@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://www.signavio.com/bpmn20" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <process id="" isClosed="false" isExecutable="true" processType="None">
+      <task id="task_1" name=""/>
+      <startEvent id="startEvent_1" name=""/>
+      <exclusiveGateway id="xor_1" name=""/>
+      <task id="task_2" name=""/>
+      <task id="task_3" name=""/>
+      <exclusiveGateway id="xor_2" name=""/>
+      <task id="task_4" name=""/>
+      <endEvent id="endEvent_1" name=""/>
+      <sequenceFlow id="sequenceFlow_1" name="" sourceRef="startEvent_1" targetRef="task_1"/>
+      <sequenceFlow id="sequenceFlow_2" name="" sourceRef="task_1" targetRef="xor_1"/>
+      <sequenceFlow id="sequenceFlow_3" name="" sourceRef="xor_1" targetRef="task_3"/>
+      <sequenceFlow id="sequenceFlow_4" name="" sourceRef="xor_1" targetRef="task_2"/>
+      <sequenceFlow id="sequenceFlow_5" name="" sourceRef="task_2" targetRef="xor_2"/>
+      <sequenceFlow id="sequenceFlow_6" name="" sourceRef="task_3" targetRef="xor_2"/>
+      <sequenceFlow id="sequenceFlow_7" name="" sourceRef="xor_2" targetRef="task_4"/>
+      <sequenceFlow id="sequenceFlow_8" name="" sourceRef="task_4" targetRef="endEvent_1"/>
+    </process>
+   <bpmndi:BPMNDiagram id="diagram_1">
+      <bpmndi:BPMNPlane bpmnElement="" id="plane_1_gui">
+         <bpmndi:BPMNShape bpmnElement="task_1" id="task_1_gui">
+            <omgdc:Bounds height="80" width="100" x="310" y="335"/>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="startEvent_1" id="startEvent_1_gui">
+            <omgdc:Bounds height="30" width="30" x="200" y="361"/>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="xor_1" id="xor_1_gui">
+            <omgdc:Bounds height="40" width="40" x="525" y="356"/>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="task_2" id="task_2_gui">
+            <omgdc:Bounds height="80" width="100" x="720" y="515"/>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="task_3" id="task_3_gui">
+            <omgdc:Bounds height="80" width="100" x="730" y="175"/>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="xor_2" id="xor_2_gui">
+            <omgdc:Bounds height="40" width="40" x="950" y="361"/>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="task_4" id="task_4_gui">
+            <omgdc:Bounds height="80" width="100" x="1110" y="340"/>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="endEvent_1" id="endEvent_1_gui">
+            <omgdc:Bounds height="28" width="28" x="1340" y="368"/>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNEdge bpmnElement="sequenceFlow_1" id="sequenceFlow_1_gui">
+            <omgdi:waypoint x="230.99998474121094" y="376"/>
+            <omgdi:waypoint x="309" y="376"/>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sequenceFlow_2" id="sequenceFlow_2_gui">
+            <omgdi:waypoint x="411" y="376"/>
+            <omgdi:waypoint x="525" y="376"/>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sequenceFlow_3" id="sequenceFlow_3_gui">
+            <omgdi:waypoint x="565" y="362.3829787234043"/>
+            <omgdi:waypoint x="729" y="250.72340425531917"/>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sequenceFlow_4" id="sequenceFlow_4_gui">
+            <omgdi:waypoint x="565" y="392"/>
+            <omgdi:waypoint x="719" y="515.2"/>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sequenceFlow_5" id="sequenceFlow_5_gui">
+            <omgdi:waypoint x="816.8571571568081" y="515"/>
+            <omgdi:waypoint x="950.0000610351562" y="398.49999465942545"/>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sequenceFlow_6" id="sequenceFlow_6_gui">
+            <omgdi:waypoint x="827.2121363784328" y="257"/>
+            <omgdi:waypoint x="950.0000610351562" y="363.63158452675765"/>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sequenceFlow_7" id="sequenceFlow_7_gui">
+            <omgdi:waypoint x="990.0000610351562" y="381"/>
+            <omgdi:waypoint x="1109" y="381"/>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sequenceFlow_8" id="sequenceFlow_8_gui">
+            <omgdi:waypoint x="1211" y="381"/>
+            <omgdi:waypoint x="1341" y="383"/>
+         </bpmndi:BPMNEdge>
+      </bpmndi:BPMNPlane>
+      <bpmndi:BPMNLabelStyle id="labelstyle_1">
+         <omgdc:Font isBold="false" isItalic="false" isStrikeThrough="false" isUnderline="false" name="Arial" size="12.0"/>
+      </bpmndi:BPMNLabelStyle>
+   </bpmndi:BPMNDiagram>
+</definitions>
