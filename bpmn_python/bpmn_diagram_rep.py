@@ -3,38 +3,53 @@ import bpmn_python.xml_reader as reader
 
 class BPMNDiagramGraph:
     def __init__(self):
-        self.diagram_graph = None
-
-    def iterate_elements(self, parent):
-        element = parent.firstChild
-        while element is not None:
-            yield element
-            element = element.nextSibling
+        self.diagram_graph = nx.Graph() # nx.Graph(), each node represents a BPMN element, edge - represents flow
+        self.sequence_flows = {} # dictonary helper, key - sequence flows ID, values - sourceRef, target_ref
 
     def add_node_to_graph(self, element):
-        elemID = element.getAttribute("id")
-        self.diagram_graph.add_node(elemID)
-        self.diagram_graph.node[elemID]["type"] = element.tagName
-        self.diagram_graph.node[elemID]["name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
+        elem_id = element.getAttribute("id")
+        self.diagram_graph.add_node(elem_id)
+        self.diagram_graph.node[elem_id]["type"] = element.tagName
+        self.diagram_graph.node[elem_id]["name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
 
     def add_edge_to_graph(self, flow):
-        sourceRef = flow.getAttribute("sourceRef")
-        targetRef = flow.getAttribute("targetRef")
-        self.diagram_graph.add_edge(sourceRef, targetRef)
-        self.diagram_graph.edge[sourceRef][targetRef]["id"] = flow.getAttribute("id")
-        self.diagram_graph.edge[sourceRef][targetRef]["name"] = flow.getAttribute("name") if flow.hasAttribute("name") else ""
+        flow_id = flow.getAttribute("id")
+        source_ref = flow.getAttribute("sourceRef")
+        target_ref = flow.getAttribute("targetRef")
+        self.sequence_flows[flow_id] = (source_ref, target_ref)
+        self.diagram_graph.add_edge(source_ref, target_ref)
+        self.diagram_graph.edge[source_ref][target_ref]["id"] = flow.getAttribute("id")
+        self.diagram_graph.edge[source_ref][target_ref]["name"] = flow.getAttribute("name") if flow.hasAttribute("name") else ""
+
+    def add_shape_DI(self, element_graphic):
+        element_id = element_graphic.getAttribute("bpmnElement")
+        bounds = element_graphic.getElementsByTagNameNS("*","Bounds")[0]
+        self.diagram_graph.node[element_id]["widht"] = bounds.getAttribute("width")
+        self.diagram_graph.node[element_id]["height"] = bounds.getAttribute("height")
+        self.diagram_graph.node[element_id]["x"] = bounds.getAttribute("x")
+        self.diagram_graph.node[element_id]["y"] = bounds.getAttribute("y")
+
+    def add_edge_DI(self, flow_graphic):
+        flow_id = flow_graphic.getAttribute("bpmnElement")
+        waypoints_xml = flow_graphic.getElementsByTagNameNS("*","waypoint")
+        length = len(waypoints_xml)
+        waypoints = [None] * length
+        for index in range(length):
+            waypoint_tmp = (waypoints_xml[index].getAttribute("x"), waypoints_xml[index].getAttribute("y"))
+            waypoints[index] = waypoint_tmp
+        (source_ref, target_ref) = self.sequence_flows[flow_id]
+        self.diagram_graph.edge[source_ref][target_ref]["waypoints"] = waypoints
 
 def xml_to_inner(filepath):
     inner_rep = BPMNDiagramGraph()
-    inner_rep.diagram_graph = nx.Graph()
 
     document = reader.readXmlFile(filepath)
-    processElement = document.getElementsByTagNameNS("*","process")[0] # We assume that there's only one process element
-    diagramElement = document.getElementsByTagNameNS("*","BPMNDiagram")[0] # We assume that there's only one diagram element
+    process_element = document.getElementsByTagNameNS("*","process")[0] # We assume that there's only one process element
+    plane_element = document.getElementsByTagNameNS("*","BPMNDiagram")[0].getElementsByTagNameNS("*","BPMNPlane")[0] # We assume that there's only one diagram element with one plne element
 
-    for element in inner_rep.iterate_elements(processElement):
+    for element in iterate_elements(process_element):
         if element.nodeType != element.TEXT_NODE:
-            tag_name = element.tagName
+            tag_name = element.tagName.split(':')[-1] # Removing namespace from tag name
             if tag_name == "task":
                 inner_rep.add_node_to_graph(element)
             elif tag_name == "startEvent" or tag_name == "endEvent":
@@ -44,11 +59,24 @@ def xml_to_inner(filepath):
             elif tag_name == "parallelGateway" or tag_name == "inclusiveGateway" or tag_name == "exclusiveGateway":
                 inner_rep.add_node_to_graph(element)
 
-    for flow in inner_rep.iterate_elements(processElement):
+    for flow in iterate_elements(process_element):
         if flow.nodeType != flow.TEXT_NODE:
             tag_name = flow.tagName
             if tag_name == "sequenceFlow":
                 inner_rep.add_edge_to_graph(flow)
 
+    for element in iterate_elements(plane_element):
+        if element.nodeType != element.TEXT_NODE:
+            tag_name = element.tagName.split(':')[-1] # Removing namespace from tag name
+            if tag_name == "BPMNShape":
+                inner_rep.add_shape_DI(element)
+            elif tag_name == "BPMNEdge":
+                inner_rep.add_edge_DI(element)
+
     return inner_rep
 
+def iterate_elements(parent):
+    element = parent.firstChild
+    while element is not None:
+        yield element
+        element = element.nextSibling
