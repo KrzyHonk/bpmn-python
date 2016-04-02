@@ -1,5 +1,4 @@
 import unittest
-import bpmn_python.xml_reader
 import os
 import bpmn_python.bpmn_diagram_rep as diagram
 
@@ -9,7 +8,7 @@ import bpmn_python.bpmn_diagram_rep as diagram
 
 class MyTestCase(unittest.TestCase):
     def test_readXmlFile(self):
-        domTree = bpmn_python.xml_reader.readXmlFile(os.path.abspath("../examples/BPMNEditor-example.xml"))
+        domTree = diagram.read_xml_file(os.path.abspath("../examples/BPMNEditor-example.xml"))
         processElement = domTree.getElementsByTagNameNS("*","process")[0]
         diagramElement = domTree.getElementsByTagNameNS("*","BPMNDiagram")[0]
         element = processElement.firstChild;

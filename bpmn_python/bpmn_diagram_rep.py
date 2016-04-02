@@ -1,17 +1,45 @@
 import networkx as nx
-import bpmn_python.xml_reader as reader
+import xml.dom.minidom as minidom
 
+"""
+Class BPMNDiagramGraph implements simple inner representation of BPMN 2.0 diagram, based on NetworkX graph implementation
+
+Fields:
+- diagram_graph = networkx.Graph object, stores elements of BPMN diagram as nodes. Each edge of graph represents sequenceFlow element. Edges are identified by IDs of nodes connected by edge.
+- sequence_flows - dictionary (associative list) that uses sequenceFlow ID attribute as key and tuple of (sourceRef, targetRef) parameters as value. It is used to help searching edges by ID parameter.
+"""
 class BPMNDiagramGraph:
+
+    """
+    Default constructor, initializes object fields with new instances.
+    """
     def __init__(self):
         self.diagram_graph = nx.Graph() # nx.Graph(), each node represents a BPMN element, edge - represents flow
         self.sequence_flows = {} # dictonary helper, key - sequence flows ID, values - sourceRef, target_ref
 
+    """
+    Adds a new node to graph.
+    Input parameter is object of class xml.dom.Element.
+    Nodes are identified by ID attribute of Element.
+    Method adds basic attributes (shared by all BPMN elements) to node. Those elements are:
+    - id - added as key value, we assume that this is a required value,
+    - type - tagName of element, used to identify type of BPMN diagram element,
+    - name - optional attribute, empty string by default.
+    """
     def add_node_to_graph(self, element):
         elem_id = element.getAttribute("id")
         self.diagram_graph.add_node(elem_id)
         self.diagram_graph.node[elem_id]["type"] = element.tagName
         self.diagram_graph.node[elem_id]["name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
 
+    """
+    Adds a new edge to graph and a record to sequence_flows dictionary.
+    Input parameter is object of class xml.dom.Element.
+    Edges are identified by pair of sourceRef and targetRef attributes of BPMNFlow element. We also provide a dictionary, that maps sequenceFlow ID attribute with its sourceRef and targetRef.
+    Method adds basic attributes of sequenceFlow element to edge. Those elements are:
+    - id - added as edge attribute, we assume that this is a required value,
+    - name - optional attribute, empty string by default.
+    """
     def add_edge_to_graph(self, flow):
         flow_id = flow.getAttribute("id")
         source_ref = flow.getAttribute("sourceRef")
@@ -21,6 +49,14 @@ class BPMNDiagramGraph:
         self.diagram_graph.edge[source_ref][target_ref]["id"] = flow.getAttribute("id")
         self.diagram_graph.edge[source_ref][target_ref]["name"] = flow.getAttribute("name") if flow.hasAttribute("name") else ""
 
+    """
+    Adds Diagram Interchange information (information about rendering a diagram) to appropriate BPMN diagram element in graph node.
+    We assume that those attributes are required for each BPMNShape:
+    - width - width of BPMNShape,
+    - height - height of BPMNShape,
+    - x - first coordinate of BPMNShape,
+    - y - second coordinate of BPMNShape.
+    """
     def add_shape_DI(self, element_graphic):
         element_id = element_graphic.getAttribute("bpmnElement")
         bounds = element_graphic.getElementsByTagNameNS("*","Bounds")[0]
@@ -29,6 +65,10 @@ class BPMNDiagramGraph:
         self.diagram_graph.node[element_id]["x"] = bounds.getAttribute("x")
         self.diagram_graph.node[element_id]["y"] = bounds.getAttribute("y")
 
+    """
+    Adds Diagram Interchange information (information about rendering a diagram) to appropriate BPMN sequence flow represented as graph edge.
+    We assume that each BPMNEdge has a list of 'waypoint' elements. BPMN 2.0 XML Schema states, that each BPMNEdge must have at least two waypoints.
+    """
     def add_edge_DI(self, flow_graphic):
         flow_id = flow_graphic.getAttribute("bpmnElement")
         waypoints_xml = flow_graphic.getElementsByTagNameNS("*","waypoint")
@@ -40,10 +80,14 @@ class BPMNDiagramGraph:
         (source_ref, target_ref) = self.sequence_flows[flow_id]
         self.diagram_graph.edge[source_ref][target_ref]["waypoints"] = waypoints
 
+"""
+Reads an XML file from given filepath and maps it into inner representation of BPMN diagram.
+Returns an instance of BPMNDiagramGraph class.
+"""
 def xml_to_inner(filepath):
     inner_rep = BPMNDiagramGraph()
 
-    document = reader.readXmlFile(filepath)
+    document = read_xml_file(filepath)
     process_element = document.getElementsByTagNameNS("*","process")[0] # We assume that there's only one process element
     plane_element = document.getElementsByTagNameNS("*","BPMNDiagram")[0].getElementsByTagNameNS("*","BPMNPlane")[0] # We assume that there's only one diagram element with one plne element
 
@@ -75,8 +119,18 @@ def xml_to_inner(filepath):
 
     return inner_rep
 
+"""
+Helper function that iterates over child Nodes/Elements of parent Node/Element.
+"""
 def iterate_elements(parent):
     element = parent.firstChild
     while element is not None:
         yield element
         element = element.nextSibling
+
+"""
+Reads BPMN 2.0 XML file from given filepath and returns xml.dom.xminidom.Document object.
+"""
+def read_xml_file(filepath):
+    domTree = minidom.parse(filepath)
+    return domTree
