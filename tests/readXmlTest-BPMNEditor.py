@@ -16,6 +16,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_loadDiagram(self):
         bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/BPMNEditor-example.xml"))
+        diagram.export_xml_file(bpmn_graph, "./output.xml")
         print(os.path.abspath("../examples/BPMNEditor-example.xml"))
 
 if __name__ == '__main__':

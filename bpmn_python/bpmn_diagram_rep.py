@@ -1,5 +1,7 @@
 import networkx as nx
-import xml.dom.minidom as minidom
+from xml.dom import minidom
+import xml.etree.cElementTree as etree
+from xml.etree import ElementTree
 
 """
 Class BPMNDiagramGraph implements simple inner representation of BPMN 2.0 diagram, based on NetworkX graph implementation
@@ -8,6 +10,8 @@ Fields:
 - diagram_graph = networkx.Graph object, stores elements of BPMN diagram as nodes. Each edge of graph represents sequenceFlow element. Edges are identified by IDs of nodes connected by edge.
 - sequence_flows - dictionary (associative list) that uses sequenceFlow ID attribute as key and tuple of (sourceRef, targetRef) parameters as value. It is used to help searching edges by ID parameter.
 """
+
+
 class BPMNDiagramGraph:
 
     """
@@ -120,6 +124,27 @@ def xml_to_inner(filepath):
     return inner_rep
 
 """
+Exports diagram inner graph to BPMN 2.0 XML file.
+"""
+def export_xml_file(diagram_inner_rep, output_path):
+    root = etree.Element("definitions")
+    root.set("xmlns", "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    root.set("xmlns:bpmndi", "http://www.omg.org/spec/BPMN/20100524/DI")
+    root.set("xmlns:omgdc", "http://www.omg.org/spec/DD/20100524/DC")
+    root.set("xmlns:omgdi", "http://www.omg.org/spec/DD/20100524/DI")
+    root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    root.set("targetNamespace", "http://www.signavio.com/bpmn20")
+    root.set("typeLanguage", "http://www.w3.org/2001/XMLSchema")
+    root.set("expressionLanguage", "http://www.w3.org/1999/XPath")
+    root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
+
+    process = etree.SubElement(root, "process")
+    diagram = etree.SubElement(root, "bpmndi:BPMNDiagram")
+    indent(root)
+    tree = etree.ElementTree(root)
+    tree.write(output_path, encoding='utf-8', xml_declaration=True)
+
+"""
 Helper function that iterates over child Nodes/Elements of parent Node/Element.
 """
 def iterate_elements(parent):
@@ -132,5 +157,25 @@ def iterate_elements(parent):
 Reads BPMN 2.0 XML file from given filepath and returns xml.dom.xminidom.Document object.
 """
 def read_xml_file(filepath):
-    domTree = minidom.parse(filepath)
-    return domTree
+    dom_tree = minidom.parse(filepath)
+    return dom_tree
+
+"""
+Helper function, adds indentation to XML output.
+"""
+def indent(elem, level=0):
+    i = "\n" + level*"  "
+    j = "\n" + (level-1)*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for subelem in elem:
+            indent(subelem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = j
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = j
+    return elem
