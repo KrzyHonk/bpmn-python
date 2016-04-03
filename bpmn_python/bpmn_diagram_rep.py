@@ -1,7 +1,6 @@
 import networkx as nx
 from xml.dom import minidom
 import xml.etree.cElementTree as etree
-from xml.etree import ElementTree
 
 """
 Class BPMNDiagramGraph implements simple inner representation of BPMN 2.0 diagram, based on NetworkX graph implementation
@@ -69,7 +68,7 @@ class BPMNDiagramGraph:
     def add_node_to_graph(self, element):
         elem_id = element.getAttribute("id")
         self.diagram_graph.add_node(elem_id)
-        self.diagram_graph.node[elem_id]["type"] = element.tagName
+        self.diagram_graph.node[elem_id]["type"] = element.tagName.split(':')[-1] # Removing namespace from tag name
         self.diagram_graph.node[elem_id]["name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
 
     """
@@ -100,7 +99,7 @@ class BPMNDiagramGraph:
     def add_shape_DI(self, element_graphic):
         element_id = element_graphic.getAttribute("bpmnElement")
         bounds = element_graphic.getElementsByTagNameNS("*","Bounds")[0]
-        self.diagram_graph.node[element_id]["widht"] = bounds.getAttribute("width")
+        self.diagram_graph.node[element_id]["width"] = bounds.getAttribute("width")
         self.diagram_graph.node[element_id]["height"] = bounds.getAttribute("height")
         self.diagram_graph.node[element_id]["x"] = bounds.getAttribute("x")
         self.diagram_graph.node[element_id]["y"] = bounds.getAttribute("y")
@@ -149,7 +148,7 @@ def xml_to_inner(filepath):
 
     for flow in iterate_elements(process_element):
         if flow.nodeType != flow.TEXT_NODE:
-            tag_name = flow.tagName
+            tag_name = flow.tagName.split(':')[-1] # Removing namespace from tag name
             if tag_name == "sequenceFlow":
                 inner_rep.add_edge_to_graph(flow)
 
@@ -167,6 +166,9 @@ def xml_to_inner(filepath):
 Exports diagram inner graph to BPMN 2.0 XML file.
 """
 def export_xml_file(diagram_inner_rep, output_path):
+    bpmndi_namespace = "bpmndi:"
+
+    # Create root 'definitons' element and add required attirbutes
     root = etree.Element("definitions")
     root.set("xmlns", "http://www.omg.org/spec/BPMN/20100524/MODEL")
     root.set("xmlns:bpmndi", "http://www.omg.org/spec/BPMN/20100524/DI")
@@ -178,8 +180,61 @@ def export_xml_file(diagram_inner_rep, output_path):
     root.set("expressionLanguage", "http://www.w3.org/1999/XPath")
     root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
 
+    # Create 'process' element and add attirbutes
     process = etree.SubElement(root, "process")
-    diagram = etree.SubElement(root, "bpmndi:BPMNDiagram")
+    process.set("id", diagram_inner_rep.process_attributes["id"])
+    process.set("isClosed", diagram_inner_rep.process_attributes["isClosed"])
+    process.set("isExecutable", diagram_inner_rep.process_attributes["isExecutable"])
+    process.set("processType", diagram_inner_rep.process_attributes["processType"])
+
+    # Create 'diagram' element and add attirbutes
+    diagram = etree.SubElement(root, bpmndi_namespace + "BPMNDiagram")
+    diagram.set("id", diagram_inner_rep.diagram_attributes["id"])
+    diagram.set("name", diagram_inner_rep.diagram_attributes["name"])
+
+    # Create 'plane' element and add attirbutes
+    plane = etree.SubElement(diagram, bpmndi_namespace + "BPMNPlane")
+    plane.set("id", diagram_inner_rep.plane_attributes["id"])
+    plane.set("bpmnElement", diagram_inner_rep.plane_attributes["bpmnElement"])
+
+    # for each node in graph add correct type of element, its attributes and BPMNShape element
+    nodes = diagram_inner_rep.diagram_graph.nodes(data=True)
+    for element in nodes:
+        id = element[0]
+        params = element[1]
+        output_element = etree.SubElement(process, params["type"])
+        output_element.set("id", id)
+        output_element.set("name", params["name"])
+
+        output_element_di = etree.SubElement(plane, bpmndi_namespace + "BPMNShape")
+        output_element_di.set("id", id + "_gui")
+        output_element_di.set("bpmnElement", id)
+        bounds = etree.SubElement(output_element_di, "omgdc:Bounds")
+        bounds.set("width", params["width"])
+        bounds.set("height", params["height"])
+        bounds.set("x", params["x"])
+        bounds.set("y", params["y"])
+
+    # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
+    edges = diagram_inner_rep.diagram_graph.edges(data=True)
+    for flow in edges:
+        params = flow[2]
+        (sourceRef, targetRef) = diagram_inner_rep.sequence_flows[params["id"]]
+        output_flow = etree.SubElement(process, "sequenceFlow")
+        output_flow.set("id", params["id"])
+        output_flow.set("name", params["name"])
+        output_flow.set("sourceRef", sourceRef)
+        output_flow.set("targetRef", targetRef)
+
+        output_flow_edge = etree.SubElement(plane, bpmndi_namespace + "BPMNEdge")
+        output_flow_edge.set("id", params["id"] + "_gui")
+        output_flow_edge.set("bpmnElement", params["id"])
+        waypoints = params["waypoints"]
+        for waypoint in waypoints:
+            waypoint_element = etree.SubElement(output_flow_edge, "omgdi:waypoint")
+            waypoint_element.set("x", waypoint[0])
+            waypoint_element.set("y", waypoint[1])
+
     indent(root)
     tree = etree.ElementTree(root)
     tree.write(output_path, encoding='utf-8', xml_declaration=True)
