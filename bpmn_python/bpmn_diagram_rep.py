@@ -7,8 +7,11 @@ from xml.etree import ElementTree
 Class BPMNDiagramGraph implements simple inner representation of BPMN 2.0 diagram, based on NetworkX graph implementation
 
 Fields:
-- diagram_graph = networkx.Graph object, stores elements of BPMN diagram as nodes. Each edge of graph represents sequenceFlow element. Edges are identified by IDs of nodes connected by edge.
-- sequence_flows - dictionary (associative list) that uses sequenceFlow ID attribute as key and tuple of (sourceRef, targetRef) parameters as value. It is used to help searching edges by ID parameter.
+- diagram_graph - networkx.Graph object, stores elements of BPMN diagram as nodes. Each edge of graph represents sequenceFlow element. Edges are identified by IDs of nodes connected by edge,
+- sequence_flows - dictionary (associative list) that uses sequenceFlow ID attribute as key and tuple of (sourceRef, targetRef) parameters as value. It is used to help searching edges by ID parameter,
+- process_attributes - dictionary that contains BPMN process element attributes,
+- diagram_attributes - dictionary that contains BPMN diagram element attributes,
+- plane_attributes - dictionary that contains BPMN plane element attributes.
 """
 
 
@@ -18,8 +21,41 @@ class BPMNDiagramGraph:
     Default constructor, initializes object fields with new instances.
     """
     def __init__(self):
-        self.diagram_graph = nx.Graph() # nx.Graph(), each node represents a BPMN element, edge - represents flow
-        self.sequence_flows = {} # dictonary helper, key - sequence flows ID, values - sourceRef, target_ref
+        self.diagram_graph = nx.Graph()
+        self.sequence_flows = {}
+        self.process_attributes = {}
+        self.diagram_attributes = {}
+        self.plane_attributes = {}
+
+    """
+    Adds attributes of BPMN process element to appropriate field process_attributes.
+    Diagram inner representation contains following process attributes:
+    - id - assumed to be required in XML file, even thought BPMN 2.0 schema doesn't say so,
+    - isClosed - optional parameter, default value 'false',
+    - isExecutable - optional parameter, default value 'false',
+    - processType - optional parameter, default value 'None',
+    """
+    def add_process_attributes(self, process_element):
+        self.process_attributes["id"] = process_element.getAttribute("id")
+        self.process_attributes["isClosed"] = process_element.getAttribute("isClosed") if process_element.hasAttribute("isClosed") else "false"
+        self.process_attributes["isExecutable"] = process_element.getAttribute("isExecutable") if process_element.hasAttribute("isExecutable") else "false"
+        self.process_attributes["processType"] = process_element.getAttribute("processType") if process_element.hasAttribute("processType") else "None"
+
+    """
+    Adds attributes of BPMN diagram and plane elements to appropriate fields diagram_attributes and plane_attributes.
+    Diagram inner representation contains following diagram element attributes:
+    - id - assumed to be required in XML file, even thought BPMN 2.0 schema doesn't say so,
+    - name - optional parameter, empty string by default,
+    Diagram inner representation contains following plane element attributes:
+    - id - assumed to be required in XML file, even thought BPMN 2.0 schema doesn't say so,
+    - bpmnElement - assumed to be required in XML file, even thought BPMN 2.0 schema doesn't say so,
+    """
+    def add_diagram_and_plane_attributes(self, diagram_element, plane_element):
+        self.diagram_attributes["id"] = diagram_element.getAttribute("id")
+        self.diagram_attributes["name"] = diagram_element.getAttribute("name") if diagram_element.hasAttribute("name") else ""
+
+        self.plane_attributes["id"] = plane_element.getAttribute("id")
+        self.plane_attributes["bpmnElement"] = plane_element.getAttribute("bpmnElement")
 
     """
     Adds a new node to graph.
@@ -93,7 +129,11 @@ def xml_to_inner(filepath):
 
     document = read_xml_file(filepath)
     process_element = document.getElementsByTagNameNS("*","process")[0] # We assume that there's only one process element
-    plane_element = document.getElementsByTagNameNS("*","BPMNDiagram")[0].getElementsByTagNameNS("*","BPMNPlane")[0] # We assume that there's only one diagram element with one plne element
+    diagram_element = document.getElementsByTagNameNS("*","BPMNDiagram")[0] # We assume that there's only one diagram element with one plane element
+    plane_element = diagram_element.getElementsByTagNameNS("*","BPMNPlane")[0]
+
+    inner_rep.add_process_attributes(process_element)
+    inner_rep.add_diagram_and_plane_attributes(diagram_element, plane_element)
 
     for element in iterate_elements(process_element):
         if element.nodeType != element.TEXT_NODE:
