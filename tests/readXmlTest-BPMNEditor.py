@@ -22,9 +22,13 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/signavio-example.bpmn"))
         diagram.export_xml_file(bpmn_graph, "./signavio-output.xml")
 
+    def test_loadSignavioComplexDiagram(self):
+        bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/signavio-complex-example.bpmn"))
+        diagram.export_xml_file(bpmn_graph, "./signavio-complex-output.xml")
+
     def test_loadCamundaDiagram(self):
-        bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/camunda-example.bpmn"))
-        diagram.export_xml_file(bpmn_graph, "./camunda-output.xml")
+        bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/camunda-complex-example.bpmn"))
+        diagram.export_xml_file(bpmn_graph, "./camunda-complex-output.xml")
 
 if __name__ == '__main__':
     unittest.main()

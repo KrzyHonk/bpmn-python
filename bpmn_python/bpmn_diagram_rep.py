@@ -65,11 +65,167 @@ class BPMNDiagramGraph:
     - type - tagName of element, used to identify type of BPMN diagram element,
     - name - optional attribute, empty string by default.
     """
-    def add_node_to_graph(self, element):
-        elem_id = element.getAttribute("id")
-        self.diagram_graph.add_node(elem_id)
-        self.diagram_graph.node[elem_id]["type"] = element.tagName.split(':')[-1] # Removing namespace from tag name
-        self.diagram_graph.node[elem_id]["name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
+    def add_flownode_to_graph(self, element, element_id):
+        self.diagram_graph.add_node(element_id)
+        self.diagram_graph.node[element_id]["type"] = remove_namespace_from_tag_name(element.tagName)
+        self.diagram_graph.node[element_id]["name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
+
+        # add incoming flow node list
+        incoming_xml = element.getElementsByTagNameNS("*","incoming")
+        length = len(incoming_xml)
+        incoming_list = [None] * length
+        for index in range(length):
+            incoming_tmp = incoming_xml[index].firstChild.nodeValue
+            incoming_list[index] = incoming_tmp
+        self.diagram_graph.node[element_id]["incoming"] = incoming_list
+
+        # add outgoing flow node list
+        outgoing_xml = element.getElementsByTagNameNS("*","outgoing")
+        length = len(outgoing_xml)
+        outgoing_list = [None] * length
+        for index in range(length):
+            outgoing_tmp = outgoing_xml[index].firstChild.nodeValue
+            outgoing_list[index] = outgoing_tmp
+        self.diagram_graph.node[element_id]["outgoing"] = outgoing_list
+
+    """
+    Adds to graph the new element that represents BPMN task.
+    In our representation tasks have only basic attributes and elements, inherited from Activity type, so this method only needs to call add_flownode_to_graph.
+    """
+    def add_task_to_graph(self, element, element_id):
+        self.add_flownode_to_graph(element, element_id)
+
+    """
+    Adds to graph the new element that represents BPMN subprocess.
+    In addition to attributes inherited from FlowNode type, SubProcess has additional attribute tiggeredByEvent (boolean type, default value - false).
+    """
+    def add_subprocess_to_graph(self, element, element_id):
+        self.add_flownode_to_graph(element, element_id)
+        self.diagram_graph.node[element_id]["triggeredByEvent"] = element.getAttribute("triggeredByEvent") if element.hasAttribute("triggeredByEvent") else "false"
+
+    """
+    Adds to graph the new element that represents BPMN gateway.
+    In addition to attributes inherited from FlowNode type, Gateway has additional attribute gatewayDirection (simple type, default value - Unspecified).
+    """
+    def add_gateway_to_graph(self, element, element_id):
+        self.add_flownode_to_graph(element, element_id)
+        self.diagram_graph.node[element_id]["gatewayDirection"] = element.getAttribute("gatewayDirection") if element.hasAttribute("gatewayDirection") else "Unspecified"
+
+    """
+    Adds to graph the new element that represents BPMN complex gateway.
+    In addition to attributes inherited from Gateway type, complex gateway has additional attribute default flow (default value - none).
+    """
+    def add_complex_gateway_to_graph(self, element, element_id):
+        self.add_gateway_to_graph(element, element_id)
+        self.diagram_graph.node[element_id]["default"] = element.getAttribute("default") if element.hasAttribute("default") else None
+        # TODO sequence of conditions
+        # Can't get any working example of Complex gateway, so I'm not sure how exactly those conditions are kept
+
+    """
+    Adds to graph the new element that represents BPMN event based gateway.
+    In addition to attributes inherited from Gateway type, event based gateway has additional attributes instantiate (boolean type, default value - false) and eventGatewayType (custom type tEventBasedGatewayType, default value - Exclusive).
+    """
+    def add_event_based_gateway_to_graph(self, element, element_id):
+        self.add_gateway_to_graph(element, element_id)
+        self.diagram_graph.node[element_id]["instantiate"] = element.getAttribute("instantiate") if element.hasAttribute("instantiate") else "false"
+        self.diagram_graph.node[element_id]["eventGatewayType"] = element.getAttribute("eventGatewayType") if element.hasAttribute("eventGatewayType") else "Exclusive"
+
+    """
+    Adds to graph the new element that represents BPMN inclusive or eclusive gateway.
+    In addition to attributes inherited from Gateway type, inclusive and exclusive gateway have additional attribute default flow (default value - none).
+    """
+    def add_inclusive_or_exclusive_gateway_to_graph(self, element, element_id):
+        self.add_gateway_to_graph(element, element_id)
+        self.diagram_graph.node[element_id]["default"] = element.getAttribute("default") if element.hasAttribute("default") else None
+
+    """
+    Adds to graph the new element that represents BPMN parallel gateway.
+    Parallel gateway doesn't have additional attributes. Separate method is used to improve code readability.
+    """
+    def add_parallel_gateway_to_graph(self, element, element_id):
+        self.add_gateway_to_graph(element, element_id)
+
+    """
+    Adds to graph the new element that represents BPMN start event.
+    Start event inherits attribute parallelMultiple from CatchEvent type and sequence of eventDefinitionRef from Event type.
+    Separate methods for each event type are required since each of them has different variants (Message, Error, Signal etc.).
+    """
+    def add_start_event_to_graph(self, element, element_id):
+        start_event_definitions = {'messageEventDefinition', 'timerEventDefinition', 'conditionalEventDefinition', 'escalationEventDefinition'}
+        self.add_flownode_to_graph(element, element_id)
+        self.diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") if element.hasAttribute("parallelMultiple") else None
+
+        # TODO Repeated code
+        # add event definitions elements
+        event_def_list = []
+        for definition_type in start_event_definitions:
+            event_def_xml = element.getElementsByTagNameNS("*",definition_type)
+            length = len(event_def_xml)
+            for index in range(length):
+                event_def_tmp = (definition_type, event_def_xml[index].getAttribute("id")) # tuple - definition type, definition id
+                event_def_list.append(event_def_tmp)
+        self.diagram_graph.node[element_id]["event_definitions"] = event_def_list
+
+    """
+    Adds to graph the new element that represents BPMN intermediate catch event.
+    Intermediate catch event inherits attribute parallelMultiple from CatchEvent type and sequence of eventDefinitionRef from Event type.
+    Separate methods for each event type are required since each of them has different variants (Message, Error, Signal etc.).
+    """
+    def add_intermediate_catch_event_to_graph(self, element, element_id):
+        intermediate_catch_event_definitions = {'messageEventDefinition', 'signalEventDefinition', 'conditionalEventDefinition', 'escalationEventDefinition'}
+        self.add_flownode_to_graph(element, element_id)
+        self.diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") if element.hasAttribute("parallelMultiple") else None
+
+        # TODO Repeated code
+        # add event definitions elements
+        event_def_list = []
+        for definition_type in intermediate_catch_event_definitions:
+            event_def_xml = element.getElementsByTagNameNS("*",definition_type)
+            length = len(event_def_xml)
+            for index in range(length):
+                event_def_tmp = (definition_type, event_def_xml[index].getAttribute("id")) # tuple - definition type, definition id
+                event_def_list.append(event_def_tmp)
+        self.diagram_graph.node[element_id]["event_definitions"] = event_def_list
+
+    """
+    Adds to graph the new element that represents BPMN end event.
+    End event inherits sequence of eventDefinitionRef from Event type.
+    Separate methods for each event type are required since each of them has different variants (Message, Error, Signal etc.).
+    """
+    def add_end_event_to_graph(self, element, element_id):
+        end_event_definitions = {'messageEventDefinition', 'signalEventDefinition', 'escalationEventDefinition'}
+        self.add_flownode_to_graph(element, element_id)
+
+        # TODO Repeated code
+        # add event definitions elements
+        event_def_list = []
+        for definition_type in end_event_definitions:
+            event_def_xml = element.getElementsByTagNameNS("*",definition_type)
+            length = len(event_def_xml)
+            for index in range(length):
+                event_def_tmp = (definition_type, event_def_xml[index].getAttribute("id")) # tuple - definition type, definition id
+                event_def_list.append(event_def_tmp)
+        self.diagram_graph.node[element_id]["event_definitions"] = event_def_list
+
+    """
+    Adds to graph the new element that represents BPMN intermediate throw event.
+    Intermediate throw event inherits sequence of eventDefinitionRef from Event type.
+    Separate methods for each event type are required since each of them has different variants (Message, Error, Signal etc.).
+    """
+    def add_intermediate_throw_event_to_graph(self, element, element_id):
+        intermediate_throw_event_definitions = {'messageEventDefinition', 'signalEventDefinition', 'escalationEventDefinition'}
+        self.add_flownode_to_graph(element, element_id)
+
+        # TODO Repeated code
+        # add event definitions elements
+        event_def_list = []
+        for definition_type in intermediate_throw_event_definitions:
+            event_def_xml = element.getElementsByTagNameNS("*",definition_type)
+            length = len(event_def_xml)
+            for index in range(length):
+                event_def_tmp = (definition_type, event_def_xml[index].getAttribute("id")) # tuple - definition type, definition id
+                event_def_list.append(event_def_tmp)
+        self.diagram_graph.node[element_id]["event_definitions"] = event_def_list
 
     """
     Adds a new edge to graph and a record to sequence_flows dictionary.
@@ -136,25 +292,37 @@ def xml_to_inner(filepath):
 
     for element in iterate_elements(process_element):
         if element.nodeType != element.TEXT_NODE:
-            tag_name = element.tagName.split(':')[-1] # Removing namespace from tag name
+            tag_name = remove_namespace_from_tag_name(element.tagName)
             if tag_name == "task":
-                inner_rep.add_node_to_graph(element)
-            elif tag_name == "startEvent" or tag_name == "endEvent":
-                inner_rep.add_node_to_graph(element)
-            elif tag_name == "intermediateThrowEvent" or tag_name == "intermediateCatchEvent":
-                inner_rep.add_node_to_graph(element)
-            elif tag_name == "parallelGateway" or tag_name == "inclusiveGateway" or tag_name == "exclusiveGateway":
-                inner_rep.add_node_to_graph(element)
+                inner_rep.add_task_to_graph(element, element.getAttribute("id"))
+            elif tag_name == "subProcess":
+                inner_rep.add_subprocess_to_graph(element, element.getAttribute("id"))
+            elif tag_name == "inclusiveGateway" or tag_name == "exclusiveGateway":
+                inner_rep.add_inclusive_or_exclusive_gateway_to_graph(element, element.getAttribute("id"))
+            elif tag_name == "parallelGateway":
+                inner_rep.add_parallel_gateway_to_graph(element, element.getAttribute("id"))
+            elif tag_name == "eventBasedGateway":
+                inner_rep.add_event_based_gateway_to_graph(element, element.getAttribute("id")) # TODO test this
+            elif tag_name == "complexGateway":
+                inner_rep.add_complex_gateway_to_graph(element, element.getAttribute("id")) # TODO test this
+            elif tag_name == "startEvent":
+                inner_rep.add_start_event_to_graph(element, element.getAttribute("id")) # TODO test this
+            elif tag_name == "endEvent":
+                inner_rep.add_end_event_to_graph(element, element.getAttribute("id")) # TODO test this
+            elif tag_name == "intermediateCatchEvent":
+                inner_rep.add_intermediate_catch_event_to_graph(element, element.getAttribute("id")) # TODO test this
+            elif tag_name == "intermediateThrowEvent":
+                inner_rep.add_intermediate_throw_event_to_graph(element, element.getAttribute("id")) # TODO test this
 
     for flow in iterate_elements(process_element):
         if flow.nodeType != flow.TEXT_NODE:
-            tag_name = flow.tagName.split(':')[-1] # Removing namespace from tag name
+            tag_name = remove_namespace_from_tag_name(flow.tagName)
             if tag_name == "sequenceFlow":
                 inner_rep.add_edge_to_graph(flow)
 
     for element in iterate_elements(plane_element):
         if element.nodeType != element.TEXT_NODE:
-            tag_name = element.tagName.split(':')[-1] # Removing namespace from tag name
+            tag_name = remove_namespace_from_tag_name(element.tagName)
             if tag_name == "BPMNShape":
                 inner_rep.add_shape_DI(element)
             elif tag_name == "BPMNEdge":
@@ -274,3 +442,9 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = j
     return elem
+
+"""
+Helper function, removes namespace annotation from tag name
+"""
+def remove_namespace_from_tag_name(tag_name):
+    return tag_name.split(':')[-1]
