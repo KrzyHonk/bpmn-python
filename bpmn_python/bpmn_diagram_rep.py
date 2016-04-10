@@ -153,7 +153,7 @@ class BPMNDiagramGraph:
     def add_start_event_to_graph(self, element, element_id):
         start_event_definitions = {'messageEventDefinition', 'timerEventDefinition', 'conditionalEventDefinition', 'escalationEventDefinition'}
         self.add_flownode_to_graph(element, element_id)
-        self.diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") if element.hasAttribute("parallelMultiple") else None
+        self.diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") if element.hasAttribute("parallelMultiple") else "false"
 
         # TODO Repeated code
         # add event definitions elements
@@ -174,7 +174,7 @@ class BPMNDiagramGraph:
     def add_intermediate_catch_event_to_graph(self, element, element_id):
         intermediate_catch_event_definitions = {'messageEventDefinition', 'signalEventDefinition', 'conditionalEventDefinition', 'escalationEventDefinition'}
         self.add_flownode_to_graph(element, element_id)
-        self.diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") if element.hasAttribute("parallelMultiple") else None
+        self.diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") if element.hasAttribute("parallelMultiple") else "false"
 
         # TODO Repeated code
         # add event definitions elements
@@ -331,6 +331,78 @@ def xml_to_inner(filepath):
     return inner_rep
 
 """
+Adds Task node attributes to exported XML element
+"""
+def export_task_info(node_params, output_element):
+    pass
+
+"""
+Adds Subprocess node attributes to exported XML element
+"""
+def export_subprocess_info(node_params, output_element):
+    output_element.set("triggeredByEvent", node_params["triggeredByEvent"])
+
+"""
+Adds ComplexGateway node attributes to exported XML element
+"""
+# TODO Conditions
+def export_complex_gateway_info(node_params, output_element):
+    # TODO Repeated for every gateway info export. Clean this up
+    output_element.set("gatewayDirection", node_params["gatewayDirection"])
+    if node_params["default"] != None:
+         output_element.set("default", node_params["default"])
+
+"""
+Adds EventBasedGateway node attributes to exported XML element
+"""
+def export_event_based_gateway_info(node_params, output_element):
+    # TODO Repeated for every gateway info export. Clean this up
+    output_element.set("gatewayDirection", node_params["gatewayDirection"])
+    output_element.set("instantiate", node_params["instantiate"])
+    output_element.set("eventGatewayType", node_params["eventGatewayType"])
+
+"""
+Adds InclusiveGateway or ExclusiveGateway node attributes to exported XML element
+"""
+def export_inclusive_exclusive_gateway_info(node_params, output_element):
+    # TODO Repeated for every gateway info export. Clean this up
+    output_element.set("gatewayDirection", node_params["gatewayDirection"])
+    if node_params["default"] != None:
+         output_element.set("default", node_params["default"])
+
+"""
+Adds Subprocess node attributes to exported XML element
+"""
+def export_parallel_gateway_info(node_params, output_element):
+    # TODO Repeated for every gateway info export. Clean this up
+    output_element.set("gatewayDirection", node_params["gatewayDirection"])
+
+"""
+Adds StartEvent or IntermediateCatchEvent attributes to exported XML element
+"""
+def export_catch_event_info(node_params, output_element):
+    output_element.set("parallelMultiple", node_params["parallelMultiple"])
+    definitions = node_params["event_definitions"]
+    for definition in definitions:
+        definition_type = definition[0]
+        definition_id = definition[1]
+        output_definition = etree.SubElement(output_element, definition_type)
+        if definition_id != "":
+            output_definition.set("id", definition_id)
+
+"""
+Adds EndEvent or IntermediateThrowingEvent attributes to exported XML element
+"""
+def export_throw_event_info(node_params, output_element):
+    definitions = node_params["event_definitions"]
+    for definition in definitions:
+        definition_type = definition[0]
+        definition_id = definition[1]
+        output_definition = etree.SubElement(output_element, definition_type)
+        if definition_id != "":
+            output_definition.set("id", definition_id)
+
+"""
 Exports diagram inner graph to BPMN 2.0 XML file.
 """
 def export_xml_file(diagram_inner_rep, output_path):
@@ -367,12 +439,37 @@ def export_xml_file(diagram_inner_rep, output_path):
 
     # for each node in graph add correct type of element, its attributes and BPMNShape element
     nodes = diagram_inner_rep.diagram_graph.nodes(data=True)
-    for element in nodes:
-        id = element[0]
-        params = element[1]
-        output_element = etree.SubElement(process, params["type"])
+    for node in nodes:
+        id = node[0]
+        params = node[1]
+        node_type = params["type"]
+        output_element = etree.SubElement(process, node_type)
         output_element.set("id", id)
         output_element.set("name", params["name"])
+
+        for incoming in params["incoming"]:
+            incoming_element = etree.SubElement(output_element, "incoming")
+            incoming_element.text = incoming
+        for outgoing in params["outgoing"]:
+            outgoing_element = etree.SubElement(output_element, "outgoing")
+            outgoing_element.text = outgoing
+
+        if node_type == "task":
+            export_task_info(params, output_element)
+        elif node_type == "subProcess":
+            export_subprocess_info(params, output_element)
+        elif node_type == "complexGateway":
+            export_complex_gateway_info(params, output_element)
+        elif node_type == "eventBasedGateway":
+            export_event_based_gateway_info(params, output_element)
+        elif node_type == "inclusiveGateway" or node_type == "exclusiveGateway":
+            export_inclusive_exclusive_gateway_info(params, output_element)
+        elif node_type == "parallelGateway":
+            export_parallel_gateway_info(params, output_element)
+        elif node_type == "startEvent" or node_type == "intermediateCatchEvent":
+            export_catch_event_info(params, output_element)
+        elif node_type == "endEvent" or node_type == "intermediateThrowEvent":
+            export_throw_event_info(params, output_element)
 
         output_element_di = etree.SubElement(plane, bpmndi_namespace + "BPMNShape")
         output_element_di.set("id", id + "_gui")
