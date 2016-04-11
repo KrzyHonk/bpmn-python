@@ -19,7 +19,8 @@ setup(
     #url = "",
     packages=['bpmn_python'],
     install_requires=[
-          'networkx',
+        'networkx',
+        'matplotlib',
     ],
     long_description=read('README.md'),
 )
