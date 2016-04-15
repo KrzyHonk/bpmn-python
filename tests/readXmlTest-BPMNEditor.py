@@ -9,32 +9,29 @@ import bpmn_python.bpmn_diagram_visualizer as visualizer
 """
 
 class MyTestCase(unittest.TestCase):
-    def test_readXmlFile(self):
-        domTree = diagram.read_xml_file(os.path.abspath("../examples/BPMNEditor-example.xml"))
-        processElement = domTree.getElementsByTagNameNS("*","process")[0]
-        diagramElement = domTree.getElementsByTagNameNS("*","BPMNDiagram")[0]
-        element = processElement.firstChild;
-        print(os.path.abspath("../examples/BPMNEditor-example.xml"))
-
     def test_loadDiagram(self):
-        bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/BPMNEditor-example.xml"))
+        bpmn_graph = diagram.BPMNDiagramGraph()
+        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/BPMNEditor-example.xml"))
         visualizer.visualize_diagram(bpmn_graph)
-        diagram.export_xml_file(bpmn_graph, "./output.xml")
+        bpmn_graph.export_xml_file(bpmn_graph, "./output.xml")
 
     def test_loadSignavioDiagram(self):
-        bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/signavio-example.bpmn"))
+        bpmn_graph = diagram.BPMNDiagramGraph()
+        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        diagram.export_xml_file(bpmn_graph, "./signavio-output.xml")
+        bpmn_graph.export_xml_file(bpmn_graph, "./signavio-output.xml")
 
     def test_loadSignavioComplexDiagram(self):
-        bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/signavio-complex-example.bpmn"))
+        bpmn_graph = diagram.BPMNDiagramGraph()
+        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-complex-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        diagram.export_xml_file(bpmn_graph, "./signavio-complex-output.xml")
+        bpmn_graph.export_xml_file(bpmn_graph, "./signavio-complex-output.xml")
 
     def test_loadCamundaDiagram(self):
-        bpmn_graph = diagram.xml_to_inner(os.path.abspath("../examples/camunda-complex-example.bpmn"))
+        bpmn_graph = diagram.BPMNDiagramGraph()
+        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/camunda-complex-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        diagram.export_xml_file(bpmn_graph, "./camunda-complex-output.xml")
+        bpmn_graph.export_xml_file(bpmn_graph, "./camunda-complex-output.xml")
 
 if __name__ == '__main__':
     unittest.main()
