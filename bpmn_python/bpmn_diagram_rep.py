@@ -26,6 +26,7 @@ class BPMNDiagramGraph:
         self.diagram_attributes = {}
         self.plane_attributes = {}
 
+    # Load diagram from XML file
     """
     Adds attributes of BPMN process element to appropriate field process_attributes.
     Diagram inner representation contains following process attributes:
@@ -302,6 +303,8 @@ class BPMNDiagramGraph:
                 elif tag_name == "BPMNEdge":
                     self.add_edge_DI(element)
 
+
+    # Exporting to XML methods
     """
     Adds Task node attributes to exported XML element
     """
@@ -513,3 +516,48 @@ class BPMNDiagramGraph:
     """
     def remove_namespace_from_tag_name(self, tag_name):
         return tag_name.split(':')[-1]
+
+    # Querying methods
+    """
+    Gets all nodes of requested type. If no type is provided by user, method returns all nodes in BPMN diagram graph.
+    Returns a dictionary, where key is an ID of node, value is a dictionary of all node attributes.
+    """
+    def get_nodes(self, type = ""):
+        tmp_nodes = self.diagram_graph.nodes(True)
+        if type == "":
+            return tmp_nodes
+        else:
+            nodes = []
+            for node in tmp_nodes:
+                if node[1]["type"] == type:
+                    nodes.append(node)
+            return nodes
+
+    """
+    Gets a node with requested ID.
+    Returns a tuple, where first value is node ID, second - a dictionary of all node attributes.
+    """
+    def get_node_by_id(self, node_id):
+        tmp_nodes = self.diagram_graph.nodes(data=True)
+        for node in tmp_nodes:
+            if node[1]["id"] == node_id:
+                return node
+
+    """
+    Gets all graph edges.
+    Returns a two-dimensional dictionary, where keys are IDs of nodes connected by edge, value is a dictionary of all edge attributes.
+    """
+    def get_edges(self):
+        return self.diagram_graph.edges(data=True)
+
+    """
+    Gets an edge with requested ID.
+    Returns a tuple, where first value is node ID, second - a dictionary of all node attributes.
+    """
+    def get_edge_by_id(self, edge_id):
+        tmp_edges = self.diagram_graph.edges(data=True)
+        for edge in tmp_edges:
+            if edge[2]["id"] == edge_id:
+                return edge
+
+    # Diagram creating methods
