@@ -1,4 +1,5 @@
 import networkx as nx
+import uuid
 from xml.dom import minidom
 import xml.etree.cElementTree as etree
 
@@ -15,7 +16,7 @@ Fields:
 
 
 class BPMNDiagramGraph:
-
+    id_prefix = "id"
     """
     Default constructor, initializes object fields with new instances.
     """
@@ -561,3 +562,136 @@ class BPMNDiagramGraph:
                 return edge
 
     # Diagram creating methods
+    """
+    Initializes a new BPMN diagram and sets up a basic process, diagram and plane attributes.
+    Accepts a user-defined values for following attributes:
+    (Process element)
+    - isClosed - default value false,
+    - isExecutable - default value false,
+    - processType - default value None.
+    (Diagram element)
+    - name - default value empty string.
+    """
+    def create_new_diagram_graph(self, process_is_closed = False, process_is_executable = False, process_type = "None", diagram_name = ""):
+        self.__init__()
+        process_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        diagram_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        plane_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.process_attributes["id"] = process_id
+        self.process_attributes["isClosed"] = "true" if process_is_closed else "false"
+        self.process_attributes["isExecutable"] = "true" if process_is_executable else "false"
+        self.process_attributes["processType"] = process_type
+
+        self.diagram_attributes["id"] = diagram_id
+        self.diagram_attributes["name"] = diagram_name
+
+        self.plane_attributes["id"] = plane_id
+        self.plane_attributes["bpmnElement"] = process_id
+
+    """
+    Helper function that adds a new Flow Node to diagram. It is used to add a new node of specified type.
+    Adds a basic information inherited from Flow Node type.
+    """
+    def add_flow_node_to_diagram(self, node_type, node_id, node_name):
+        self.diagram_graph.add_node(node_id)
+        self.diagram_graph.node[node_id]["type"] = node_type
+        self.diagram_graph.node[node_id]["name"] = node_name
+        self.diagram_graph.node[node_id]["incoming"] = []
+        self.diagram_graph.node[node_id]["outgoing"] = []
+
+        # TODO Automated generation of rendering parameters
+        self.diagram_graph.node[node_id]["width"] = "100"
+        self.diagram_graph.node[node_id]["height"] = "100"
+        self.diagram_graph.node[node_id]["x"] = "100"
+        self.diagram_graph.node[node_id]["y"] = "100"
+
+    """
+    Adds a Task element to BPMN diagram.
+    User-defined attributes:
+    - name
+    Returns a tuple, where first value is task ID, second a reference to created object.
+    """
+    def add_task_to_diagram(self, task_name = ""):
+        task_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.add_flow_node_to_diagram("task", task_id, task_name)
+        return (task_id, self.diagram_graph.node[task_id])
+
+    """
+    Adds a SubProcess element to BPMN diagram.
+    User-defined attributes:
+    - name
+    - triggered_by_event
+    Returns a tuple, where first value is subProcess ID, second a reference to created object.
+    """
+    # TODO add isExpanded?
+    def add_subprocess_to_diagram(self, subprocess_name, triggered_by_event = False):
+        subprocess_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.add_flow_node_to_diagram("subProcess", subprocess_id, subprocess_name)
+        self.diagram_graph.node[subprocess_id]["triggeredByEvent"] = "true" if triggered_by_event else "false"
+        return (subprocess_id, self.diagram_graph.node[subprocess_id])
+
+    """
+    Adds a StartEvent element to BPMN diagram.
+    User-defined attributes:
+    - name
+    - parallel_multiple
+    Returns a tuple, where first value is startEvent ID, second a reference to created object.
+    """
+    def add_start_event_to_diagram(self, start_event_name = "", start_event_definition = None, parallel_multiple = False):
+        start_event_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.add_flow_node_to_diagram("startEvent", start_event_id, start_event_name)
+        self.diagram_graph.node[start_event_id]["parallelMultiple"] = "true" if parallel_multiple else "false"
+        # TODO Add event definition
+        self.diagram_graph.node[start_event_id]["event_definitions"] = []
+        return (start_event_id, self.diagram_graph.node[start_event_id])
+
+    """
+    Adds an EndEvent element to BPMN diagram.
+    User-defined attributes:
+    - name
+    Returns a tuple, where first value is endEvent ID, second a reference to created object.
+    """
+    def add_end_event_to_diagram(self, end_event_name = "", end_event_definition = None):
+        end_event_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.add_flow_node_to_diagram("endEvent", end_event_id, end_event_name)
+        # TODO Add event definition
+        self.diagram_graph.node[end_event_id]["event_definitions"] = []
+        return (end_event_id, self.diagram_graph.node[end_event_id])
+
+    """
+    """
+    def add_exclusive_gateway_to_diagram(self):
+        pass
+
+    """
+    """
+    def add_inclusive_gateway_to_diagram(self):
+        pass
+
+    """
+    """
+    def add_parallel_gateway_to_diagram(self):
+        pass
+
+    """
+    Adds a SequenceFlow element to BPMN diagram.
+    Requires that user passes a sourceRef and targetRef as parameters.
+    User-defined attributes:
+    - name
+    Returns a tuple, where first value is sequenceFlow ID, second a reference to created object.
+    """
+    def add_sequence_flow_to_diagram(self, source_ref_id, target_ref_id, sequence_flow_name = ""):
+        sequence_flow_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.sequence_flows[sequence_flow_id] = (source_ref_id, target_ref_id)
+        self.diagram_graph.add_edge(source_ref_id, target_ref_id)
+        self.diagram_graph.edge[source_ref_id][target_ref_id]["id"] = sequence_flow_id
+        self.diagram_graph.edge[source_ref_id][target_ref_id]["name"] = sequence_flow_name
+        self.diagram_graph.edge[source_ref_id][target_ref_id]["waypoints"] = [(self.diagram_graph.node[source_ref_id]["x"], self.diagram_graph.node[source_ref_id]["y"]),
+                                                                              (self.diagram_graph.node[target_ref_id]["x"], self.diagram_graph.node[target_ref_id]["y"])]
+
+        # add target node (target_ref_id) as outgoing node from source node (source_ref_id)
+        self.diagram_graph.node[source_ref_id]["outgoing"].append(target_ref_id)
+
+        # add source node (source_ref_id) as incoming node to target node (target_ref_id)
+        self.diagram_graph.node[target_ref_id]["incoming"].append(source_ref_id)
+        return (sequence_flow_id, self.diagram_graph.edge[source_ref_id][target_ref_id])
