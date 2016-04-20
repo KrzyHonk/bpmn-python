@@ -13,25 +13,29 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/BPMNEditor-example.xml"))
         visualizer.visualize_diagram(bpmn_graph)
-        bpmn_graph.export_xml_file(bpmn_graph, "./output.xml")
+        bpmn_graph.export_xml_file("./output.xml")
+        bpmn_graph.export_xml_file_no_di("./output-no-di.xml")
 
     def test_loadSignavioDiagram(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        bpmn_graph.export_xml_file(bpmn_graph, "./signavio-output.xml")
+        bpmn_graph.export_xml_file("./signavio-output.xml")
+        bpmn_graph.export_xml_file_no_di("./signavio-output-no-di.xml")
 
     def test_loadSignavioComplexDiagram(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-complex-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        bpmn_graph.export_xml_file(bpmn_graph, "./signavio-complex-output.xml")
+        bpmn_graph.export_xml_file("./signavio-complex-output.xml")
+        bpmn_graph.export_xml_file("./signavio-complex-output-no-di.xml")
 
     def test_loadCamundaDiagram(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/camunda-complex-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        bpmn_graph.export_xml_file(bpmn_graph, "./camunda-complex-output.xml")
+        bpmn_graph.export_xml_file("./camunda-complex-output.xml")
+        bpmn_graph.export_xml_file("./camunda-complex-output-no-di.xml")
 
     def test_get_all_nodes_edges(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
@@ -58,7 +62,8 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(task1_id, task2_id, "one_to_two")
         bpmn_graph.add_sequence_flow_to_diagram(task2_id, end_id, "two_to_end")
 
-        bpmn_graph.export_xml_file(bpmn_graph, "./manually-created-output.bpmn")
+        bpmn_graph.export_xml_file("./manually-created-output.bpmn")
+        bpmn_graph.export_xml_file("./manually-created-output-no-di.bpmn")
 
 if __name__ == '__main__':
     unittest.main()

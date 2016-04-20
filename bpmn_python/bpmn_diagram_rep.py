@@ -17,6 +17,8 @@ Fields:
 
 class BPMNDiagramGraph:
     id_prefix = "id"
+    bpmndi_namespace = "bpmndi:"
+
     """
     Default constructor, initializes object fields with new instances.
     """
@@ -256,8 +258,6 @@ class BPMNDiagramGraph:
     Returns an instance of BPMNDiagramGraph class.
     """
     def load_diagram_from_xml(self, filepath):
-        #inner_rep = BPMNDiagramGraph()
-
         document = self.read_xml_file(filepath)
         process_element = document.getElementsByTagNameNS("*","process")[0] # We assume that there's only one process element
         diagram_element = document.getElementsByTagNameNS("*","BPMNDiagram")[0] # We assume that there's only one diagram element with one plane element
@@ -375,11 +375,61 @@ class BPMNDiagramGraph:
                 output_definition.set("id", definition_id)
 
     """
-    Exports diagram inner graph to BPMN 2.0 XML file.
+    Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
     """
-    def export_xml_file(self, diagram_inner_rep, output_path):
-        bpmndi_namespace = "bpmndi:"
+    def export_xml_file(self, output_path):
+        [root, process] = self.create_root_process_output()
+        [diagram, plane] = self.create_diagram_plane_output(root)
 
+        # for each node in graph add correct type of element, its attributes and BPMNShape element
+        nodes = self.diagram_graph.nodes(data=True)
+        for node in nodes:
+            id = node[0]
+            params = node[1]
+            self.export_node_process_data(id, params, process)
+            self.export_node_di_data(id, params, plane)
+
+        # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
+        edges = self.diagram_graph.edges(data=True)
+        for flow in edges:
+            params = flow[2]
+            (source_ref, target_ref) = self.sequence_flows[params["id"]]
+            self.export_edge_process_data(params, process, source_ref, target_ref)
+            self.export_edge_di_data(params, plane)
+
+        self.indent(root)
+        tree = etree.ElementTree(root)
+        tree.write(output_path, encoding='utf-8', xml_declaration=True)
+
+    """
+    Exports diagram inner graph to BPMN 2.0 XML file (without Diagram Interchange data).
+    """
+    def export_xml_file_no_di(self, output_path):
+        [root, process] = self.create_root_process_output()
+
+        # for each node in graph add correct type of element, its attributes and BPMNShape element
+        nodes = self.diagram_graph.nodes(data=True)
+        for node in nodes:
+            id = node[0]
+            params = node[1]
+            self.export_node_process_data(id, params, process)
+
+        # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
+        edges = self.diagram_graph.edges(data=True)
+        for flow in edges:
+            params = flow[2]
+            (source_ref, target_ref) = self.sequence_flows[params["id"]]
+            self.export_edge_process_data(params, process, source_ref, target_ref)
+
+        self.indent(root)
+        tree = etree.ElementTree(root)
+        tree.write(output_path, encoding='utf-8', xml_declaration=True)
+
+    """
+    Creates root element ('definitions') and 'process' element for exported BPMN XML file.
+    Returns a tuple (root, process).
+    """
+    def create_root_process_output(self):
         # Create root 'definitons' element and add required attirbutes
         root = etree.Element("definitions")
         root.set("xmlns", "http://www.omg.org/spec/BPMN/20100524/MODEL")
@@ -394,87 +444,98 @@ class BPMNDiagramGraph:
 
         # Create 'process' element and add attirbutes
         process = etree.SubElement(root, "process")
-        process.set("id", diagram_inner_rep.process_attributes["id"])
-        process.set("isClosed", diagram_inner_rep.process_attributes["isClosed"])
-        process.set("isExecutable", diagram_inner_rep.process_attributes["isExecutable"])
-        process.set("processType", diagram_inner_rep.process_attributes["processType"])
+        process.set("id", self.process_attributes["id"])
+        process.set("isClosed", self.process_attributes["isClosed"])
+        process.set("isExecutable", self.process_attributes["isExecutable"])
+        process.set("processType", self.process_attributes["processType"])
 
+        return root, process
+
+    """
+    Creates 'diagram' and 'plane' elements for exported BPMN XML file.
+    Returns a tuple (diagram, plane).
+    """
+    def create_diagram_plane_output(self, root):
         # Create 'diagram' element and add attirbutes
-        diagram = etree.SubElement(root, bpmndi_namespace + "BPMNDiagram")
-        diagram.set("id", diagram_inner_rep.diagram_attributes["id"])
-        diagram.set("name", diagram_inner_rep.diagram_attributes["name"])
+        diagram = etree.SubElement(root, self.bpmndi_namespace + "BPMNDiagram")
+        diagram.set("id", self.diagram_attributes["id"])
+        diagram.set("name", self.diagram_attributes["name"])
 
         # Create 'plane' element and add attirbutes
-        plane = etree.SubElement(diagram, bpmndi_namespace + "BPMNPlane")
-        plane.set("id", diagram_inner_rep.plane_attributes["id"])
-        plane.set("bpmnElement", diagram_inner_rep.plane_attributes["bpmnElement"])
+        plane = etree.SubElement(diagram, self.bpmndi_namespace + "BPMNPlane")
+        plane.set("id", self.plane_attributes["id"])
+        plane.set("bpmnElement", self.plane_attributes["bpmnElement"])
 
-        # for each node in graph add correct type of element, its attributes and BPMNShape element
-        nodes = diagram_inner_rep.diagram_graph.nodes(data=True)
-        for node in nodes:
-            id = node[0]
-            params = node[1]
-            node_type = params["type"]
-            output_element = etree.SubElement(process, node_type)
-            output_element.set("id", id)
-            output_element.set("name", params["name"])
+        return diagram, plane
 
-            for incoming in params["incoming"]:
-                incoming_element = etree.SubElement(output_element, "incoming")
-                incoming_element.text = incoming
-            for outgoing in params["outgoing"]:
-                outgoing_element = etree.SubElement(output_element, "outgoing")
-                outgoing_element.text = outgoing
+    """
+    Creates a new XML element (depends on node type) for given node parameters and adds it to 'process' element.
+    """
+    def export_node_process_data(self, id, params, process):
+        node_type = params["type"]
+        output_element = etree.SubElement(process, node_type)
+        output_element.set("id", id)
+        output_element.set("name", params["name"])
 
-            if node_type == "task":
-                self.export_task_info(params, output_element)
-            elif node_type == "subProcess":
-                self.export_subprocess_info(params, output_element)
-            elif node_type == "complexGateway":
-                self.export_complex_gateway_info(params, output_element)
-            elif node_type == "eventBasedGateway":
-                self.export_event_based_gateway_info(params, output_element)
-            elif node_type == "inclusiveGateway" or node_type == "exclusiveGateway":
-                self.export_inclusive_exclusive_gateway_info(params, output_element)
-            elif node_type == "parallelGateway":
-                self.export_parallel_gateway_info(params, output_element)
-            elif node_type == "startEvent" or node_type == "intermediateCatchEvent":
-                self.export_catch_event_info(params, output_element)
-            elif node_type == "endEvent" or node_type == "intermediateThrowEvent":
-                self.export_throw_event_info(params, output_element)
+        for incoming in params["incoming"]:
+            incoming_element = etree.SubElement(output_element, "incoming")
+            incoming_element.text = incoming
+        for outgoing in params["outgoing"]:
+            outgoing_element = etree.SubElement(output_element, "outgoing")
+            outgoing_element.text = outgoing
 
-            output_element_di = etree.SubElement(plane, bpmndi_namespace + "BPMNShape")
-            output_element_di.set("id", id + "_gui")
-            output_element_di.set("bpmnElement", id)
-            bounds = etree.SubElement(output_element_di, "omgdc:Bounds")
-            bounds.set("width", params["width"])
-            bounds.set("height", params["height"])
-            bounds.set("x", params["x"])
-            bounds.set("y", params["y"])
+        if node_type == "task":
+            self.export_task_info(params, output_element)
+        elif node_type == "subProcess":
+            self.export_subprocess_info(params, output_element)
+        elif node_type == "complexGateway":
+            self.export_complex_gateway_info(params, output_element)
+        elif node_type == "eventBasedGateway":
+            self.export_event_based_gateway_info(params, output_element)
+        elif node_type == "inclusiveGateway" or node_type == "exclusiveGateway":
+            self.export_inclusive_exclusive_gateway_info(params, output_element)
+        elif node_type == "parallelGateway":
+            self.export_parallel_gateway_info(params, output_element)
+        elif node_type == "startEvent" or node_type == "intermediateCatchEvent":
+            self.export_catch_event_info(params, output_element)
+        elif node_type == "endEvent" or node_type == "intermediateThrowEvent":
+            self.export_throw_event_info(params, output_element)
 
-        # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
-        edges = diagram_inner_rep.diagram_graph.edges(data=True)
-        for flow in edges:
-            params = flow[2]
-            (sourceRef, targetRef) = diagram_inner_rep.sequence_flows[params["id"]]
-            output_flow = etree.SubElement(process, "sequenceFlow")
-            output_flow.set("id", params["id"])
-            output_flow.set("name", params["name"])
-            output_flow.set("sourceRef", sourceRef)
-            output_flow.set("targetRef", targetRef)
+    """
+    Creates a new BPMNShape XML element for given node parameters and adds it to 'plane' element.
+    """
+    def export_node_di_data(self, id, params, plane):
+        output_element_di = etree.SubElement(plane, self.bpmndi_namespace + "BPMNShape")
+        output_element_di.set("id", id + "_gui")
+        output_element_di.set("bpmnElement", id)
+        bounds = etree.SubElement(output_element_di, "omgdc:Bounds")
+        bounds.set("width", params["width"])
+        bounds.set("height", params["height"])
+        bounds.set("x", params["x"])
+        bounds.set("y", params["y"])
 
-            output_flow_edge = etree.SubElement(plane, bpmndi_namespace + "BPMNEdge")
-            output_flow_edge.set("id", params["id"] + "_gui")
-            output_flow_edge.set("bpmnElement", params["id"])
-            waypoints = params["waypoints"]
-            for waypoint in waypoints:
-                waypoint_element = etree.SubElement(output_flow_edge, "omgdi:waypoint")
-                waypoint_element.set("x", waypoint[0])
-                waypoint_element.set("y", waypoint[1])
+    """
+    Creates a new SequenceFlow XML element for given edge parameters and adds it to 'process' element.
+    """
+    def export_edge_process_data(self, params, process, source_ref, target_ref):
+        output_flow = etree.SubElement(process, "sequenceFlow")
+        output_flow.set("id", params["id"])
+        output_flow.set("name", params["name"])
+        output_flow.set("sourceRef", source_ref)
+        output_flow.set("targetRef", target_ref)
 
-        self.indent(root)
-        tree = etree.ElementTree(root)
-        tree.write(output_path, encoding='utf-8', xml_declaration=True)
+    """
+    Creates a new BPMNEdge XML element for given edge parameters and adds it to 'plane' element.
+    """
+    def export_edge_di_data(self, params, plane):
+        output_flow_edge = etree.SubElement(plane, self.bpmndi_namespace + "BPMNEdge")
+        output_flow_edge.set("id", params["id"] + "_gui")
+        output_flow_edge.set("bpmnElement", params["id"])
+        waypoints = params["waypoints"]
+        for waypoint in waypoints:
+            waypoint_element = etree.SubElement(output_flow_edge, "omgdi:waypoint")
+            waypoint_element.set("x", waypoint[0])
+            waypoint_element.set("y", waypoint[1])
 
     """
     Helper function that iterates over child Nodes/Elements of parent Node/Element.
