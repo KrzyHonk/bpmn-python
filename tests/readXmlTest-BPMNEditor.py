@@ -13,29 +13,36 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/BPMNEditor-example.xml"))
         visualizer.visualize_diagram(bpmn_graph)
-        bpmn_graph.export_xml_file("./output.xml")
-        bpmn_graph.export_xml_file_no_di("./output-no-di.xml")
+        bpmn_graph.export_xml_file("./BPMNEditor-example-output.xml")
+        bpmn_graph.export_xml_file_no_di("./BPMNEditor-example-output-no-di.xml")
 
     def test_loadSignavioDiagram(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        bpmn_graph.export_xml_file("./signavio-output.xml")
-        bpmn_graph.export_xml_file_no_di("./signavio-output-no-di.xml")
+        bpmn_graph.export_xml_file("./signavio-example-output.xml")
+        bpmn_graph.export_xml_file_no_di("./signavio-example-output-no-di.xml")
 
     def test_loadSignavioComplexDiagram(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-complex-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        bpmn_graph.export_xml_file("./signavio-complex-output.xml")
-        bpmn_graph.export_xml_file("./signavio-complex-output-no-di.xml")
+        bpmn_graph.export_xml_file("./signavio-complex-example-output.xml")
+        bpmn_graph.export_xml_file("./signavio-complex-example-output-no-di.xml")
 
     def test_loadCamundaDiagram(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
+        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/camunda-example.bpmn"))
+        visualizer.visualize_diagram(bpmn_graph)
+        bpmn_graph.export_xml_file("./camunda-example-output.xml")
+        bpmn_graph.export_xml_file("./camunda-example-output-no-di.xml")
+
+    def test_loadCamundaComplexDiagram(self):
+        bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/camunda-complex-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
-        bpmn_graph.export_xml_file("./camunda-complex-output.xml")
-        bpmn_graph.export_xml_file("./camunda-complex-output-no-di.xml")
+        bpmn_graph.export_xml_file("./camunda-complex-example-output.xml")
+        bpmn_graph.export_xml_file("./camunda-complex-example-output-no-di.xml")
 
     def test_get_all_nodes_edges(self):
         bpmn_graph = diagram.BPMNDiagramGraph()

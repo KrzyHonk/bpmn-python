@@ -374,7 +374,7 @@ class BPMNDiagramGraph:
         """
         output_element.set("triggeredByEvent", node_params["triggeredByEvent"])
 
-    # TODO Conditions
+    # TODO sequence of conditions
     def export_complex_gateway_info(self, node_params, output_element):
         """
         Adds ComplexGateway node attributes to exported XML element
