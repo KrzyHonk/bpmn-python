@@ -657,6 +657,18 @@ class BPMNDiagramGraph:
             if node[1]["id"] == node_id:
                 return node
 
+    def get_nodes_id_list_by_type(self, node_type):
+        """
+        Get a list of node's id by requested type.
+        Returns a list of ids
+        """
+        tmp_nodes = self.diagram_graph.nodes(data=True)
+        id_list = []
+        for node in tmp_nodes:
+            if node[1]["type"]==node_type:
+                id_list.append(node[0])
+        return id_list
+
     def get_edges(self):
         """
         Gets all graph edges.
