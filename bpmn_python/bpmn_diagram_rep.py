@@ -360,17 +360,22 @@ class BPMNDiagramGraph:
                 elif tag_name == "BPMNEdge":
                     self.add_edge_DI(element)
 
-    # TODO Add params to docstrings
     # Exporting to XML methods
     def export_task_info(self, node_params, output_element):
         """
         Adds Task node attributes to exported XML element
+
+        :param node_params: dictionary with given task parameters,
+        :param output_element: object representing BPMN XML 'task' element.
         """
         pass
 
     def export_subprocess_info(self, node_params, output_element):
         """
         Adds Subprocess node attributes to exported XML element
+
+        :param node_params: dictionary with given subprocess parameters,
+        :param output_element: object representing BPMN XML 'subprocess' element.
         """
         output_element.set("triggeredByEvent", node_params["triggeredByEvent"])
 
@@ -378,6 +383,9 @@ class BPMNDiagramGraph:
     def export_complex_gateway_info(self, node_params, output_element):
         """
         Adds ComplexGateway node attributes to exported XML element
+
+        :param node_params: dictionary with given complex gateway parameters,
+        :param output_element: object representing BPMN XML 'complexGateway' element.
         """
         output_element.set("gatewayDirection", node_params["gatewayDirection"])
         if node_params["default"] != None:
@@ -386,6 +394,9 @@ class BPMNDiagramGraph:
     def export_event_based_gateway_info(self, node_params, output_element):
         """
         Adds EventBasedGateway node attributes to exported XML element
+
+        :param node_params: dictionary with given event based gateway parameters,
+        :param output_element: object representing BPMN XML 'eventBasedGateway' element.
         """
         output_element.set("gatewayDirection", node_params["gatewayDirection"])
         output_element.set("instantiate", node_params["instantiate"])
@@ -394,6 +405,9 @@ class BPMNDiagramGraph:
     def export_inclusive_exclusive_gateway_info(self, node_params, output_element):
         """
         Adds InclusiveGateway or ExclusiveGateway node attributes to exported XML element
+
+        :param node_params: dictionary with given inclusive or exclusive gateway parameters,
+        :param output_element: object representing BPMN XML 'inclusiveGateway'/'exclusive' element.
         """
         output_element.set("gatewayDirection", node_params["gatewayDirection"])
         if node_params["default"] != None:
@@ -402,12 +416,18 @@ class BPMNDiagramGraph:
     def export_parallel_gateway_info(self, node_params, output_element):
         """
         Adds Subprocess node attributes to exported XML element
+
+        :param node_params: dictionary with given parallel gateway parameters,
+        :param output_element: object representing BPMN XML 'parallelGateway' element.
         """
         output_element.set("gatewayDirection", node_params["gatewayDirection"])
 
     def export_catch_event_info(self, node_params, output_element):
         """
         Adds StartEvent or IntermediateCatchEvent attributes to exported XML element
+
+        :param node_params: dictionary with given intermediate catch event parameters,
+        :param output_element: object representing BPMN XML 'intermediateCatchEvent' element.
         """
         output_element.set("parallelMultiple", node_params["parallelMultiple"])
         definitions = node_params["event_definitions"]
@@ -421,6 +441,9 @@ class BPMNDiagramGraph:
     def export_throw_event_info(self, node_params, output_element):
         """
         Adds EndEvent or IntermediateThrowingEvent attributes to exported XML element
+
+        :param node_params: dictionary with given intermediate throw event parameters,
+        :param output_element: object representing BPMN XML 'intermediateThrowEvent' element.
         """
         definitions = node_params["event_definitions"]
         for definition in definitions:
@@ -433,6 +456,8 @@ class BPMNDiagramGraph:
     def export_xml_file(self, output_path):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
+
+        :param output_path: string representing output pathfile.
         """
         [root, process] = self.create_root_process_output()
         [diagram, plane] = self.create_diagram_plane_output(root)
@@ -460,6 +485,8 @@ class BPMNDiagramGraph:
     def export_xml_file_no_di(self, output_path):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (without Diagram Interchange data).
+
+        :param output_path: string representing output pathfile.
         """
         [root, process] = self.create_root_process_output()
 
@@ -509,6 +536,8 @@ class BPMNDiagramGraph:
         """
         Creates 'diagram' and 'plane' elements for exported BPMN XML file.
         Returns a tuple (diagram, plane).
+
+        :param root: object of Element class, representing a BPMN XML root element ('definitions').
         """
         diagram = eTree.SubElement(root, self.bpmndi_namespace + "BPMNDiagram")
         diagram.set("id", self.diagram_attributes["id"])
@@ -523,6 +552,10 @@ class BPMNDiagramGraph:
     def export_node_process_data(self, id, params, process):
         """
         Creates a new XML element (depends on node type) for given node parameters and adds it to 'process' element.
+
+        :param id: string representing ID of given flow node,
+        :param params: dictionary with node parameters,
+        :param process: object of Element class, representing BPMN XML 'process' element (root for nodes).
         """
         node_type = params["type"]
         output_element = eTree.SubElement(process, node_type)
@@ -556,6 +589,10 @@ class BPMNDiagramGraph:
     def export_node_di_data(self, id, params, plane):
         """
         Creates a new BPMNShape XML element for given node parameters and adds it to 'plane' element.
+
+        :param id: string representing ID of given flow node,
+        :param params: dictionary with node parameters,
+        :param plane: object of Element class, representing BPMN XML 'BPMNPlane' element (root for node DI data).
         """
         output_element_di = eTree.SubElement(plane, self.bpmndi_namespace + "BPMNShape")
         output_element_di.set("id", id + "_gui")
@@ -569,6 +606,11 @@ class BPMNDiagramGraph:
     def export_edge_process_data(self, params, process, source_ref, target_ref):
         """
         Creates a new SequenceFlow XML element for given edge parameters and adds it to 'process' element.
+
+        :param params: dictionary with edge parameters,
+        :param process: object of Element class, representing BPMN XML 'process' element (root for sequence flows),
+        :param source_ref: string representing ID of source node,
+        :param target_ref: string representing ID of taget node.
         """
         output_flow = eTree.SubElement(process, "sequenceFlow")
         output_flow.set("id", params["id"])
@@ -579,6 +621,9 @@ class BPMNDiagramGraph:
     def export_edge_di_data(self, params, plane):
         """
         Creates a new BPMNEdge XML element for given edge parameters and adds it to 'plane' element.
+
+        :param params: dictionary with edge parameters,
+        :param plane: object of Element class, representing BPMN XML 'BPMNPlane' element (root for edge DI data).
         """
         output_flow_edge = eTree.SubElement(plane, self.bpmndi_namespace + "BPMNEdge")
         output_flow_edge.set("id", params["id"] + "_gui")
@@ -592,6 +637,8 @@ class BPMNDiagramGraph:
     def iterate_elements(self, parent):
         """
         Helper function that iterates over child Nodes/Elements of parent Node/Element.
+
+        :param plane: object of Element class, representing parent element.
         """
         element = parent.firstChild
         while element is not None:
@@ -601,6 +648,8 @@ class BPMNDiagramGraph:
     def read_xml_file(self, filepath):
         """
         Reads BPMN 2.0 XML file from given filepath and returns xml.dom.xminidom.Document object.
+
+        :param filepath: filepath of source XML file.
         """
         dom_tree = minidom.parse(filepath)
         return dom_tree
@@ -608,6 +657,9 @@ class BPMNDiagramGraph:
     def indent(self, elem, level=0):
         """
         Helper function, adds indentation to XML output.
+
+        :param elem: object of Element class, representing element to which method adds intendation,
+        :param level: current level of intendation.
         """
         i = "\n" + level*"  "
         j = "\n" + (level-1)*"  "
@@ -627,7 +679,9 @@ class BPMNDiagramGraph:
 
     def remove_namespace_from_tag_name(self, tag_name):
         """
-        Helper function, removes namespace annotation from tag name
+        Helper function, removes namespace annotation from tag name.
+
+        :param tag_name: string with tag name.
         """
         return tag_name.split(':')[-1]
 
@@ -636,6 +690,8 @@ class BPMNDiagramGraph:
         """
         Gets all nodes of requested type. If no type is provided by user, method returns all nodes in BPMN diagram graph.
         Returns a dictionary, where key is an ID of node, value is a dictionary of all node attributes.
+
+        :param type: string with valid BPMN XML tag name (e.g. 'task', 'sequenceFlow').
         """
         tmp_nodes = self.diagram_graph.nodes(True)
         if type == "":
@@ -651,6 +707,8 @@ class BPMNDiagramGraph:
         """
         Gets a node with requested ID.
         Returns a tuple, where first value is node ID, second - a dictionary of all node attributes.
+
+        :param node_id: string with ID of node.
         """
         tmp_nodes = self.diagram_graph.nodes(data=True)
         for node in tmp_nodes:
@@ -661,6 +719,8 @@ class BPMNDiagramGraph:
         """
         Get a list of node's id by requested type.
         Returns a list of ids
+
+        :param node_type: string with valid BPMN XML tag name (e.g. 'task', 'sequenceFlow').
         """
         tmp_nodes = self.diagram_graph.nodes(data=True)
         id_list = []
@@ -680,6 +740,8 @@ class BPMNDiagramGraph:
         """
         Gets an edge with requested ID.
         Returns a tuple, where first value is node ID, second - a dictionary of all node attributes.
+
+        :param edge_id: string with edge ID.
         """
         tmp_edges = self.diagram_graph.edges(data=True)
         for edge in tmp_edges:
@@ -697,6 +759,15 @@ class BPMNDiagramGraph:
         - processType - default value None.
         (Diagram element)
         - name - default value empty string.
+
+        :param process_is_closed: boolean type. Represents a user-defined value of 'process' element
+        attribute 'isClosed'. Default value false,
+        :param process_is_executable: boolean type. Represents a user-defined value of 'process' element
+        attribute 'isExecutable'. Default value false,
+        :param process_type: string type. Represents a user-defined value of 'process' element
+        attribute 'procesType'. Default value "None",
+        :param diagram_name: string type. Represents a user-defined value of 'BPMNDiagram' element
+        attribute 'name'. Default value - empty string.
         """
         self.__init__()
         process_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
@@ -717,6 +788,10 @@ class BPMNDiagramGraph:
         """
         Helper function that adds a new Flow Node to diagram. It is used to add a new node of specified type.
         Adds a basic information inherited from Flow Node type.
+
+        :param node_type: string object. Represents type of BPMN node passed to method,
+        :param node_id: string object. ID of given node,
+        :param node_name: string object. Node name.
         """
         self.diagram_graph.add_node(node_id)
         self.diagram_graph.node[node_id]["type"] = node_type
@@ -736,6 +811,8 @@ class BPMNDiagramGraph:
         User-defined attributes:
         - name
         Returns a tuple, where first value is task ID, second a reference to created object.
+
+        :param task_name: string object. Name of task.
         """
         task_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("task", task_id, task_name)
@@ -749,6 +826,9 @@ class BPMNDiagramGraph:
         - name
         - triggered_by_event
         Returns a tuple, where first value is subProcess ID, second a reference to created object.
+
+        :param subprocess_name: string object. Name of subprocess,
+        :param triggered_by_event: boolean value for attribute "triggeredByEvent". Default value false.
         """
         subprocess_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("subProcess", subprocess_id, subprocess_name)
@@ -762,6 +842,10 @@ class BPMNDiagramGraph:
         - name
         - parallel_multiple
         Returns a tuple, where first value is startEvent ID, second a reference to created object.
+
+        :param start_event_name: string object. Name of start event,
+        :param start_event_definition: list of event definitions. By default - empty,
+        :param parallel_multiple: boolean value for attribute "parallelMultiple".
         """
         start_event_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("startEvent", start_event_id, start_event_name)
@@ -776,6 +860,9 @@ class BPMNDiagramGraph:
         User-defined attributes:
         - name
         Returns a tuple, where first value is endEvent ID, second a reference to created object.
+
+        :param end_event_name: string object. Name of end event,
+        :param end_event_definition: list of event definitions. By default - empty.
         """
         end_event_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("endEvent", end_event_id, end_event_name)
@@ -805,6 +892,10 @@ class BPMNDiagramGraph:
         User-defined attributes:
         - name
         Returns a tuple, where first value is sequenceFlow ID, second a reference to created object.
+
+        :param source_ref_id: string object. ID of source node,
+        :param target_ref_id: string object. ID of target node,
+        :param sequence_flow_name: string object. Name of sequence flow.
         """
         sequence_flow_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
         self.sequence_flows[sequence_flow_id] = (source_ref_id, target_ref_id)
