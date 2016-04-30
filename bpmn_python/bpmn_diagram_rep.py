@@ -251,20 +251,63 @@ class BPMNDiagramGraph:
         self.diagram_graph.node[end_event_id]["event_definitions"] = []
         return end_event_id, self.diagram_graph.node[end_event_id]
 
-    def add_exclusive_gateway_to_diagram(self):
+    # TODO add gatewayDirection validation
+    def add_exclusive_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified", default=None):
         """
-        """
-        pass
+        Adds an exclusiveGateway element to BPMN diagram.
+        User-defined attributes:
+        - name
+        - gatewayDirection
+        - default
+        Returns a tuple, where first value is exculusiveGateway ID, second a reference to created object.
 
-    def add_inclusive_gateway_to_diagram(self):
+        :param gateway_name: string object. Name of exclusive gateway,
+        :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
+        Default value - "Unspecified",
+        :param default: string object. ID of flow node, target of gateway default path. Default value - None.
         """
-        """
-        pass
+        exclusive_gateway_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.add_flow_node_to_diagram("exclusiveGateway", exclusive_gateway_id, gateway_name)
+        self.diagram_graph.node[exclusive_gateway_id]["gatewayDirection"] = gateway_direction
+        self.diagram_graph.node[exclusive_gateway_id]["default"] = default
+        return exclusive_gateway_id, self.diagram_graph.node[exclusive_gateway_id]
 
-    def add_parallel_gateway_to_diagram(self):
+    def add_inclusive_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified", default=None):
         """
+        Adds an inclusiveGateway element to BPMN diagram.
+        User-defined attributes:
+        - name
+        - gatewayDirection
+        - default
+        Returns a tuple, where first value is inclusiveGateway ID, second a reference to created object.
+
+        :param gateway_name: string object. Name of inclusive gateway,
+        :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
+        Default value - "Unspecified",
+        :param default: string object. ID of flow node, target of gateway default path. Default value - None.
         """
-        pass
+        inclusive_gateway_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.add_flow_node_to_diagram("inclusiveGateway", inclusive_gateway_id, gateway_name)
+        self.diagram_graph.node[inclusive_gateway_id]["gatewayDirection"] = gateway_direction
+        self.diagram_graph.node[inclusive_gateway_id]["default"] = default
+        return inclusive_gateway_id, self.diagram_graph.node[inclusive_gateway_id]
+
+    def add_parallel_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified"):
+        """
+        Adds an parallelGateway element to BPMN diagram.
+        User-defined attributes:
+        - name
+        - gatewayDirection
+        Returns a tuple, where first value is parallelGateway ID, second a reference to created object.
+
+        :param gateway_name: string object. Name of inclusive gateway,
+        :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
+        Default value - "Unspecified".
+        """
+        parallel_gateway_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        self.add_flow_node_to_diagram("parallelGateway", parallel_gateway_id, gateway_name)
+        self.diagram_graph.node[parallel_gateway_id]["gatewayDirection"] = gateway_direction
+        return parallel_gateway_id, self.diagram_graph.node[parallel_gateway_id]
 
     def add_sequence_flow_to_diagram(self, source_ref_id, target_ref_id, sequence_flow_name=""):
         """
