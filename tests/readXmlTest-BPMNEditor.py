@@ -60,8 +60,6 @@ class MyTestCase(unittest.TestCase):
         assert len(all_nodes) == 8
         assert len(task_nodes) == 4
         assert len(all_edges) == 8
-        assert edge[0] == "task_4"
-        assert edge[1] == "xor_2"
 
     def test_create_diagram_manually(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
