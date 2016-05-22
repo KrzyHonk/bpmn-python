@@ -176,7 +176,7 @@ class BPMNDiagramGraph:
         """
         self.diagram_graph.add_node(node_id)
         self.diagram_graph.node[node_id]["type"] = node_type
-        self.diagram_graph.node[node_id]["name"] = node_name
+        self.diagram_graph.node[node_id]["node_name"] = node_name
         self.diagram_graph.node[node_id]["incoming"] = []
         self.diagram_graph.node[node_id]["outgoing"] = []
 

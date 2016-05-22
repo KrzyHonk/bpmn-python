@@ -170,7 +170,7 @@ class BPMNDiagramGraphExport:
         node_type = params["type"]
         output_element = eTree.SubElement(process, node_type)
         output_element.set("id", process_id)
-        output_element.set("name", params["name"])
+        output_element.set("name", params["node_name"])
 
         for incoming in params["incoming"]:
             incoming_element = eTree.SubElement(output_element, "incoming")

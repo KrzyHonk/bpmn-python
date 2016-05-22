@@ -70,7 +70,7 @@ class BPMNDiagramGraphImport:
         """
         diagram_graph.add_node(element_id)
         diagram_graph.node[element_id]["type"] = BPMNDiagramGraphImport.remove_namespace_from_tag_name(element.tagName)
-        diagram_graph.node[element_id]["name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
+        diagram_graph.node[element_id]["node_name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
 
         # add incoming flow node list
         incoming_xml = element.getElementsByTagNameNS("*", "incoming")
