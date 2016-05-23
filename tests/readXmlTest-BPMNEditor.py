@@ -15,6 +15,7 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/BPMNEditor-example.xml"))
         visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "BPMNEditor-example")
+        visualizer.bpmn_diagram_to_png(bpmn_graph, "BPMNEditor-example")
         bpmn_graph.export_xml_file("./BPMNEditor-example-output.xml")
         bpmn_graph.export_xml_file_no_di("./BPMNEditor-example-output-no-di.xml")
 
@@ -23,6 +24,7 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "signavio-example")
+        visualizer.bpmn_diagram_to_png(bpmn_graph, "signavio-example")
         bpmn_graph.export_xml_file("./signavio-example-output.xml")
         bpmn_graph.export_xml_file_no_di("./signavio-example-output-no-di.xml")
 
@@ -31,6 +33,7 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-complex-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "signavio-complex-example")
+        visualizer.bpmn_diagram_to_png(bpmn_graph, "signavio-complex-example")
         bpmn_graph.export_xml_file("./signavio-complex-example-output.xml")
         bpmn_graph.export_xml_file_no_di("./signavio-complex-example-output-no-di.xml")
 
@@ -39,6 +42,7 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/camunda-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "camunda-example")
+        visualizer.bpmn_diagram_to_png(bpmn_graph, "camunda-example")
         bpmn_graph.export_xml_file("./camunda-example-output.xml")
         bpmn_graph.export_xml_file_no_di("./camunda-example-output-no-di.xml")
 
@@ -47,6 +51,7 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/camunda-complex-example.bpmn"))
         visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "camunda-complex-example")
+        visualizer.bpmn_diagram_to_png(bpmn_graph, "camunda-complex-example")
         bpmn_graph.export_xml_file("./camunda-complex-example-output.xml")
         bpmn_graph.export_xml_file_no_di("./camunda-complex-example-output-no-di.xml")
 
@@ -112,6 +117,7 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph.export_xml_file_no_di("./manually-created-output-no-di.bpmn")
         visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "manually-created")
+        visualizer.bpmn_diagram_to_png(bpmn_graph, "manually-created")
 
 if __name__ == '__main__':
     unittest.main()
