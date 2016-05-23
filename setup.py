@@ -21,6 +21,7 @@ setup(
     install_requires=[
         'networkx',
         'matplotlib',
+        'pydotplus',
     ],
     long_description=read('README.md'),
 )
