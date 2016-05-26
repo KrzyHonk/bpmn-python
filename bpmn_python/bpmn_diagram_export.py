@@ -1,7 +1,8 @@
+import os
 import xml.etree.cElementTree as eTree
-import bpmn_python.bpmn_diagram_visualizer as visualizer
+
+import errno
 from networkx.drawing.nx_pydot import graphviz_layout
-from networkx.drawing.nx_pydot import write_dot
 
 
 class BPMNDiagramGraphExport:
@@ -251,7 +252,7 @@ class BPMNDiagramGraphExport:
             waypoint_element.set("y", waypoint[1])
 
     @staticmethod
-    def export_xml_file(output_path, bpmn_graph, sequence_flows,
+    def export_xml_file(directory, filename, bpmn_graph, sequence_flows,
                         process_attributes, diagram_attributes, plane_attributes):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
@@ -293,10 +294,15 @@ class BPMNDiagramGraphExport:
 
         BPMNDiagramGraphExport.indent(root)
         tree = eTree.ElementTree(root)
-        tree.write(output_path, encoding='utf-8', xml_declaration=True)
+        try:
+            os.makedirs(directory)
+        except OSError as exception:
+            if exception.errno != errno.EEXIST:
+                raise
+        tree.write(directory + filename, encoding='utf-8', xml_declaration=True)
 
     @staticmethod
-    def export_xml_file_no_di(output_path, diagram_graph, sequence_flows,
+    def export_xml_file_no_di(directory, filename, diagram_graph, sequence_flows,
                               process_attributes):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (without Diagram Interchange data).
@@ -325,7 +331,12 @@ class BPMNDiagramGraphExport:
 
         BPMNDiagramGraphExport.indent(root)
         tree = eTree.ElementTree(root)
-        tree.write(output_path, encoding='utf-8', xml_declaration=True)
+        try:
+            os.makedirs(directory)
+        except OSError as exception:
+            if exception.errno != errno.EEXIST:
+                raise
+        tree.write(directory + filename, encoding='utf-8', xml_declaration=True)
 
     # Helper methods
     @staticmethod

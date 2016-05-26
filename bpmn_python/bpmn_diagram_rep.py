@@ -45,23 +45,23 @@ class BPMNDiagramGraph:
                                                                  self.sequence_flows, self.process_attributes,
                                                                  self.diagram_attributes, self.plane_attributes)
 
-    def export_xml_file(self, output_path):
+    def export_xml_file(self, directory, filename):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
 
         :param output_path: string representing output pathfile.
         """
-        bpmn_export.BPMNDiagramGraphExport.export_xml_file(output_path, self, self.sequence_flows,
+        bpmn_export.BPMNDiagramGraphExport.export_xml_file(directory, filename, self, self.sequence_flows,
                                                            self.process_attributes, self.diagram_attributes,
                                                            self.plane_attributes)
 
-    def export_xml_file_no_di(self, output_path):
+    def export_xml_file_no_di(self, directory, filename):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (without Diagram Interchange data).
 
         :param output_path: string representing output pathfile.
         """
-        bpmn_export.BPMNDiagramGraphExport.export_xml_file_no_di(output_path, self.diagram_graph,
+        bpmn_export.BPMNDiagramGraphExport.export_xml_file_no_di(directory, filename, self.diagram_graph,
                                                                  self.sequence_flows, self.process_attributes)
 
     # Querying methods

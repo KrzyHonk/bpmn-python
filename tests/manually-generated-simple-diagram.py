@@ -4,67 +4,16 @@ import os
 import bpmn_python.bpmn_diagram_rep as diagram
 import bpmn_python.bpmn_diagram_visualizer as visualizer
 
-"""
-    Put breakpoint on print instruction and use debugger to check objects structure.
-"""
 
-
-class MyTestCase(unittest.TestCase):
-    def test_loadBPMNEditorDiagram(self):
-        bpmn_graph = diagram.BPMNDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/BPMNEditor-example.xml"))
-        visualizer.visualize_diagram(bpmn_graph)
-        visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "BPMNEditor-example")
-        visualizer.bpmn_diagram_to_png(bpmn_graph, "BPMNEditor-example")
-        bpmn_graph.export_xml_file("./BPMNEditor-example-output.xml")
-        bpmn_graph.export_xml_file_no_di("./BPMNEditor-example-output-no-di.xml")
-
-    def test_loadSignavioDiagram(self):
-        bpmn_graph = diagram.BPMNDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-example.bpmn"))
-        visualizer.visualize_diagram(bpmn_graph)
-        visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "signavio-example")
-        visualizer.bpmn_diagram_to_png(bpmn_graph, "signavio-example")
-        bpmn_graph.export_xml_file("./signavio-example-output.xml")
-        bpmn_graph.export_xml_file_no_di("./signavio-example-output-no-di.xml")
-
-    def test_loadSignavioComplexDiagram(self):
-        bpmn_graph = diagram.BPMNDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/signavio-complex-example.bpmn"))
-        visualizer.visualize_diagram(bpmn_graph)
-        visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "signavio-complex-example")
-        visualizer.bpmn_diagram_to_png(bpmn_graph, "signavio-complex-example")
-        bpmn_graph.export_xml_file("./signavio-complex-example-output.xml")
-        bpmn_graph.export_xml_file_no_di("./signavio-complex-example-output-no-di.xml")
-
-    def test_loadCamundaDiagram(self):
-        bpmn_graph = diagram.BPMNDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/camunda-example.bpmn"))
-        visualizer.visualize_diagram(bpmn_graph)
-        visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "camunda-example")
-        visualizer.bpmn_diagram_to_png(bpmn_graph, "camunda-example")
-        bpmn_graph.export_xml_file("./camunda-example-output.xml")
-        bpmn_graph.export_xml_file_no_di("./camunda-example-output-no-di.xml")
-
-    def test_loadCamundaComplexDiagram(self):
-        bpmn_graph = diagram.BPMNDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/camunda-complex-example.bpmn"))
-        visualizer.visualize_diagram(bpmn_graph)
-        visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "camunda-complex-example")
-        visualizer.bpmn_diagram_to_png(bpmn_graph, "camunda-complex-example")
-        bpmn_graph.export_xml_file("./camunda-complex-example-output.xml")
-        bpmn_graph.export_xml_file_no_di("./camunda-complex-example-output-no-di.xml")
-
-    def test_get_all_nodes_edges(self):
-        bpmn_graph = diagram.BPMNDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath("../examples/BPMNEditor-example.xml"))
-        all_nodes = bpmn_graph.get_nodes()
-        task_nodes = bpmn_graph.get_nodes("task")
-        all_edges = bpmn_graph.get_edges()
-        edge = bpmn_graph.get_edge_by_id("sequenceFlow_7")
-        assert len(all_nodes) == 8
-        assert len(task_nodes) == 4
-        assert len(all_edges) == 8
+class ManualGenerationSimpleTests(unittest.TestCase):
+    """
+    This class contains test formanual diagram generation functionality.
+    """
+    output_directory = "./output/test-manual/simple/"
+    output_file_with_di = "manually-generated-output.xml"
+    output_file_no_di = "manually-generated-output-no-di.xml"
+    output_dot_file = "manually-generated-example"
+    output_png_file = "manually-generated-example"
 
     def test_create_diagram_manually(self):
         bpmn_graph = diagram.BPMNDiagramGraph()
@@ -113,11 +62,11 @@ class MyTestCase(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_join_id, task2_id, "ex_join_to_two")
         bpmn_graph.add_sequence_flow_to_diagram(task2_id, end_id, "two_to_end")
 
-        bpmn_graph.export_xml_file("./manually-created-output.bpmn")
-        bpmn_graph.export_xml_file_no_di("./manually-created-output-no-di.bpmn")
+        bpmn_graph.export_xml_file(self.output_directory, self.output_file_with_di)
+        bpmn_graph.export_xml_file_no_di(self.output_directory, self.output_file_no_di)
         visualizer.visualize_diagram(bpmn_graph)
-        visualizer.bpmn_diagram_to_dot_file(bpmn_graph, "manually-created")
-        visualizer.bpmn_diagram_to_png(bpmn_graph, "manually-created")
+        visualizer.bpmn_diagram_to_dot_file(bpmn_graph, self.output_directory + self.output_dot_file)
+        visualizer.bpmn_diagram_to_png(bpmn_graph, self.output_directory + self.output_png_file)
 
 if __name__ == '__main__':
     unittest.main()
