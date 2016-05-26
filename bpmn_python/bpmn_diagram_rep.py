@@ -51,7 +51,7 @@ class BPMNDiagramGraph:
 
         :param output_path: string representing output pathfile.
         """
-        bpmn_export.BPMNDiagramGraphExport.export_xml_file(output_path, self.diagram_graph, self.sequence_flows,
+        bpmn_export.BPMNDiagramGraphExport.export_xml_file(output_path, self, self.sequence_flows,
                                                            self.process_attributes, self.diagram_attributes,
                                                            self.plane_attributes)
 
@@ -91,7 +91,7 @@ class BPMNDiagramGraph:
         """
         tmp_nodes = self.diagram_graph.nodes(data=True)
         for node in tmp_nodes:
-            if node[1]["id"] == node_id:
+            if node[0] == node_id:
                 return node
 
     def get_nodes_id_list_by_type(self, node_type):

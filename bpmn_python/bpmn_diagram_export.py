@@ -1,4 +1,7 @@
 import xml.etree.cElementTree as eTree
+import bpmn_python.bpmn_diagram_visualizer as visualizer
+from networkx.drawing.nx_pydot import graphviz_layout
+from networkx.drawing.nx_pydot import write_dot
 
 
 class BPMNDiagramGraphExport:
@@ -248,13 +251,13 @@ class BPMNDiagramGraphExport:
             waypoint_element.set("y", waypoint[1])
 
     @staticmethod
-    def export_xml_file(output_path, diagram_graph, sequence_flows,
+    def export_xml_file(output_path, bpmn_graph, sequence_flows,
                         process_attributes, diagram_attributes, plane_attributes):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
 
         :param output_path: string representing output pathfile,
-        :param diagram_graph: NetworkX graph representing a BPMN process diagram,
+        :param bpmn_graph: BPMNDiagramGraph class instantion representing a BPMN process diagram,
         :param sequence_flows:- sequence_flows - dictionary (associative list) that uses sequenceFlow ID
         attribute as key and tuple of (sourceRef, targetRef) parameters as value,
         :param process_attributes: dictionary that holds attribute values for imported 'process' element,
@@ -262,22 +265,29 @@ class BPMNDiagramGraphExport:
         :param plane_attributes: dictionary that holds attribute values for imported 'BPMNPlane' element.
         """
         [root, process] = BPMNDiagramGraphExport.create_root_process_output(process_attributes)
-        [_, plane] = BPMNDiagramGraphExport.create_diagram_plane_output(root, diagram_attributes,
-                                                                        plane_attributes)
+        [_, plane] = BPMNDiagramGraphExport.create_diagram_plane_output(root, diagram_attributes, plane_attributes)
+        graph = bpmn_graph.diagram_graph
+        pos = graphviz_layout(graph)
 
         # for each node in graph add correct type of element, its attributes and BPMNShape element
-        nodes = diagram_graph.nodes(data=True)
+        nodes = graph.nodes(data=True)
         for node in nodes:
             node_id = node[0]
+            [x, y] = pos.get(node_id)
             params = node[1]
+            params['x'] = str(int(x) + 200);
+            params['y'] = str(int(y) + 200);
             BPMNDiagramGraphExport.export_node_process_data(node_id, params, process)
             BPMNDiagramGraphExport.export_node_di_data(node_id, params, plane)
 
         # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
-        edges = diagram_graph.edges(data=True)
+        edges = graph.edges(data=True)
         for flow in edges:
             params = flow[2]
             (source_ref, target_ref) = sequence_flows[params["id"]]
+            source_node = bpmn_graph.get_node_by_id(source_ref)
+            target_node = bpmn_graph.get_node_by_id(target_ref)
+            params['waypoints'] = [(source_node[1]['x'], source_node[1]['y']), (target_node[1]['x'], target_node[1]['y'])]
             BPMNDiagramGraphExport.export_edge_process_data(params, process, source_ref, target_ref)
             BPMNDiagramGraphExport.export_edge_di_data(params, plane)
 
