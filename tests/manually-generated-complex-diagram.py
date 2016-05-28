@@ -21,6 +21,8 @@ class ManualGenerationComplexTests(unittest.TestCase):
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="First task")
         [subprocess1_id, _] = bpmn_graph.add_subprocess_to_diagram(subprocess_name="Subprocess")
+        bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id)
+        bpmn_graph.add_sequence_flow_to_diagram(task1_id, subprocess1_id)
 
         [parallel_gate_fork_id, _] = bpmn_graph.add_parallel_gateway_to_diagram(gateway_name="parallel_gate_fork")
         [task1_par_id, _] = bpmn_graph.add_task_to_diagram(task_name="task1_par")
