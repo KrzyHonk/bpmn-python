@@ -7,7 +7,7 @@ import bpmn_python.bpmn_diagram_visualizer as visualizer
 
 class ManualGenerationSimpleTests(unittest.TestCase):
     """
-    This class contains test formanual diagram generation functionality.
+    This class contains test for manual diagram generation functionality.
     """
     output_directory = "./output/test-manual/simple/"
     output_file_with_di = "manually-generated-output.xml"
@@ -33,11 +33,6 @@ class ManualGenerationSimpleTests(unittest.TestCase):
         [task2_ex_id, _] = bpmn_graph.add_task_to_diagram(task_name="task2_ex")
         [exclusive_gate_join_id, _] = bpmn_graph.add_exclusive_gateway_to_diagram(gateway_name="exclusive_gate_join")
 
-        # [inclusive_gate_fork_id, _] = bpmn_graph.add_inclusive_gateway_to_diagram(gateway_name="inclusive_gate_fork")
-        # [task1_in_id, _] = bpmn_graph.add_task_to_diagram(task_name="task1_in")
-        # [task2_in_id, _] = bpmn_graph.add_task_to_diagram(task_name="task2_in")
-        # [inclusive_gate_join_id, _] = bpmn_graph.add_inclusive_gateway_to_diagram(gateway_name="inclusive_gate_join")
-
         bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id, "start_to_one")
 
         bpmn_graph.add_sequence_flow_to_diagram(task1_id, parallel_gate_fork_id, "one_to_par_fork")
@@ -51,13 +46,6 @@ class ManualGenerationSimpleTests(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_fork_id, task2_ex_id, "ex_fork_to_ex_two")
         bpmn_graph.add_sequence_flow_to_diagram(task1_ex_id, exclusive_gate_join_id, "ex_one_to_ex_join")
         bpmn_graph.add_sequence_flow_to_diagram(task2_ex_id, exclusive_gate_join_id, "ex_two_to_ex_join")
-
-        # BPMNEditor doesn't handle inclusiveGateway, so we can't test this fully. Method seems to be corret.
-        # bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_join_id, inclusive_gate_fork_id, "ex_join_to_in_fork")
-        # bpmn_graph.add_sequence_flow_to_diagram(inclusive_gate_fork_id, task1_in_id, "in_fork_to_in_one")
-        # bpmn_graph.add_sequence_flow_to_diagram(inclusive_gate_fork_id, task2_in_id, "in_fork_to_in_two")
-        # bpmn_graph.add_sequence_flow_to_diagram(task1_in_id, inclusive_gate_join_id, "in_one_to_in_join")
-        # bpmn_graph.add_sequence_flow_to_diagram(task2_in_id, inclusive_gate_join_id, "in_two_to_in_join")
 
         bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_join_id, task2_id, "ex_join_to_two")
         bpmn_graph.add_sequence_flow_to_diagram(task2_id, end_id, "two_to_end")
