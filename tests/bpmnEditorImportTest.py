@@ -10,7 +10,7 @@ class BPMNEditorTests(unittest.TestCase):
     This class contains test for bpmn-python package functionality using an example BPMN diagram created in BPMNEditor.
     """
     output_directory = "./output/test-bpmneditor/"
-    example_directory = "../examples/BPMNEditor-example.xml"
+    example_directory = "../examples/BPMNEditor-simple-example.xml"
     output_file_with_di = "BPMNEditor-example-output.xml"
     output_file_no_di = "BPMNEditor-example-output-no-di.xml"
     output_dot_file = "BPMNEditor-example"

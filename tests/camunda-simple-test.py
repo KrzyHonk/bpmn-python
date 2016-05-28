@@ -11,7 +11,7 @@ class CamundaSimpleTests(unittest.TestCase):
     created in bpmn-io (Camunda library implementation).
     """
     output_directory = "./output/test-camunda/simple/"
-    example_directory = "../examples/camunda-example.bpmn"
+    example_directory = "../examples/camunda-simple-example.bpmn"
     output_file_with_di = "camunda-example-output.xml"
     output_file_no_di = "camunda-example-output-no-di.xml"
     output_dot_file = "camunda-example"
