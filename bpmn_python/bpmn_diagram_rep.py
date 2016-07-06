@@ -199,8 +199,7 @@ class BPMNDiagramGraph:
         self.add_flow_node_to_diagram("task", task_id, task_name)
         return task_id, self.diagram_graph.node[task_id]
 
-    # TODO add isExpanded?
-    def add_subprocess_to_diagram(self, subprocess_name, triggered_by_event=False):
+    def add_subprocess_to_diagram(self, subprocess_name, is_expanded=False, triggered_by_event=False):
         """
         Adds a SubProcess element to BPMN diagram.
         User-defined attributes:
@@ -209,10 +208,12 @@ class BPMNDiagramGraph:
         Returns a tuple, where first value is subProcess ID, second a reference to created object.
 
         :param subprocess_name: string object. Name of subprocess,
+        :param is_expanded: boolean value for attribute "isExpanded". Default value false,
         :param triggered_by_event: boolean value for attribute "triggeredByEvent". Default value false.
         """
         subprocess_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("subProcess", subprocess_id, subprocess_name)
+        self.diagram_graph.node[subprocess_id]["isExpanded"] = "true" if is_expanded else "false"
         self.diagram_graph.node[subprocess_id]["triggeredByEvent"] = "true" if triggered_by_event else "false"
         return subprocess_id, self.diagram_graph.node[subprocess_id]
 

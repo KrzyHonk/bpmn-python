@@ -336,6 +336,10 @@ class BPMNDiagramGraphImport:
         diagram_graph.node[element_id]["width"] = bounds.getAttribute("width")
         diagram_graph.node[element_id]["height"] = bounds.getAttribute("height")
 
+        if diagram_graph.node[element_id]["type"] == "subProcess":
+            diagram_graph.node[element_id]["isExpanded"] = shape_element.getAttribute("isExpanded") \
+                if shape_element.hasAttribute("isExpanded") else "false"
+
         # TODO Since we usegraphviz-generated positions as a temporary solution, we can ignore this part
         '''
         diagram_graph.node[element_id]["x"] = bounds.getAttribute("x")

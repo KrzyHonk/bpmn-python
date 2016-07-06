@@ -211,12 +211,16 @@ class BPMNDiagramGraphExport:
         """
         output_element_di = eTree.SubElement(plane, BPMNDiagramGraphExport.bpmndi_namespace + "BPMNShape")
         output_element_di.set("id", node_id + "_gui")
+
+
         output_element_di.set("bpmnElement", node_id)
         bounds = eTree.SubElement(output_element_di, "omgdc:Bounds")
         bounds.set("width", params["width"])
         bounds.set("height", params["height"])
         bounds.set("x", params["x"])
         bounds.set("y", params["y"])
+        if params["type"] == "subProcess":
+            output_element_di.set("isExpanded", params["isExpanded"])
 
     @staticmethod
     def export_edge_process_data(params, process, source_ref, target_ref):
