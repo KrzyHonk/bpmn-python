@@ -15,8 +15,9 @@ setup(
     #author_email = "honkiszkrzystof@gmail.com",
     description = ("Python library that allows to import/export BPMN diagram (as an XML file) and provides a simple visualization capabilities."),
     license = "GNU GENERAL PUBLIC LICENSE",
-    keywords = "bpmn",
-    #url = "",
+    keywords = ["bpmn", "xml"],
+    url = "https://github.com/KrzyHonk/bpmn-python",
+    download_url="https://github.com/KrzyHonk/bpmn-python/tarball/0.0.1",
     packages=['bpmn_python'],
     install_requires=[
         'networkx',
