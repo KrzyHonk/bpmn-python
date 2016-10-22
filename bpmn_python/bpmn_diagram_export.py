@@ -1,3 +1,7 @@
+# coding=utf-8
+"""
+Package provides exporting to BPMN 2.0 XML
+"""
 import os
 import xml.etree.cElementTree as eTree
 
@@ -11,6 +15,9 @@ class BPMNDiagramGraphExport:
     As a utility class, it only contains static methods.
     This class is meant to be used from BPMNDiagramGraph class.
     """
+
+    def __init__(self):
+        pass
 
     # String "constants" used in multiple places
     bpmndi_namespace = "bpmndi:"
@@ -35,7 +42,8 @@ class BPMNDiagramGraphExport:
         """
         output_element.set("triggeredByEvent", node_params["triggeredByEvent"])
 
-    # TODO sequence of conditions
+    # TODO Complex gateway not fully supported
+    #  need to find out how sequence of conditions is represented in BPMN 2.0 XML
     @staticmethod
     def export_complex_gateway_info(node_params, output_element):
         """
@@ -212,7 +220,6 @@ class BPMNDiagramGraphExport:
         output_element_di = eTree.SubElement(plane, BPMNDiagramGraphExport.bpmndi_namespace + "BPMNShape")
         output_element_di.set("id", node_id + "_gui")
 
-
         output_element_di.set("bpmnElement", node_id)
         bounds = eTree.SubElement(output_element_di, "omgdc:Bounds")
         bounds.set("width", params["width"])
@@ -261,7 +268,8 @@ class BPMNDiagramGraphExport:
         """
         Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
 
-        :param output_path: string representing output pathfile,
+        :param directory: string representing output directory,
+        :param filename: string representing output file name,
         :param bpmn_graph: BPMNDiagramGraph class instantion representing a BPMN process diagram,
         :param sequence_flows:- sequence_flows - dictionary (associative list) that uses sequenceFlow ID
         attribute as key and tuple of (sourceRef, targetRef) parameters as value,
@@ -280,8 +288,8 @@ class BPMNDiagramGraphExport:
             node_id = node[0]
             [x, y] = pos.get(node_id)
             params = node[1]
-            params['x'] = str(int(x) + 200);
-            params['y'] = str(int(y) + 200);
+            params['x'] = str(int(x) + 200)
+            params['y'] = str(int(y) + 200)
             BPMNDiagramGraphExport.export_node_process_data(node_id, params, process)
             BPMNDiagramGraphExport.export_node_di_data(node_id, params, plane)
 
@@ -292,7 +300,8 @@ class BPMNDiagramGraphExport:
             (source_ref, target_ref) = sequence_flows[params["id"]]
             source_node = bpmn_graph.get_node_by_id(source_ref)
             target_node = bpmn_graph.get_node_by_id(target_ref)
-            params['waypoints'] = [(source_node[1]['x'], source_node[1]['y']), (target_node[1]['x'], target_node[1]['y'])]
+            params['waypoints'] = [(source_node[1]['x'], source_node[1]['y']),
+                                   (target_node[1]['x'], target_node[1]['y'])]
             BPMNDiagramGraphExport.export_edge_process_data(params, process, source_ref, target_ref)
             BPMNDiagramGraphExport.export_edge_di_data(params, plane)
 
@@ -311,7 +320,8 @@ class BPMNDiagramGraphExport:
         """
         Exports diagram inner graph to BPMN 2.0 XML file (without Diagram Interchange data).
 
-        :param output_path: string representing output pathfile,
+        :param directory: string representing output directory,
+        :param filename: string representing output file name,
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param sequence_flows:- sequence_flows - dictionary (associative list) that uses sequenceFlow ID
         attribute as key and tuple of (sourceRef, targetRef) parameters as value,

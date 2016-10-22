@@ -1,7 +1,12 @@
+# coding=utf-8
+"""
+Package with BPMNDiagramGraph - graph representation of BPMN diagram
+"""
 import networkx as nx
 import uuid
 import bpmn_python.bpmn_diagram_import as bpmn_import
 import bpmn_python.bpmn_diagram_export as bpmn_export
+import bpmn_diagram_exception as bpmn_exception
 
 
 class BPMNDiagramGraph:
@@ -49,7 +54,8 @@ class BPMNDiagramGraph:
         """
         Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
 
-        :param output_path: string representing output pathfile.
+        :param directory: strings representing output directory,
+        :param filename: string representing output file name.
         """
         bpmn_export.BPMNDiagramGraphExport.export_xml_file(directory, filename, self, self.sequence_flows,
                                                            self.process_attributes, self.diagram_attributes,
@@ -59,7 +65,8 @@ class BPMNDiagramGraph:
         """
         Exports diagram inner graph to BPMN 2.0 XML file (without Diagram Interchange data).
 
-        :param output_path: string representing output pathfile.
+        :param directory: strings representing output directory,
+        :param filename: string representing output file name.
         """
         bpmn_export.BPMNDiagramGraphExport.export_xml_file_no_di(directory, filename, self.diagram_graph,
                                                                  self.sequence_flows, self.process_attributes)
@@ -78,7 +85,7 @@ class BPMNDiagramGraph:
         else:
             nodes = []
             for node in tmp_nodes:
-                if node[1]["type"] == node_type:
+                if node[1]['type'] == node_type:
                     nodes.append(node)
             return nodes
 
@@ -252,7 +259,6 @@ class BPMNDiagramGraph:
         self.diagram_graph.node[end_event_id]["event_definitions"] = []
         return end_event_id, self.diagram_graph.node[end_event_id]
 
-    # TODO add gatewayDirection validation
     def add_exclusive_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified", default=None):
         """
         Adds an exclusiveGateway element to BPMN diagram.
@@ -264,11 +270,14 @@ class BPMNDiagramGraph:
 
         :param gateway_name: string object. Name of exclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
-        Default value - "Unspecified",
+        Default value - "Unspecified". If passed value is not one of the allowed values, it is changed to "Unspecified"
         :param default: string object. ID of flow node, target of gateway default path. Default value - None.
         """
         exclusive_gateway_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("exclusiveGateway", exclusive_gateway_id, gateway_name)
+        if not (gateway_direction in ("Unspecified", "Converging", "Diverging", "Mixed")):
+            raise bpmn_exception.BpmnPythonError("Invalid value passed as gatewayDirection parameter. Value passed: "
+                                                 + gateway_direction)
         self.diagram_graph.node[exclusive_gateway_id]["gatewayDirection"] = gateway_direction
         self.diagram_graph.node[exclusive_gateway_id]["default"] = default
         return exclusive_gateway_id, self.diagram_graph.node[exclusive_gateway_id]
