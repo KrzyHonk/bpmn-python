@@ -1,3 +1,7 @@
+# coding=utf-8
+"""
+Test unit, creates a more complex graph using functions provided by package and exports it to XML and graphic format
+"""
 import unittest
 
 import bpmn_python.bpmn_diagram_rep as diagram
@@ -57,13 +61,13 @@ class ManualGenerationComplexTests(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(task1_in_id, inclusive_gate_join_id)
         bpmn_graph.add_sequence_flow_to_diagram(task2_in_id, inclusive_gate_join_id)
 
-
         [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="end_event")
         bpmn_graph.add_sequence_flow_to_diagram(inclusive_gate_join_id, end_id)
 
         bpmn_graph.export_xml_file(self.output_directory, self.output_file_with_di)
         bpmn_graph.export_xml_file_no_di(self.output_directory, self.output_file_no_di)
-        visualizer.visualize_diagram(bpmn_graph)
+        # Uncomment line below to get a simple view of created diagram
+        # visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, self.output_directory + self.output_dot_file)
         visualizer.bpmn_diagram_to_png(bpmn_graph, self.output_directory + self.output_png_file)
 

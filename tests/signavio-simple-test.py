@@ -1,3 +1,7 @@
+# coding=utf-8
+"""
+Test unit, using simple graph made in Signavio editor for import/export operation
+"""
 import unittest
 import os
 
@@ -34,7 +38,8 @@ class SignavioSimpleTests(unittest.TestCase):
         """
         bpmn_graph = diagram.BPMNDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath(self.example_directory))
-        visualizer.visualize_diagram(bpmn_graph)
+        # Uncomment line below to get a simple view of created diagram
+        # visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, self.output_directory + self.output_dot_file)
         visualizer.bpmn_diagram_to_png(bpmn_graph, self.output_directory + self.output_png_file)
         bpmn_graph.export_xml_file(self.output_directory, self.output_file_with_di)
