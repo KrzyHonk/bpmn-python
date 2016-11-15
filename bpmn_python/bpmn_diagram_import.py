@@ -1,3 +1,7 @@
+# coding=utf-8
+"""
+Package provides functionality for importing from BPMN 2.0 XML to graph representation
+"""
 from xml.dom import minidom
 
 

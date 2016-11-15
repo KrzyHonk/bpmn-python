@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-Package provides exporting to BPMN 2.0 XML
+Package provides functionality for exporting graph representation to BPMN 2.0 XML
 """
 import os
 import xml.etree.cElementTree as eTree
