@@ -9,7 +9,7 @@ import errno
 from networkx.drawing.nx_pydot import graphviz_layout
 
 
-class BPMNDiagramGraphExport:
+class BpmnDiagramGraphExport:
     """
     Class BPMNDiagramGraphExport provides methods for exporting BPMNDiagramGraph into BPMN 2.0 XML file.
     As a utility class, it only contains static methods.
@@ -160,11 +160,11 @@ class BPMNDiagramGraphExport:
         :param diagram_attributes: dictionary that holds attribute values for imported 'BPMNDiagram' element,
         :param plane_attributes: dictionary that holds attribute values for imported 'BPMNPlane' element.
         """
-        diagram = eTree.SubElement(root, BPMNDiagramGraphExport.bpmndi_namespace + "BPMNDiagram")
+        diagram = eTree.SubElement(root, BpmnDiagramGraphExport.bpmndi_namespace + "BPMNDiagram")
         diagram.set("id", diagram_attributes["id"])
         diagram.set("name", diagram_attributes["name"])
 
-        plane = eTree.SubElement(diagram, BPMNDiagramGraphExport.bpmndi_namespace + "BPMNPlane")
+        plane = eTree.SubElement(diagram, BpmnDiagramGraphExport.bpmndi_namespace + "BPMNPlane")
         plane.set("id", plane_attributes["id"])
         plane.set("bpmnElement", plane_attributes["bpmnElement"])
 
@@ -192,21 +192,21 @@ class BPMNDiagramGraphExport:
             outgoing_element.text = outgoing
 
         if node_type == "task":
-            BPMNDiagramGraphExport.export_task_info(params, output_element)
+            BpmnDiagramGraphExport.export_task_info(params, output_element)
         elif node_type == "subProcess":
-            BPMNDiagramGraphExport.export_subprocess_info(params, output_element)
+            BpmnDiagramGraphExport.export_subprocess_info(params, output_element)
         elif node_type == "complexGateway":
-            BPMNDiagramGraphExport.export_complex_gateway_info(params, output_element)
+            BpmnDiagramGraphExport.export_complex_gateway_info(params, output_element)
         elif node_type == "eventBasedGateway":
-            BPMNDiagramGraphExport.export_event_based_gateway_info(params, output_element)
+            BpmnDiagramGraphExport.export_event_based_gateway_info(params, output_element)
         elif node_type == "inclusiveGateway" or node_type == "exclusiveGateway":
-            BPMNDiagramGraphExport.export_inclusive_exclusive_gateway_info(params, output_element)
+            BpmnDiagramGraphExport.export_inclusive_exclusive_gateway_info(params, output_element)
         elif node_type == "parallelGateway":
-            BPMNDiagramGraphExport.export_parallel_gateway_info(params, output_element)
+            BpmnDiagramGraphExport.export_parallel_gateway_info(params, output_element)
         elif node_type == "startEvent" or node_type == "intermediateCatchEvent":
-            BPMNDiagramGraphExport.export_catch_event_info(params, output_element)
+            BpmnDiagramGraphExport.export_catch_event_info(params, output_element)
         elif node_type == "endEvent" or node_type == "intermediateThrowEvent":
-            BPMNDiagramGraphExport.export_throw_event_info(params, output_element)
+            BpmnDiagramGraphExport.export_throw_event_info(params, output_element)
 
     @staticmethod
     def export_node_di_data(node_id, params, plane):
@@ -217,7 +217,7 @@ class BPMNDiagramGraphExport:
         :param params: dictionary with node parameters,
         :param plane: object of Element class, representing BPMN XML 'BPMNPlane' element (root for node DI data).
         """
-        output_element_di = eTree.SubElement(plane, BPMNDiagramGraphExport.bpmndi_namespace + "BPMNShape")
+        output_element_di = eTree.SubElement(plane, BpmnDiagramGraphExport.bpmndi_namespace + "BPMNShape")
         output_element_di.set("id", node_id + "_gui")
 
         output_element_di.set("bpmnElement", node_id)
@@ -253,7 +253,7 @@ class BPMNDiagramGraphExport:
         :param params: dictionary with edge parameters,
         :param plane: object of Element class, representing BPMN XML 'BPMNPlane' element (root for edge DI data).
         """
-        output_flow_edge = eTree.SubElement(plane, BPMNDiagramGraphExport.bpmndi_namespace + "BPMNEdge")
+        output_flow_edge = eTree.SubElement(plane, BpmnDiagramGraphExport.bpmndi_namespace + "BPMNEdge")
         output_flow_edge.set("id", params["id"] + "_gui")
         output_flow_edge.set("bpmnElement", params["id"])
         waypoints = params["waypoints"]
@@ -277,8 +277,8 @@ class BPMNDiagramGraphExport:
         :param diagram_attributes: dictionary that holds attribute values for imported 'BPMNDiagram' element,
         :param plane_attributes: dictionary that holds attribute values for imported 'BPMNPlane' element.
         """
-        [root, process] = BPMNDiagramGraphExport.create_root_process_output(process_attributes)
-        [_, plane] = BPMNDiagramGraphExport.create_diagram_plane_output(root, diagram_attributes, plane_attributes)
+        [root, process] = BpmnDiagramGraphExport.create_root_process_output(process_attributes)
+        [_, plane] = BpmnDiagramGraphExport.create_diagram_plane_output(root, diagram_attributes, plane_attributes)
         graph = bpmn_graph.diagram_graph
         pos = graphviz_layout(graph)
 
@@ -290,8 +290,8 @@ class BPMNDiagramGraphExport:
             params = node[1]
             params['x'] = str(int(x) + 200)
             params['y'] = str(int(y) + 200)
-            BPMNDiagramGraphExport.export_node_process_data(node_id, params, process)
-            BPMNDiagramGraphExport.export_node_di_data(node_id, params, plane)
+            BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
+            BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
 
         # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
         edges = graph.edges(data=True)
@@ -302,10 +302,10 @@ class BPMNDiagramGraphExport:
             target_node = bpmn_graph.get_node_by_id(target_ref)
             params['waypoints'] = [(source_node[1]['x'], source_node[1]['y']),
                                    (target_node[1]['x'], target_node[1]['y'])]
-            BPMNDiagramGraphExport.export_edge_process_data(params, process, source_ref, target_ref)
-            BPMNDiagramGraphExport.export_edge_di_data(params, plane)
+            BpmnDiagramGraphExport.export_edge_process_data(params, process, source_ref, target_ref)
+            BpmnDiagramGraphExport.export_edge_di_data(params, plane)
 
-        BPMNDiagramGraphExport.indent(root)
+        BpmnDiagramGraphExport.indent(root)
         tree = eTree.ElementTree(root)
         try:
             os.makedirs(directory)
@@ -327,23 +327,23 @@ class BPMNDiagramGraphExport:
         attribute as key and tuple of (sourceRef, targetRef) parameters as value,
         :param process_attributes: dictionary that holds attribute values for imported 'process' element.
         """
-        [root, process] = BPMNDiagramGraphExport.create_root_process_output(process_attributes)
+        [root, process] = BpmnDiagramGraphExport.create_root_process_output(process_attributes)
 
         # for each node in graph add correct type of element, its attributes and BPMNShape element
         nodes = diagram_graph.nodes(data=True)
         for node in nodes:
             node_id = node[0]
             params = node[1]
-            BPMNDiagramGraphExport.export_node_process_data(node_id, params, process)
+            BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
 
         # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
         edges = diagram_graph.edges(data=True)
         for flow in edges:
             params = flow[2]
             (source_ref, target_ref) = sequence_flows[params["id"]]
-            BPMNDiagramGraphExport.export_edge_process_data(params, process, source_ref, target_ref)
+            BpmnDiagramGraphExport.export_edge_process_data(params, process, source_ref, target_ref)
 
-        BPMNDiagramGraphExport.indent(root)
+        BpmnDiagramGraphExport.indent(root)
         tree = eTree.ElementTree(root)
         try:
             os.makedirs(directory)
@@ -369,7 +369,7 @@ class BPMNDiagramGraphExport:
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
             for subelem in elem:
-                BPMNDiagramGraphExport.indent(subelem, level + 1)
+                BpmnDiagramGraphExport.indent(subelem, level + 1)
             if not elem.tail or not elem.tail.strip():
                 elem.tail = j
         else:

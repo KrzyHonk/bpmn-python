@@ -20,7 +20,7 @@ class ManualGenerationSimpleTests(unittest.TestCase):
     output_png_file = "manually-generated-example"
 
     def test_create_diagram_manually(self):
-        bpmn_graph = diagram.BPMNDiagramGraph()
+        bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="task1")

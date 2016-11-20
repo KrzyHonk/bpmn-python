@@ -9,7 +9,7 @@ import bpmn_python.bpmn_diagram_export as bpmn_export
 import bpmn_diagram_exception as bpmn_exception
 
 
-class BPMNDiagramGraph:
+class BpmnDiagramGraph:
     """
     Class BPMNDiagramGraph implements simple inner representation of BPMN 2.0 diagram,
     based on NetworkX graph implementation
@@ -46,7 +46,7 @@ class BPMNDiagramGraph:
         :param filepath: string with output filepath.
         """
 
-        bpmn_import.BPMNDiagramGraphImport.load_diagram_from_xml(filepath, self.diagram_graph,
+        bpmn_import.BpmnDiagramGraphImport.load_diagram_from_xml(filepath, self.diagram_graph,
                                                                  self.sequence_flows, self.process_attributes,
                                                                  self.diagram_attributes, self.plane_attributes)
 
@@ -57,7 +57,7 @@ class BPMNDiagramGraph:
         :param directory: strings representing output directory,
         :param filename: string representing output file name.
         """
-        bpmn_export.BPMNDiagramGraphExport.export_xml_file(directory, filename, self, self.sequence_flows,
+        bpmn_export.BpmnDiagramGraphExport.export_xml_file(directory, filename, self, self.sequence_flows,
                                                            self.process_attributes, self.diagram_attributes,
                                                            self.plane_attributes)
 
@@ -68,7 +68,7 @@ class BPMNDiagramGraph:
         :param directory: strings representing output directory,
         :param filename: string representing output file name.
         """
-        bpmn_export.BPMNDiagramGraphExport.export_xml_file_no_di(directory, filename, self.diagram_graph,
+        bpmn_export.BpmnDiagramGraphExport.export_xml_file_no_di(directory, filename, self.diagram_graph,
                                                                  self.sequence_flows, self.process_attributes)
 
     # Querying methods
@@ -158,9 +158,9 @@ class BPMNDiagramGraph:
         attribute 'name'. Default value - empty string.
         """
         self.__init__()
-        process_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
-        diagram_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
-        plane_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        process_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
+        diagram_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
+        plane_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.process_attributes["id"] = process_id
         self.process_attributes["isClosed"] = "true" if process_is_closed else "false"
         self.process_attributes["isExecutable"] = "true" if process_is_executable else "false"
@@ -192,6 +192,7 @@ class BPMNDiagramGraph:
         self.diagram_graph.node[node_id]["height"] = "100"
         self.diagram_graph.node[node_id]["x"] = "100"
         self.diagram_graph.node[node_id]["y"] = "100"
+        return node_id, self.diagram_graph.node[node_id]
 
     def add_task_to_diagram(self, task_name=""):
         """
@@ -202,7 +203,7 @@ class BPMNDiagramGraph:
 
         :param task_name: string object. Name of task.
         """
-        task_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        task_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("task", task_id, task_name)
         return task_id, self.diagram_graph.node[task_id]
 
@@ -218,7 +219,7 @@ class BPMNDiagramGraph:
         :param is_expanded: boolean value for attribute "isExpanded". Default value false,
         :param triggered_by_event: boolean value for attribute "triggeredByEvent". Default value false.
         """
-        subprocess_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        subprocess_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("subProcess", subprocess_id, subprocess_name)
         self.diagram_graph.node[subprocess_id]["isExpanded"] = "true" if is_expanded else "false"
         self.diagram_graph.node[subprocess_id]["triggeredByEvent"] = "true" if triggered_by_event else "false"
@@ -236,7 +237,7 @@ class BPMNDiagramGraph:
         :param start_event_definition: list of event definitions. By default - empty,
         :param parallel_multiple: boolean value for attribute "parallelMultiple".
         """
-        start_event_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        start_event_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("startEvent", start_event_id, start_event_name)
         self.diagram_graph.node[start_event_id]["parallelMultiple"] = "true" if parallel_multiple else "false"
         # TODO Add event definition
@@ -253,7 +254,7 @@ class BPMNDiagramGraph:
         :param end_event_name: string object. Name of end event,
         :param end_event_definition: list of event definitions. By default - empty.
         """
-        end_event_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        end_event_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("endEvent", end_event_id, end_event_name)
         # TODO Add event definition
         self.diagram_graph.node[end_event_id]["event_definitions"] = []
@@ -273,7 +274,7 @@ class BPMNDiagramGraph:
         Default value - "Unspecified". If passed value is not one of the allowed values, it is changed to "Unspecified"
         :param default: string object. ID of flow node, target of gateway default path. Default value - None.
         """
-        exclusive_gateway_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        exclusive_gateway_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("exclusiveGateway", exclusive_gateway_id, gateway_name)
         if not (gateway_direction in ("Unspecified", "Converging", "Diverging", "Mixed")):
             raise bpmn_exception.BpmnPythonError("Invalid value passed as gatewayDirection parameter. Value passed: "
@@ -296,7 +297,7 @@ class BPMNDiagramGraph:
         Default value - "Unspecified",
         :param default: string object. ID of flow node, target of gateway default path. Default value - None.
         """
-        inclusive_gateway_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        inclusive_gateway_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("inclusiveGateway", inclusive_gateway_id, gateway_name)
         self.diagram_graph.node[inclusive_gateway_id]["gatewayDirection"] = gateway_direction
         self.diagram_graph.node[inclusive_gateway_id]["default"] = default
@@ -314,7 +315,7 @@ class BPMNDiagramGraph:
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
         Default value - "Unspecified".
         """
-        parallel_gateway_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        parallel_gateway_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("parallelGateway", parallel_gateway_id, gateway_name)
         self.diagram_graph.node[parallel_gateway_id]["gatewayDirection"] = gateway_direction
         return parallel_gateway_id, self.diagram_graph.node[parallel_gateway_id]
@@ -331,18 +332,23 @@ class BPMNDiagramGraph:
         :param target_ref_id: string object. ID of target node,
         :param sequence_flow_name: string object. Name of sequence flow.
         """
-        sequence_flow_id = BPMNDiagramGraph.id_prefix + str(uuid.uuid4())
+        sequence_flow_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.sequence_flows[sequence_flow_id] = (source_ref_id, target_ref_id)
         self.diagram_graph.add_edge(source_ref_id, target_ref_id)
-        self.diagram_graph.edge[source_ref_id][target_ref_id]["id"] = sequence_flow_id
-        self.diagram_graph.edge[source_ref_id][target_ref_id]["name"] = sequence_flow_name
-        self.diagram_graph.edge[source_ref_id][target_ref_id]["waypoints"] = \
-            [(self.diagram_graph.node[source_ref_id]["x"], self.diagram_graph.node[source_ref_id]["y"]),
-             (self.diagram_graph.node[target_ref_id]["x"], self.diagram_graph.node[target_ref_id]["y"])]
+        edge = self.diagram_graph.edge[source_ref_id][target_ref_id]
+        edge["id"] = sequence_flow_id
+        edge["name"] = sequence_flow_name
+        edge["source_id"] = source_ref_id
+        edge["target_id"] = target_ref_id
+        source_node = self.diagram_graph.node[source_ref_id]
+        target_node = self.diagram_graph.node[target_ref_id]
+        edge["waypoints"] = \
+            [(source_node["x"], source_node["y"]),
+             (target_node["x"], target_node["y"])]
 
         # add target node (target_ref_id) as outgoing node from source node (source_ref_id)
-        self.diagram_graph.node[source_ref_id]["outgoing"].append(target_ref_id)
+        source_node["outgoing"].append(sequence_flow_id)
 
         # add source node (source_ref_id) as incoming node to target node (target_ref_id)
-        self.diagram_graph.node[target_ref_id]["incoming"].append(source_ref_id)
-        return sequence_flow_id, self.diagram_graph.edge[source_ref_id][target_ref_id]
+        target_node["incoming"].append(sequence_flow_id)
+        return sequence_flow_id, edge

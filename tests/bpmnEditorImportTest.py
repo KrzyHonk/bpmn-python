@@ -25,7 +25,7 @@ class BPMNEditorTests(unittest.TestCase):
         Test for importing a simple BPMNEditor diagram example (as BPMN 2.0 XML) into inner representation
         and later exporting it to XML file
         """
-        bpmn_graph = diagram.BPMNDiagramGraph()
+        bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath(self.example_directory))
         bpmn_graph.export_xml_file(self.output_directory, self.output_file_with_di)
         bpmn_graph.export_xml_file_no_di(self.output_directory, self.output_file_no_di)
@@ -35,7 +35,7 @@ class BPMNEditorTests(unittest.TestCase):
         Test for importing a simple BPMNEditor diagram example (as BPMN 2.0 XML) into inner representation
         and later exporting it to XML file. Includes test for visualization functionality.
         """
-        bpmn_graph = diagram.BPMNDiagramGraph()
+        bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.load_diagram_from_xml(os.path.abspath(self.example_directory))
         # Uncomment line below to get a simple view of created diagram
         # visualizer.visualize_diagram(bpmn_graph)
