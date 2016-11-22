@@ -16,7 +16,7 @@ class BpmnDiagramGraph:
 
     Fields:
     - diagram_graph - networkx.Graph object, stores elements of BPMN diagram as nodes. Each edge of graph represents
-    sequenceFlow element. Edges are identified by IDs of nodes connected by edge,
+    sequenceFlow element. Edges are identified by IDs of nodes connected by edge. IDs are passed as edge parameters,
     - sequence_flows - dictionary (associative list) that uses sequenceFlow ID attribute as key
     and tuple of (sourceRef, targetRef) parameters as value. It is used to help searching edges by ID parameter,
     - process_attributes - dictionary that contains BPMN process element attributes,
@@ -115,25 +115,25 @@ class BpmnDiagramGraph:
                 id_list.append(node[0])
         return id_list
 
-    def get_edges(self):
+    def get_flows(self):
         """
-        Gets all graph edges.
-        Returns a two-dimensional dictionary, where keys are IDs of nodes connected by edge,
-        value is a dictionary of all edge attributes.
+        Gets all graph edges (process flows).
+        Returns a two-dimensional dictionary, where keys are IDs of nodes connected by edge and
+        values are a dictionary of all edge attributes.
         """
         return self.diagram_graph.edges(data=True)
 
-    def get_edge_by_id(self, edge_id):
+    def get_flow_by_id(self, flow_id):
         """
-        Gets an edge with requested ID.
+        Gets an edge (flow) with requested ID.
         Returns a tuple, where first value is node ID, second - a dictionary of all node attributes.
 
-        :param edge_id: string with edge ID.
+        :param flow_id: string with edge ID.
         """
-        tmp_edges = self.diagram_graph.edges(data=True)
-        for edge in tmp_edges:
-            if edge[2]["id"] == edge_id:
-                return edge
+        tmp_flows = self.diagram_graph.edges(data=True)
+        for flow in tmp_flows:
+            if flow[2]["id"] == flow_id:
+                return flow
 
     # Diagram creating methods
     def create_new_diagram_graph(self, process_is_closed=False, process_is_executable=False,
@@ -335,14 +335,14 @@ class BpmnDiagramGraph:
         sequence_flow_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.sequence_flows[sequence_flow_id] = (source_ref_id, target_ref_id)
         self.diagram_graph.add_edge(source_ref_id, target_ref_id)
-        edge = self.diagram_graph.edge[source_ref_id][target_ref_id]
-        edge["id"] = sequence_flow_id
-        edge["name"] = sequence_flow_name
-        edge["source_id"] = source_ref_id
-        edge["target_id"] = target_ref_id
+        flow = self.diagram_graph.edge[source_ref_id][target_ref_id]
+        flow["id"] = sequence_flow_id
+        flow["name"] = sequence_flow_name
+        flow["source_id"] = source_ref_id
+        flow["target_id"] = target_ref_id
         source_node = self.diagram_graph.node[source_ref_id]
         target_node = self.diagram_graph.node[target_ref_id]
-        edge["waypoints"] = \
+        flow["waypoints"] = \
             [(source_node["x"], source_node["y"]),
              (target_node["x"], target_node["y"])]
 
@@ -351,4 +351,4 @@ class BpmnDiagramGraph:
 
         # add source node (source_ref_id) as incoming node to target node (target_ref_id)
         target_node["incoming"].append(sequence_flow_id)
-        return sequence_flow_id, edge
+        return sequence_flow_id, flow

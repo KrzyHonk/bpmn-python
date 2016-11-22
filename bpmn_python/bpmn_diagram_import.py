@@ -297,7 +297,7 @@ class BpmnDiagramGraphImport:
                                                              element_id, intermediate_throw_event_definitions)
 
     @staticmethod
-    def add_edge_to_graph(diagram_graph, sequence_flows, flow):
+    def add_flow_to_graph(diagram_graph, sequence_flows, flow):
         """
         Adds a new edge to graph and a record to sequence_flows dictionary.
         Input parameter is object of class xml.dom.Element.
@@ -365,7 +365,7 @@ class BpmnDiagramGraphImport:
         '''
 
     @staticmethod
-    def add_edge_di(diagram_graph, sequence_flows, edge_element):
+    def add_flow_di(diagram_graph, sequence_flows, flow_element):
         """
         Adds Diagram Interchange information (information about rendering a diagram) to appropriate
         BPMN sequence flow represented as graph edge.
@@ -375,10 +375,10 @@ class BpmnDiagramGraphImport:
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param sequence_flows:- sequence_flows - dictionary (associative list) that uses sequenceFlow ID
         attribute as key and tuple of (sourceRef, targetRef) parameters as value,
-        :param edge_element: object representing a BPMN XML 'BPMNEdge' element.
+        :param flow_element: object representing a BPMN XML 'BPMNEdge' element.
         """
-        flow_id = edge_element.getAttribute("bpmnElement")
-        waypoints_xml = edge_element.getElementsByTagNameNS("*", "waypoint")
+        flow_id = flow_element.getAttribute("bpmnElement")
+        waypoints_xml = flow_element.getElementsByTagNameNS("*", "waypoint")
         length = len(waypoints_xml)
         # TODO Since we usegraphviz-generated positions as a temporary solution, we can ignore this part
         '''
@@ -450,7 +450,7 @@ class BpmnDiagramGraphImport:
             if flow.nodeType != flow.TEXT_NODE:
                 tag_name = BpmnDiagramGraphImport.remove_namespace_from_tag_name(flow.tagName)
                 if tag_name == "sequenceFlow":
-                    BpmnDiagramGraphImport.add_edge_to_graph(diagram_graph, sequence_flows, flow)
+                    BpmnDiagramGraphImport.add_flow_to_graph(diagram_graph, sequence_flows, flow)
 
         for element in BpmnDiagramGraphImport.iterate_elements(plane_element):
             if element.nodeType != element.TEXT_NODE:
@@ -458,7 +458,7 @@ class BpmnDiagramGraphImport:
                 if tag_name == "BPMNShape":
                     BpmnDiagramGraphImport.add_shape_di(diagram_graph, element)
                 elif tag_name == "BPMNEdge":
-                    BpmnDiagramGraphImport.add_edge_di(diagram_graph, sequence_flows, element)
+                    BpmnDiagramGraphImport.add_flow_di(diagram_graph, sequence_flows, element)
 
     @staticmethod
     def read_xml_file(filepath):
