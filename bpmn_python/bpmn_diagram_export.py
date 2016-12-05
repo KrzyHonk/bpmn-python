@@ -21,6 +21,11 @@ class BpmnDiagramGraphExport:
 
     # String "constants" used in multiple places
     bpmndi_namespace = "bpmndi:"
+    gateway_direction_param_name = "gatewayDirection"
+    id_param_name = "id"
+    waypoints_param_name = "waypoints"
+    bpmn_element_param_name = "bpmnElement"
+    default_param_name = "default"
 
     @staticmethod
     def export_task_info(node_params, output_element):
@@ -52,9 +57,11 @@ class BpmnDiagramGraphExport:
         :param node_params: dictionary with given complex gateway parameters,
         :param output_element: object representing BPMN XML 'complexGateway' element.
         """
-        output_element.set("gatewayDirection", node_params["gatewayDirection"])
-        if node_params["default"] is not None:
-            output_element.set("default", node_params["default"])
+        output_element.set(BpmnDiagramGraphExport.gateway_direction_param_name,
+                           node_params[BpmnDiagramGraphExport.gateway_direction_param_name])
+        if node_params[BpmnDiagramGraphExport.default_param_name] is not None:
+            output_element.set(BpmnDiagramGraphExport.default_param_name,
+                               node_params[BpmnDiagramGraphExport.default_param_name])
 
     @staticmethod
     def export_event_based_gateway_info(node_params, output_element):
@@ -64,7 +71,8 @@ class BpmnDiagramGraphExport:
         :param node_params: dictionary with given event based gateway parameters,
         :param output_element: object representing BPMN XML 'eventBasedGateway' element.
         """
-        output_element.set("gatewayDirection", node_params["gatewayDirection"])
+        output_element.set(BpmnDiagramGraphExport.gateway_direction_param_name,
+                           node_params[BpmnDiagramGraphExport.gateway_direction_param_name])
         output_element.set("instantiate", node_params["instantiate"])
         output_element.set("eventGatewayType", node_params["eventGatewayType"])
 
@@ -76,9 +84,11 @@ class BpmnDiagramGraphExport:
         :param node_params: dictionary with given inclusive or exclusive gateway parameters,
         :param output_element: object representing BPMN XML 'inclusiveGateway'/'exclusive' element.
         """
-        output_element.set("gatewayDirection", node_params["gatewayDirection"])
-        if node_params["default"] is not None:
-            output_element.set("default", node_params["default"])
+        output_element.set(BpmnDiagramGraphExport.gateway_direction_param_name,
+                           node_params[BpmnDiagramGraphExport.gateway_direction_param_name])
+        if node_params[BpmnDiagramGraphExport.default_param_name] is not None:
+            output_element.set(BpmnDiagramGraphExport.default_param_name,
+                               node_params[BpmnDiagramGraphExport.default_param_name])
 
     @staticmethod
     def export_parallel_gateway_info(node_params, output_element):
@@ -88,7 +98,8 @@ class BpmnDiagramGraphExport:
         :param node_params: dictionary with given parallel gateway parameters,
         :param output_element: object representing BPMN XML 'parallelGateway' element.
         """
-        output_element.set("gatewayDirection", node_params["gatewayDirection"])
+        output_element.set(BpmnDiagramGraphExport.gateway_direction_param_name,
+                           node_params[BpmnDiagramGraphExport.gateway_direction_param_name])
 
     @staticmethod
     def export_catch_event_info(node_params, output_element):
@@ -105,7 +116,7 @@ class BpmnDiagramGraphExport:
             definition_id = definition[1]
             output_definition = eTree.SubElement(output_element, definition_type)
             if definition_id != "":
-                output_definition.set("id", definition_id)
+                output_definition.set(BpmnDiagramGraphExport.id_param_name, definition_id)
 
     @staticmethod
     def export_throw_event_info(node_params, output_element):
@@ -121,7 +132,7 @@ class BpmnDiagramGraphExport:
             definition_id = definition[1]
             output_definition = eTree.SubElement(output_element, definition_type)
             if definition_id != "":
-                output_definition.set("id", definition_id)
+                output_definition.set(BpmnDiagramGraphExport.id_param_name, definition_id)
 
     @staticmethod
     def create_root_process_output(process_attributes):
@@ -143,7 +154,7 @@ class BpmnDiagramGraphExport:
         root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
 
         process = eTree.SubElement(root, "process")
-        process.set("id", process_attributes["id"])
+        process.set(BpmnDiagramGraphExport.id_param_name, process_attributes[BpmnDiagramGraphExport.id_param_name])
         process.set("isClosed", process_attributes["isClosed"])
         process.set("isExecutable", process_attributes["isExecutable"])
         process.set("processType", process_attributes["processType"])
@@ -161,12 +172,13 @@ class BpmnDiagramGraphExport:
         :param plane_attributes: dictionary that holds attribute values for imported 'BPMNPlane' element.
         """
         diagram = eTree.SubElement(root, BpmnDiagramGraphExport.bpmndi_namespace + "BPMNDiagram")
-        diagram.set("id", diagram_attributes["id"])
+        diagram.set(BpmnDiagramGraphExport.id_param_name, diagram_attributes[BpmnDiagramGraphExport.id_param_name])
         diagram.set("name", diagram_attributes["name"])
 
         plane = eTree.SubElement(diagram, BpmnDiagramGraphExport.bpmndi_namespace + "BPMNPlane")
-        plane.set("id", plane_attributes["id"])
-        plane.set("bpmnElement", plane_attributes["bpmnElement"])
+        plane.set(BpmnDiagramGraphExport.id_param_name, plane_attributes[BpmnDiagramGraphExport.id_param_name])
+        plane.set(BpmnDiagramGraphExport.bpmn_element_param_name,
+                  plane_attributes[BpmnDiagramGraphExport.bpmn_element_param_name])
 
         return diagram, plane
 
@@ -181,7 +193,7 @@ class BpmnDiagramGraphExport:
         """
         node_type = params["type"]
         output_element = eTree.SubElement(process, node_type)
-        output_element.set("id", process_id)
+        output_element.set(BpmnDiagramGraphExport.id_param_name, process_id)
         output_element.set("name", params["node_name"])
 
         for incoming in params["incoming"]:
@@ -218,9 +230,9 @@ class BpmnDiagramGraphExport:
         :param plane: object of Element class, representing BPMN XML 'BPMNPlane' element (root for node DI data).
         """
         output_element_di = eTree.SubElement(plane, BpmnDiagramGraphExport.bpmndi_namespace + "BPMNShape")
-        output_element_di.set("id", node_id + "_gui")
+        output_element_di.set(BpmnDiagramGraphExport.id_param_name, node_id + "_gui")
 
-        output_element_di.set("bpmnElement", node_id)
+        output_element_di.set(BpmnDiagramGraphExport.bpmn_element_param_name, node_id)
         bounds = eTree.SubElement(output_element_di, "omgdc:Bounds")
         bounds.set("width", params["width"])
         bounds.set("height", params["height"])
@@ -240,7 +252,7 @@ class BpmnDiagramGraphExport:
         :param target_ref: string representing ID of taget node.
         """
         output_flow = eTree.SubElement(process, "sequenceFlow")
-        output_flow.set("id", params["id"])
+        output_flow.set(BpmnDiagramGraphExport.id_param_name, params[BpmnDiagramGraphExport.id_param_name])
         output_flow.set("name", params["name"])
         output_flow.set("sourceRef", source_ref)
         output_flow.set("targetRef", target_ref)
@@ -254,9 +266,9 @@ class BpmnDiagramGraphExport:
         :param plane: object of Element class, representing BPMN XML 'BPMNPlane' element (root for edge DI data).
         """
         output_flow = eTree.SubElement(plane, BpmnDiagramGraphExport.bpmndi_namespace + "BPMNEdge")
-        output_flow.set("id", params["id"] + "_gui")
-        output_flow.set("bpmnElement", params["id"])
-        waypoints = params["waypoints"]
+        output_flow.set(BpmnDiagramGraphExport.id_param_name, params[BpmnDiagramGraphExport.id_param_name] + "_gui")
+        output_flow.set(BpmnDiagramGraphExport.bpmn_element_param_name, params[BpmnDiagramGraphExport.id_param_name])
+        waypoints = params[BpmnDiagramGraphExport.waypoints_param_name]
         for waypoint in waypoints:
             waypoint_element = eTree.SubElement(output_flow, "omgdi:waypoint")
             waypoint_element.set("x", waypoint[0])
@@ -289,8 +301,8 @@ class BpmnDiagramGraphExport:
             node_id = node[0]
             [x, y] = pos.get(node_id)
             params = node[1]
-            params['x'] = str(int(x) + 200)
-            params['y'] = str(int(y) + 200)
+            params["x"] = str(int(x) + 200)
+            params["y"] = str(int(y) + 200)
             BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
             BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
 
@@ -298,11 +310,11 @@ class BpmnDiagramGraphExport:
         flows = graph.edges(data=True)
         for flow in flows:
             params = flow[2]
-            (source_ref, target_ref) = sequence_flows[params["id"]]
+            (source_ref, target_ref) = sequence_flows[params[BpmnDiagramGraphExport.id_param_name]]
             source_node = bpmn_graph.get_node_by_id(source_ref)
             target_node = bpmn_graph.get_node_by_id(target_ref)
-            params['waypoints'] = [(source_node[1]['x'], source_node[1]['y']),
-                                   (target_node[1]['x'], target_node[1]['y'])]
+            params[BpmnDiagramGraphExport.waypoints_param_name] = [(source_node[1]["x"], source_node[1]["y"]),
+                                                                   (target_node[1]["x"], target_node[1]["y"])]
             BpmnDiagramGraphExport.export_flow_process_data(params, process, source_ref, target_ref)
             BpmnDiagramGraphExport.export_flow_di_data(params, plane)
 
@@ -341,7 +353,7 @@ class BpmnDiagramGraphExport:
         flows = graph.edges(data=True)
         for flow in flows:
             params = flow[2]
-            (source_ref, target_ref) = sequence_flows[params["id"]]
+            (source_ref, target_ref) = sequence_flows[params[BpmnDiagramGraphExport.id_param_name]]
             BpmnDiagramGraphExport.export_flow_process_data(params, process, source_ref, target_ref)
 
         BpmnDiagramGraphExport.indent(root)
