@@ -13,12 +13,14 @@ class BPMNEditorTests(unittest.TestCase):
     """
     This class contains test for bpmn-python package functionality using an example BPMN diagram created in BPMNEditor.
     """
+    output_directory = "./output/test-manual/layouter/simple/"
 
     def test_layouter_manually_created_diagram_simple_case(self):
         """
         Test for importing a simple BPMNEditor diagram example (as BPMN 2.0 XML) into inner representation
         and generating layout for it
         """
+        output_file = "layouter_simple_case.xml"
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
@@ -30,13 +32,15 @@ class BPMNEditorTests(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(task1_id, task2_id, "one_to_two")
         bpmn_graph.add_sequence_flow_to_diagram(task2_id, end_id, "two_to_end")
 
-        layouter.BpmnDiagramLayouter.generate_layout(bpmn_graph)
+        layouter.generate_layout(bpmn_graph)
+        bpmn_graph.export_xml_file(self.output_directory, output_file)
 
     def test_layouter_manually_created_diagram_split_join_case(self):
         """
         Test for importing a simple BPMNEditor diagram example (as BPMN 2.0 XML) into inner representation
         and generating layout for it
         """
+        output_file = "layouter_split_join_case.xml"
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
@@ -59,13 +63,15 @@ class BPMNEditorTests(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_join_id, task2_id, "ex_join_to_two")
         bpmn_graph.add_sequence_flow_to_diagram(task2_id, end_id, "two_to_end")
 
-        layouter.BpmnDiagramLayouter.generate_layout(bpmn_graph)
+        layouter.generate_layout(bpmn_graph)
+        bpmn_graph.export_xml_file(self.output_directory, output_file)
 
     def test_layouter_manually_created_diagram_cycle_case(self):
         """
         Test for importing a simple BPMNEditor diagram example (as BPMN 2.0 XML) into inner representation
         and generating layout for it
         """
+        output_file = "layouter_cycle_case.xml"
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
@@ -89,6 +95,7 @@ class BPMNEditorTests(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(task2_id, end_id, "two_to_end")
 
         layouter.generate_layout(bpmn_graph)
+        bpmn_graph.export_xml_file(self.output_directory, output_file)
 
 if __name__ == '__main__':
     unittest.main()

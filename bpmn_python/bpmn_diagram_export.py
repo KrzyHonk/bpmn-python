@@ -292,17 +292,12 @@ class BpmnDiagramGraphExport:
         [root, process] = BpmnDiagramGraphExport.create_root_process_output(process_attributes)
         [_, plane] = BpmnDiagramGraphExport.create_diagram_plane_output(root, diagram_attributes, plane_attributes)
         graph = bpmn_graph.diagram_graph
-        # TODO remove graphviz layout later
-        pos = graphviz_layout(graph)
 
         # for each node in graph add correct type of element, its attributes and BPMNShape element
         nodes = graph.nodes(data=True)
         for node in nodes:
             node_id = node[0]
-            [x, y] = pos.get(node_id)
             params = node[1]
-            params["x"] = str(int(x) + 200)
-            params["y"] = str(int(y) + 200)
             BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
             BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
 
@@ -311,10 +306,6 @@ class BpmnDiagramGraphExport:
         for flow in flows:
             params = flow[2]
             (source_ref, target_ref) = sequence_flows[params[BpmnDiagramGraphExport.id_param_name]]
-            source_node = bpmn_graph.get_node_by_id(source_ref)
-            target_node = bpmn_graph.get_node_by_id(target_ref)
-            params[BpmnDiagramGraphExport.waypoints_param_name] = [(source_node[1]["x"], source_node[1]["y"]),
-                                                                   (target_node[1]["x"], target_node[1]["y"])]
             BpmnDiagramGraphExport.export_flow_process_data(params, process, source_ref, target_ref)
             BpmnDiagramGraphExport.export_flow_di_data(params, plane)
 
