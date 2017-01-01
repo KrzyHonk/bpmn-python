@@ -357,12 +357,8 @@ class BpmnDiagramGraphImport:
         if diagram_graph.node[element_id]["type"] == "subProcess":
             diagram_graph.node[element_id]["isExpanded"] = shape_element.getAttribute("isExpanded") \
                 if shape_element.hasAttribute("isExpanded") else "false"
-
-        # TODO Since we usegraphviz-generated positions as a temporary solution, we can ignore this part
-        '''
         diagram_graph.node[element_id]["x"] = bounds.getAttribute("x")
         diagram_graph.node[element_id]["y"] = bounds.getAttribute("y")
-        '''
 
     @staticmethod
     def add_flow_di(diagram_graph, sequence_flows, flow_element):
@@ -380,15 +376,13 @@ class BpmnDiagramGraphImport:
         flow_id = flow_element.getAttribute("bpmnElement")
         waypoints_xml = flow_element.getElementsByTagNameNS("*", "waypoint")
         length = len(waypoints_xml)
-        # TODO Since we usegraphviz-generated positions as a temporary solution, we can ignore this part
-        '''
+
         waypoints = [None] * length
         for index in range(length):
             waypoint_tmp = (waypoints_xml[index].getAttribute("x"), waypoints_xml[index].getAttribute("y"))
             waypoints[index] = waypoint_tmp
         (source_ref, target_ref) = sequence_flows[flow_id]
         diagram_graph.edge[source_ref][target_ref]["waypoints"] = waypoints
-        '''
 
     @staticmethod
     def load_diagram_from_xml(filepath, diagram_graph, sequence_flows,

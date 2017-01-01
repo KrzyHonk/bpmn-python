@@ -15,7 +15,7 @@ class SignavioComplexTests(unittest.TestCase):
     created in Signavio Editor.
     """
     output_directory = "./output/test-signavio/complex/"
-    example_directory = "../examples/signavio-complex-example.bpmn"
+    example_path = "../examples/signavio_complex_example.bpmn"
     output_file_with_di = "signavio-complex-example-output.xml"
     output_file_no_di = "signavio-complex-example-output-no-di.xml"
     output_dot_file = "signavio-complex-example"
@@ -27,7 +27,7 @@ class SignavioComplexTests(unittest.TestCase):
         and later exporting it to XML file
         """
         bpmn_graph = diagram.BpmnDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath(self.example_directory))
+        bpmn_graph.load_diagram_from_xml(os.path.abspath(self.example_path))
         bpmn_graph.export_xml_file(self.output_directory, self.output_file_with_di)
         bpmn_graph.export_xml_file_no_di(self.output_directory, self.output_file_no_di)
 
@@ -37,7 +37,7 @@ class SignavioComplexTests(unittest.TestCase):
         and later exporting it to XML file. Includes test for visualization functionality.
         """
         bpmn_graph = diagram.BpmnDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath(self.example_directory))
+        bpmn_graph.load_diagram_from_xml(os.path.abspath(self.example_path))
         # Uncomment line below to get a simple view of created diagram
         # visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, self.output_directory + self.output_dot_file)

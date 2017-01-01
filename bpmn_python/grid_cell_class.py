@@ -1,6 +1,7 @@
 # coding=utf-8
 """
-Package with BPMNDiagramGraph - graph representation of BPMN diagram
+GridCell represents a single cell with node element on two-dimensional grid layout. It is used in diagram layouting
+process
 """
 
 

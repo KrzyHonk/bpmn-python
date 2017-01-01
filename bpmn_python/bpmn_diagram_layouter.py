@@ -182,12 +182,9 @@ def topological_sort(bpmn_graph, nodes_with_classification):
                     - Remove the incoming flow for target flow node
                     '''
                     outgoing_list.remove(flow_id)
-
-                    flow = bpmn_graph.get_flow_by_id(flow_id)
-
-                    source_id = flow[2][source_id_param_name]
                     node_with_classification[node_param_name][1][outgoing_flows_list_param_name].remove(flow_id)
 
+                    flow = bpmn_graph.get_flow_by_id(flow_id)
                     target_id = flow[2][target_id_param_name]
                     target = next(tmp_node[node_param_name]
                                   for tmp_node in tmp_nodes_with_classification
