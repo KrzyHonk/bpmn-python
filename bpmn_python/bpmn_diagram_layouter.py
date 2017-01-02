@@ -237,11 +237,14 @@ def grid_layout(bpmn_graph, sorted_nodes_with_classification):
 def place_element_in_grid(node_with_classification, grid, last_row, last_col, bpmn_graph, nodes_with_classification,
                           enforced_row_num=None):
     """
+
     :param node_with_classification:
     :param grid:
     :param last_row:
     :param last_col:
-    :param last_split_grid_cell:
+    :param bpmn_graph:
+    :param nodes_with_classification:
+    :param enforced_row_num:
     :return:
     """
     incoming_flows_list_param_name = "incoming"
@@ -308,7 +311,7 @@ def place_element_in_grid(node_with_classification, grid, last_row, last_col, bp
             successors_id_list.append(flow[2][target_id_param_name])
         # TODO Compute where successors should be placed (row number). Place them in correct rows
         num_of_successors = len(successors_id_list)
-        if (num_of_successors % 2 != 0):
+        if num_of_successors % 2 != 0:
             # if number of successors is even, put one half over the split, second half below
             # proceed with first half
             centre = (num_of_successors // 2)
@@ -374,8 +377,6 @@ def set_coordinates_for_nodes(bpmn_graph, grid):
     :param bpmn_graph:
     :param grid:
     """
-    incoming_flows_list_param_name = "incoming"
-    outgoing_flows_list_param_name = "outgoing"
 
     nodes = bpmn_graph.get_nodes()
     for node in nodes:

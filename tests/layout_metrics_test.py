@@ -13,22 +13,28 @@ class MetricsTests(unittest.TestCase):
     """
     """
     output_directory = "./output/test-bpmneditor/"
-    example_path = "../examples/crossing_point_test.bpmn"
+    crossing_points_example_path = "../examples/crossing_point_test.bpmn"
+    cycles_example_path = "../examples/cycles_test.bpmn"
 
-    def load_example_diagram(self):
+    def load_example_diagram(self, filepath):
         bpmn_graph = diagram.BpmnDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath(self.example_path))
+        bpmn_graph.load_diagram_from_xml(os.path.abspath(filepath))
         return bpmn_graph
 
     def test_count_crossing_points(self):
-        bpmn_graph = MetricsTests.load_example_diagram(self)
+        bpmn_graph = MetricsTests.load_example_diagram(self, self.crossing_points_example_path)
         cross_points = metrics.count_crossing_points(bpmn_graph)
         self.assertEqual(cross_points, 6, "Crossing points count does not match")
 
     def test_count_segments(self):
-        bpmn_graph = MetricsTests.load_example_diagram(self)
+        bpmn_graph = MetricsTests.load_example_diagram(self, self.crossing_points_example_path)
         segments_count = metrics.count_segments(bpmn_graph)
         self.assertEqual(segments_count, 25, "Segments count does not match")
+
+    def test_compute_longest_path(self):
+        bpmn_graph = MetricsTests.load_example_diagram(self, self.cycles_example_path)
+        (longest_path, longest_path_len) = metrics.compute_longest_path(bpmn_graph)
+        self.assertEqual(longest_path_len, 9, "Path length does not match")
 
 
 if __name__ == '__main__':

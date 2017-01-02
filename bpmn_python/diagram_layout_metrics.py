@@ -159,32 +159,6 @@ def lies_on_segment(p1, p2, p3):
            and min(p1['y'], p2['y']) <= p3['y'] <= max(p1['y'], p2['y'])
 
 
-def min_int(v1, v2):
-    """
-
-    :param v1:
-    :param v2:
-    :return:
-    """
-    if v1 < v2:
-        return v1
-    else:
-        return v2
-
-
-def max(v1, v2):
-    """
-
-    :param v1:
-    :param v2:
-    :return:
-    """
-    if v1 >= v2:
-        return v1
-    else:
-        return v2
-
-
 def count_segments(bpmn_graph):
     """
 
@@ -195,9 +169,55 @@ def count_segments(bpmn_graph):
     return len(segments)
 
 
-def compute_longest_path(bpmn_path):
+def compute_longest_path(bpmn_graph):
     """
 
-    :param bpmn_path:
+    :param bpmn_graph:
     """
-    pass
+    incoming_flows_list_param_name = "incoming"
+
+    nodes = copy.deepcopy(bpmn_graph.get_nodes())
+    no_incoming_flow_nodes = []
+    for node in nodes:
+        incoming_list = node[1][incoming_flows_list_param_name]
+        if len(incoming_list) == 0:
+            no_incoming_flow_nodes.append(node)
+
+    longest_path = []
+    for node in no_incoming_flow_nodes:
+        (output_path, output_path_len) = find_longest_path([], node, bpmn_graph)
+        if output_path_len > len(longest_path):
+            longest_path = output_path
+    return longest_path, len(longest_path)
+
+
+def find_longest_path(previous_nodes, node, bpmn_graph):
+    # TODO Should consider only tasks or subtasks
+    """
+
+    :param previous_nodes:
+    :param node:
+    :param bpmn_graph:
+    :return:
+    """
+    outgoing_flows_list_param_name = "outgoing"
+    source_id_param_name = "source_id"
+    target_id_param_name = "target_id"
+    outgoing_flows_list = node[1][outgoing_flows_list_param_name]
+    longest_path = []
+
+    if len(outgoing_flows_list) == 0:
+        tmp_previous_nodes = copy.deepcopy(previous_nodes)
+        tmp_previous_nodes.append(node)
+        return tmp_previous_nodes, len(tmp_previous_nodes)
+    else:
+        for outgoing_flow_id in outgoing_flows_list:
+            flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
+            outgoing_node = bpmn_graph.get_node_by_id(flow[2][target_id_param_name])
+            if outgoing_node not in previous_nodes:
+                tmp_previous_nodes = copy.deepcopy(previous_nodes)
+                tmp_previous_nodes.append(node)
+                (output_path, output_path_len) = find_longest_path(tmp_previous_nodes, outgoing_node, bpmn_graph)
+                if output_path_len > len(longest_path):
+                    longest_path = output_path
+        return longest_path, len(longest_path)
