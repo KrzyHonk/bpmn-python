@@ -36,6 +36,11 @@ class MetricsTests(unittest.TestCase):
         (longest_path, longest_path_len) = metrics.compute_longest_path(bpmn_graph)
         self.assertEqual(longest_path_len, 9, "Path length does not match")
 
+    def test_compute_longest_path_tasks(self):
+        bpmn_graph = MetricsTests.load_example_diagram(self, self.cycles_example_path)
+        (longest_path, longest_path_len) = metrics.compute_longest_path_tasks(bpmn_graph)
+        self.assertEqual(longest_path_len, 6, "Path length does not match")
+
 
 if __name__ == '__main__':
     unittest.main()

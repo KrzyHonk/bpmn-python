@@ -192,7 +192,6 @@ def compute_longest_path(bpmn_graph):
 
 
 def find_longest_path(previous_nodes, node, bpmn_graph):
-    # TODO Should consider only tasks or subtasks
     """
 
     :param previous_nodes:
@@ -201,7 +200,6 @@ def find_longest_path(previous_nodes, node, bpmn_graph):
     :return:
     """
     outgoing_flows_list_param_name = "outgoing"
-    source_id_param_name = "source_id"
     target_id_param_name = "target_id"
     outgoing_flows_list = node[1][outgoing_flows_list_param_name]
     longest_path = []
@@ -211,13 +209,81 @@ def find_longest_path(previous_nodes, node, bpmn_graph):
         tmp_previous_nodes.append(node)
         return tmp_previous_nodes, len(tmp_previous_nodes)
     else:
+        tmp_previous_nodes = copy.deepcopy(previous_nodes)
+        tmp_previous_nodes.append(node)
         for outgoing_flow_id in outgoing_flows_list:
             flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
             outgoing_node = bpmn_graph.get_node_by_id(flow[2][target_id_param_name])
             if outgoing_node not in previous_nodes:
-                tmp_previous_nodes = copy.deepcopy(previous_nodes)
-                tmp_previous_nodes.append(node)
                 (output_path, output_path_len) = find_longest_path(tmp_previous_nodes, outgoing_node, bpmn_graph)
                 if output_path_len > len(longest_path):
                     longest_path = output_path
         return longest_path, len(longest_path)
+
+
+def compute_longest_path_tasks(bpmn_graph):
+    """
+
+    :param bpmn_graph:
+    """
+    incoming_flows_list_param_name = "incoming"
+
+    nodes = copy.deepcopy(bpmn_graph.get_nodes())
+    no_incoming_flow_nodes = []
+    for node in nodes:
+        incoming_list = node[1][incoming_flows_list_param_name]
+        if len(incoming_list) == 0:
+            no_incoming_flow_nodes.append(node)
+
+    longest_path = []
+    for node in no_incoming_flow_nodes:
+        (all_nodes, qualified_nodes) = find_longest_path_tasks([], [], node, bpmn_graph)
+        if len(qualified_nodes) > len(longest_path):
+            longest_path = qualified_nodes
+    return longest_path, len(longest_path)
+
+
+def find_longest_path_tasks(path, qualified_nodes, node, bpmn_graph):
+    """
+
+    :param path:
+    :param qualified_nodes:
+    :param node:
+    :param bpmn_graph:
+    :return:
+    """
+    outgoing_flows_list_param_name = "outgoing"
+    node_names = {"task", "subProcess"}
+    target_id_param_name = "target_id"
+    outgoing_flows_list = node[1][outgoing_flows_list_param_name]
+
+    if len(outgoing_flows_list) == 0:
+        tmp_path = copy.deepcopy(path)
+        tmp_path.append(node)
+        tmp_qualified_nodes = copy.deepcopy(qualified_nodes)
+        if node[1]["type"] in node_names:
+            tmp_qualified_nodes.append(node)
+        return tmp_path, tmp_qualified_nodes
+    else:
+        longest_qualified_nodes = []
+        longest_path = copy.deepcopy(path)
+        longest_path.append(node)
+        for outgoing_flow_id in outgoing_flows_list:
+            flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
+            outgoing_node = bpmn_graph.get_node_by_id(flow[2][target_id_param_name])
+            tmp_path = copy.deepcopy(path)
+            tmp_path.append(node)
+            tmp_qualified_nodes = copy.deepcopy(qualified_nodes)
+            if node[1]["type"] in node_names:
+                tmp_qualified_nodes.append(node)
+
+            if outgoing_node not in path:
+                (path_all_nodes, path_qualified_nodes) = find_longest_path_tasks(tmp_path, tmp_qualified_nodes, outgoing_node, bpmn_graph)
+                if len(path_qualified_nodes) > len(longest_qualified_nodes):
+                    longest_qualified_nodes = path_qualified_nodes
+                    longest_path = path_all_nodes
+            else:
+                if len(tmp_qualified_nodes) > len(longest_qualified_nodes):
+                    longest_qualified_nodes = tmp_qualified_nodes
+                    longest_path = tmp_path
+        return longest_path, longest_qualified_nodes
