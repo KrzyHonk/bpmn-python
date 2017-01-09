@@ -2,11 +2,13 @@
 """
 Package with BPMNDiagramGraph - graph representation of BPMN diagram
 """
-import networkx as nx
 import uuid
-import bpmn_python.bpmn_diagram_import as bpmn_import
-import bpmn_python.bpmn_diagram_export as bpmn_export
+
+import networkx as nx
+
 import bpmn_diagram_exception as bpmn_exception
+import bpmn_python.bpmn_diagram_export as bpmn_export
+import bpmn_python.bpmn_diagram_import as bpmn_import
 
 
 class BpmnDiagramGraph:
@@ -352,3 +354,14 @@ class BpmnDiagramGraph:
         # add source node (source_ref_id) as incoming node to target node (target_ref_id)
         target_node["incoming"].append(sequence_flow_id)
         return sequence_flow_id, flow
+
+    def get_nodes_positions(self):
+        """
+        Getter method for nodes positions.
+        :return: A dictionary with nodes as keys and positions as values
+        """
+        nodes = self.get_nodes()
+        output = {}
+        for node in nodes:
+            output[node[0]] = (float(node[1]["x"]), float(node[1]["y"]))
+        return output

@@ -5,7 +5,6 @@ BPMN diagram visualization methods
 import matplotlib.pyplot as plt
 import networkx as nx
 import pydotplus
-from networkx.drawing.nx_pydot import graphviz_layout
 from networkx.drawing.nx_pydot import write_dot
 
 
@@ -16,7 +15,7 @@ def visualize_diagram(bpmn_diagram):
     :param bpmn_diagram: an instance of BPMNDiagramGraph class.
     """
     g = bpmn_diagram.diagram_graph
-    pos = graphviz_layout(g, prog='dot')
+    pos = bpmn_diagram.get_nodes_positions()
     nx.draw_networkx_nodes(g, pos, nodelist=bpmn_diagram.get_nodes_id_list_by_type("task"),
                            node_shape='s', node_color='white')
     nx.draw_networkx_nodes(g, pos, nodelist=bpmn_diagram.get_nodes_id_list_by_type("subProcess"),
