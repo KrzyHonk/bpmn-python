@@ -8,6 +8,7 @@ import networkx as nx
 
 import bpmn_diagram_exception as bpmn_exception
 import bpmn_python.bpmn_diagram_export as bpmn_export
+import bpmn_python.bpmn_process_csv_export as bpmn_csv_export
 import bpmn_python.bpmn_diagram_import as bpmn_import
 
 
@@ -72,6 +73,16 @@ class BpmnDiagramGraph:
         """
         bpmn_export.BpmnDiagramGraphExport.export_xml_file_no_di(directory, filename, self.diagram_graph,
                                                                  self.sequence_flows, self.process_attributes)
+
+    def export_csv_file(self, directory, filename):
+        """
+        Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
+
+        :param directory: strings representing output directory,
+        :param filename: string representing output file name.
+        """
+        bpmn_csv_export.BpmnDiagramGraphCsvExport.export_process_to_csv(self, directory, filename)
+
 
     # Querying methods
     def get_nodes(self, node_type=""):
