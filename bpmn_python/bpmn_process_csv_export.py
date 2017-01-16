@@ -40,7 +40,7 @@ class BpmnDiagramGraphCsvExport:
         incoming_flows_list_param_name = "incoming"
         nodes = copy.deepcopy(bpmn_diagram.get_nodes())
         start_nodes = []
-        export_elements = {}
+        export_elements = []
 
         for node in nodes:
             incoming_list = node[1][incoming_flows_list_param_name]
@@ -93,8 +93,8 @@ class BpmnDiagramGraphCsvExport:
 
     @staticmethod
     def export_task(bpmn_diagram, export_elements, node, order=0, prefix="", condition="", who=""):
-        export_elements[node[0]] = {"Order": prefix + str(order), "Activity": node[1]["node_name"],
-                                    "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""}
+        export_elements.append({"Order": prefix + str(order), "Activity": node[1]["node_name"],
+                                "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""})
         outgoing_flow_id = node[1]["outgoing"][0]
         outgoing_flow = bpmn_diagram.get_flow_by_id(outgoing_flow_id)
         outgoing_node = bpmn_diagram.get_node_by_id(outgoing_flow[2]["target_id"])
@@ -102,8 +102,8 @@ class BpmnDiagramGraphCsvExport:
 
     @staticmethod
     def export_sub_process(bpmn_diagram, export_elements, node, order=0, prefix="", condition="", who=""):
-        export_elements[node[0]] = {"Order": prefix + str(order), "Activity": node[1]["node_name"],
-                                    "Condition": condition, "Who": who, "Subprocess": "yes", "Terminated": ""}
+        export_elements.append({"Order": prefix + str(order), "Activity": node[1]["node_name"],
+                                "Condition": condition, "Who": who, "Subprocess": "yes", "Terminated": ""})
         outgoing_flow_id = node[1]["outgoing"][0]
         outgoing_flow = bpmn_diagram.get_flow_by_id(outgoing_flow_id)
         outgoing_node = bpmn_diagram.get_node_by_id(outgoing_flow[2]["target_id"])
@@ -138,8 +138,8 @@ class BpmnDiagramGraphCsvExport:
 
     @staticmethod
     def export_start_event(bpmn_diagram, export_elements, node, order=0, prefix="", condition="", who=""):
-        export_elements[node[0]] = {"Order": prefix + str(order), "Activity": node[1]["node_name"],
-                                    "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""}
+        export_elements.append({"Order": prefix + str(order), "Activity": node[1]["node_name"],
+                                "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""})
         outgoing_flow_id = node[1]["outgoing"][0]
         outgoing_flow = bpmn_diagram.get_flow_by_id(outgoing_flow_id)
         outgoing_node = bpmn_diagram.get_node_by_id(outgoing_flow[2]["target_id"])
@@ -147,14 +147,14 @@ class BpmnDiagramGraphCsvExport:
 
     @staticmethod
     def export_end_event(bpmn_diagram, export_elements, node, order=0, prefix="", condition="", who=""):
-        export_elements[node[0]] = {"Order": prefix + str(order), "Activity": node[1]["node_name"],
-                                    "Condition": condition, "Who": who, "Subprocess": "", "Terminated": "yes"}
+        export_elements.append({"Order": prefix + str(order), "Activity": node[1]["node_name"],
+                                "Condition": condition, "Who": who, "Subprocess": "", "Terminated": "yes"})
 
     @staticmethod
     def write_export_node_to_file(file_object, export_elements):
-        for export_element_key in export_elements:
+        for export_element in export_elements:
             # Order,Activity,Condition,Who,Subprocess,Terminated
-            export_element = export_elements[export_element_key]
+            #export_element = export_elements[export_element_key]
             file_object.write(
                 export_element["Order"] + "," + export_element["Activity"] + "," + export_element["Condition"] + "," +
                 export_element["Who"] + "," + export_element["Subprocess"] + "," + export_element["Terminated"] + "\n")
