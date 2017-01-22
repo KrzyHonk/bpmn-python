@@ -35,7 +35,7 @@ class CsvExportTests(unittest.TestCase):
         bpmn_graph.export_csv_file(self.output_directory, "simple_diagram.csv")
         bpmn_graph.export_xml_file(self.output_directory, "simple_diagram.bpmn")
 
-    def test_create_diagram_with_gateway_manually(self):
+    def test_create_diagram_with_exclusive_parallel_gateway_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event")
@@ -81,8 +81,57 @@ class CsvExportTests(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_join_id, end_id,
                                                 sequence_flow_name="Exclusive join to end event")
 
-        bpmn_graph.export_csv_file(self.output_directory, "gateways_diagram.csv")
-        bpmn_graph.export_xml_file(self.output_directory, "gateways_diagram.bpmn")
+        bpmn_graph.export_csv_file(self.output_directory, "exclusive_parallel_gateways_diagram.csv")
+        bpmn_graph.export_xml_file(self.output_directory, "exclusive_parallel_gateways_diagram.bpmn")
+
+    def test_create_diagram_with_inclusive_parallel_gateway_manually(self):
+        bpmn_graph = diagram.BpmnDiagramGraph()
+        bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
+        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event")
+        [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 1")
+
+        [exclusive_gate_fork_id, _] = bpmn_graph.add_inclusive_gateway_to_diagram(gateway_name="Inclusive gate fork")
+        [task2_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 2")
+        [task3_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 3")
+        [task6_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 6")
+        [exclusive_gate_join_id, _] = bpmn_graph.add_inclusive_gateway_to_diagram(gateway_name="Inclusive gate join")
+
+        [parallel_gate_fork_id, _] = bpmn_graph.add_parallel_gateway_to_diagram(gateway_name="Parallel gateway fork")
+        [task4_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 4")
+        [task5_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 5")
+        [parallel_gate_join_id, _] = bpmn_graph.add_parallel_gateway_to_diagram(gateway_name="Parallel gateway join")
+
+        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="End event")
+
+        bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id,
+                                                sequence_flow_name="Start to one")
+        bpmn_graph.add_sequence_flow_to_diagram(task1_id, exclusive_gate_fork_id,
+                                                sequence_flow_name="Task one to exclusive fork")
+        bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_fork_id, task2_id,
+                                                sequence_flow_name="Condition: approved")
+        bpmn_graph.add_sequence_flow_to_diagram(task2_id, task3_id,
+                                                sequence_flow_name="Task two to task three")
+        bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_fork_id, parallel_gate_fork_id,
+                                                sequence_flow_name="Condition: rejected")
+        bpmn_graph.add_sequence_flow_to_diagram(parallel_gate_fork_id, task4_id,
+                                                sequence_flow_name="Parallel fork to task four")
+        bpmn_graph.add_sequence_flow_to_diagram(parallel_gate_fork_id, task5_id,
+                                                sequence_flow_name="Parallel fork to task five")
+        bpmn_graph.add_sequence_flow_to_diagram(task4_id, parallel_gate_join_id,
+                                                sequence_flow_name="Task four to parallel join")
+        bpmn_graph.add_sequence_flow_to_diagram(task5_id, parallel_gate_join_id,
+                                                sequence_flow_name="Task five to parallel join")
+        bpmn_graph.add_sequence_flow_to_diagram(parallel_gate_join_id, task6_id,
+                                                sequence_flow_name="Parallel join to task six")
+        bpmn_graph.add_sequence_flow_to_diagram(task3_id, exclusive_gate_join_id,
+                                                sequence_flow_name="Task three to exclusive join")
+        bpmn_graph.add_sequence_flow_to_diagram(task6_id, exclusive_gate_join_id,
+                                                sequence_flow_name="Task six to exclusive join")
+        bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_join_id, end_id,
+                                                sequence_flow_name="Exclusive join to end event")
+
+        bpmn_graph.export_csv_file(self.output_directory, "inclusive_parallel_gateways_diagram.csv")
+        bpmn_graph.export_xml_file(self.output_directory, "inclusive_parallel_gateways_diagram.bpmn")
 
 
 if __name__ == '__main__':

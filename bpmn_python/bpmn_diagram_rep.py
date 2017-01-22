@@ -20,8 +20,9 @@ class BpmnDiagramGraph:
     Fields:
     - diagram_graph - networkx.Graph object, stores elements of BPMN diagram as nodes. Each edge of graph represents
     sequenceFlow element. Edges are identified by IDs of nodes connected by edge. IDs are passed as edge parameters,
-    - sequence_flows - dictionary (associative list) that uses sequenceFlow ID attribute as key
-    and tuple of (sourceRef, targetRef) parameters as value. It is used to help searching edges by ID parameter,
+    - sequence_flows - dictionary (associative list) of sequence flows existing in diagram.
+    Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence flow
+    name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
     - process_attributes - dictionary that contains BPMN process element attributes,
     - diagram_attributes - dictionary that contains BPMN diagram element attributes,
     - plane_attributes - dictionary that contains BPMN plane element attributes.
@@ -60,9 +61,8 @@ class BpmnDiagramGraph:
         :param directory: strings representing output directory,
         :param filename: string representing output file name.
         """
-        bpmn_export.BpmnDiagramGraphExport.export_xml_file(directory, filename, self, self.sequence_flows,
-                                                           self.process_attributes, self.diagram_attributes,
-                                                           self.plane_attributes)
+        bpmn_export.BpmnDiagramGraphExport.export_xml_file(directory, filename, self, self.process_attributes,
+                                                           self.diagram_attributes, self.plane_attributes)
 
     def export_xml_file_no_di(self, directory, filename):
         """
@@ -72,7 +72,7 @@ class BpmnDiagramGraph:
         :param filename: string representing output file name.
         """
         bpmn_export.BpmnDiagramGraphExport.export_xml_file_no_di(directory, filename, self.diagram_graph,
-                                                                 self.sequence_flows, self.process_attributes)
+                                                                 self.process_attributes)
 
     def export_csv_file(self, directory, filename):
         """
@@ -82,7 +82,6 @@ class BpmnDiagramGraph:
         :param filename: string representing output file name.
         """
         bpmn_csv_export.BpmnDiagramGraphCsvExport.export_process_to_csv(self, directory, filename)
-
 
     # Querying methods
     def get_nodes(self, node_type=""):
@@ -346,7 +345,8 @@ class BpmnDiagramGraph:
         :param sequence_flow_name: string object. Name of sequence flow.
         """
         sequence_flow_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
-        self.sequence_flows[sequence_flow_id] = (source_ref_id, target_ref_id)
+        self.sequence_flows[sequence_flow_id] = {"name": sequence_flow_name, "sourceRef": source_ref_id,
+                                                 "targetRef": target_ref_id}
         self.diagram_graph.add_edge(source_ref_id, target_ref_id)
         flow = self.diagram_graph.edge[source_ref_id][target_ref_id]
         flow["id"] = sequence_flow_id

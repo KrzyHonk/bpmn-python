@@ -308,18 +308,19 @@ class BpmnDiagramGraphImport:
         - name - optional attribute, empty string by default.
 
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
-        :param sequence_flows:- sequence_flows - dictionary (associative list) that uses sequenceFlow ID
-        attribute as key and tuple of (sourceRef, targetRef) parameters as value,
+        :param sequence_flows: dictionary (associative list) of sequence flows existing in diagram.
+        Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence
+        flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param flow: object representing a BPMN XML 'sequenceFlow' element.
         """
         flow_id = flow.getAttribute("id")
+        name = flow.getAttribute("name") if flow.hasAttribute("name") else ""
         source_ref = flow.getAttribute("sourceRef")
         target_ref = flow.getAttribute("targetRef")
-        sequence_flows[flow_id] = (source_ref, target_ref)
+        sequence_flows[flow_id] = {"name": name, "sourceRef": source_ref, "targetRef": target_ref}
         diagram_graph.add_edge(source_ref, target_ref)
         diagram_graph.edge[source_ref][target_ref]["id"] = flow_id
-        diagram_graph.edge[source_ref][target_ref]["name"] = flow.getAttribute("name") \
-            if flow.hasAttribute("name") else ""
+        diagram_graph.edge[source_ref][target_ref]["name"] = name
         diagram_graph.edge[source_ref][target_ref]["source_id"] = source_ref
         diagram_graph.edge[source_ref][target_ref]["target_id"] = target_ref
 
@@ -369,8 +370,9 @@ class BpmnDiagramGraphImport:
         that each BPMNEdge must have at least two waypoints.
 
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
-        :param sequence_flows:- sequence_flows - dictionary (associative list) that uses sequenceFlow ID
-        attribute as key and tuple of (sourceRef, targetRef) parameters as value,
+        :param sequence_flows: dictionary (associative list) of sequence flows existing in diagram.
+        Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence
+        flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param flow_element: object representing a BPMN XML 'BPMNEdge' element.
         """
         flow_id = flow_element.getAttribute("bpmnElement")
@@ -381,8 +383,12 @@ class BpmnDiagramGraphImport:
         for index in range(length):
             waypoint_tmp = (waypoints_xml[index].getAttribute("x"), waypoints_xml[index].getAttribute("y"))
             waypoints[index] = waypoint_tmp
-        (source_ref, target_ref) = sequence_flows[flow_id]
+        flow_data = sequence_flows[flow_id]
+        name = flow_data["name"]
+        source_ref = flow_data["sourceRef"]
+        target_ref = flow_data["targetRef"]
         diagram_graph.edge[source_ref][target_ref]["waypoints"] = waypoints
+        diagram_graph.edge[source_ref][target_ref]["name"] = name
 
     @staticmethod
     def load_diagram_from_xml(filepath, diagram_graph, sequence_flows,
@@ -393,8 +399,9 @@ class BpmnDiagramGraphImport:
 
         :param filepath: string with output filepath,
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
-        :param sequence_flows:- sequence_flows - dictionary (associative list) that uses sequenceFlow ID
-        attribute as key and tuple of (sourceRef, targetRef) parameters as value,
+        :param sequence_flows: dictionary (associative list) of sequence flows existing in diagram.
+        Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence
+        flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param process_attributes: dictionary that holds attribute values for imported 'process' element,
         :param diagram_attributes: dictionary that holds attribute values for imported 'BPMNDiagram' element,
         :param plane_attributes: dictionary that holds attribute values for imported 'BPMNPlane' element.

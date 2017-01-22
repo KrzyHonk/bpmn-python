@@ -11,11 +11,9 @@ import bpmn_diagram_exception as bpmn_exception
 
 
 class BpmnDiagramGraphCsvExport:
-    # TODO
-    # TODO need to add support for lanes in import/export. After that, read user and pass it as 'who'
-    """
-
-    """
+    # TODO need to add support for lanes in import/export. After that, read user and add 'who' param
+    #TODO Drop the assumption that gateway has only two outgoing flows
+    # increase it to the size of alphabet - should be enough for normal users
     gateways_list = ["exclusiveGateway", "inclusiveGateway", "parallelGateway"]
     tasks_list = ["task", "subProcess"]
     '''
@@ -52,7 +50,7 @@ class BpmnDiagramGraphCsvExport:
         nodes.remove(start_node)
         BpmnDiagramGraphCsvExport.export_node(bpmn_diagram, export_elements, start_node, order=0, prefix="",
                                               condition="", who="")
-        sorted_nodes, backward_flows = BpmnDiagramGraphCsvExport.topological_sort(bpmn_diagram)
+        sorted_nodes, backward_flows = BpmnDiagramGraphCsvExport.topological_sort_node_ids(bpmn_diagram)
 
         try:
             os.makedirs(directory)
@@ -188,20 +186,44 @@ class BpmnDiagramGraphCsvExport:
 
     @staticmethod
     def export_inclusive_gateway(bpmn_diagram, export_elements, node, order=0, prefix="", condition="", who=""):
-        # TODO need to add support for conditions in import/export
-        pass
+        outgoing_flows = node[1]["outgoing"]
+        if len(outgoing_flows) == 1:
+            outgoing_flow_id = outgoing_flows[0]
+            outgoing_flow = bpmn_diagram.get_flow_by_id(outgoing_flow_id)
+            outgoing_node = bpmn_diagram.get_node_by_id(outgoing_flow[2]["target_id"])
+
+            return outgoing_node
+        elif len(outgoing_flows) == 2:
+            outgoing_flow_id_a = outgoing_flows[0]
+            outgoing_flow_a = bpmn_diagram.get_flow_by_id(outgoing_flow_id_a)
+            outgoing_node_a = bpmn_diagram.get_node_by_id(outgoing_flow_a[2]["target_id"])
+            prefix_a = prefix + str(order) + 'a'
+            condition_a = outgoing_flow_a[2]["name"]
+            BpmnDiagramGraphCsvExport.export_node(bpmn_diagram, export_elements,
+                                                  outgoing_node_a, 1, prefix_a, condition_a, who)
+
+            outgoing_flow_id_b = outgoing_flows[1]
+            outgoing_flow_b = bpmn_diagram.get_flow_by_id(outgoing_flow_id_b)
+            outgoing_node_b = bpmn_diagram.get_node_by_id(outgoing_flow_b[2]["target_id"])
+            prefix_b = prefix + str(order) + 'b'
+            condition_b = outgoing_flow_b[2]["name"]
+            next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_diagram, export_elements,
+                                                              outgoing_node_b, 2, prefix_b, condition_b, who)
+            return BpmnDiagramGraphCsvExport.export_node(bpmn_diagram, export_elements,
+                                                         next_node, order + 1, prefix, "", who)
+        else:
+            raise bpmn_exception.BpmnPythonError("Exporting to CSV format: gateways must have 1 or 2 outgoing flows")
 
     @staticmethod
     def write_export_node_to_file(file_object, export_elements, sorted_node_ids):
         for node_id in sorted_node_ids:
-            # Order,Activity,Condition,Who,Subprocess,Terminated
             export_element = export_elements[node_id]
             file_object.write(
                 export_element["Order"] + "," + export_element["Activity"] + "," + export_element["Condition"] + "," +
                 export_element["Who"] + "," + export_element["Subprocess"] + "," + export_element["Terminated"] + "\n")
 
     @staticmethod
-    def topological_sort(bpmn_graph):
+    def topological_sort_node_ids(bpmn_graph):
         incoming_flows_list_param_name = "incoming"
         outgoing_flows_list_param_name = "outgoing"
         source_id_param_name = "source_id"
