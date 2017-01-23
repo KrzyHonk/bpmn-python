@@ -120,7 +120,17 @@ class BpmnDiagramGraphCsvExport:
         :param who: the condition param of exported node,
         :return: None or the next node object if the exported node was a gateway join.
         """
-        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": node[1]["node_name"],
+
+        # Assuming that there is only one event definition
+        event_definition = node[1]["event_definitions"][0]
+        if event_definition["definition_type"] == "messageEventDefinition":
+            activity = "message " + node[1]["node_name"]
+        elif event_definition["definition_type"] == "timerEventDefinition":
+            activity = "timer " + node[1]["node_name"]
+        else:
+            activity = node[1]["node_name"]
+
+        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": activity,
                                      "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""})
 
         outgoing_flow_id = node[1]["outgoing"][0]
@@ -143,7 +153,15 @@ class BpmnDiagramGraphCsvExport:
         :param who: the condition param of exported node,
         :return: None or the next node object if the exported node was a gateway join.
         """
-        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": node[1]["node_name"],
+
+        # Assuming that there is only one event definition
+        event_definition = node[1]["event_definitions"][0]
+        if event_definition["definition_type"] == "messageEventDefinition":
+            activity = "message " + node[1]["node_name"]
+        else:
+            activity = node[1]["node_name"]
+
+        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": activity,
                                      "Condition": condition, "Who": who, "Subprocess": "", "Terminated": "yes"})
 
     @staticmethod
@@ -227,7 +245,7 @@ class BpmnDiagramGraphCsvExport:
             outgoing_node_b = bpmn_graph.get_node_by_id(outgoing_flow_b[2]["target_id"])
             prefix_b = prefix + str(order) + 'b'
             next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                              outgoing_node_b, 2, prefix_b, "else", who)
+                                                              outgoing_node_b, 1, prefix_b, "else", who)
 
             return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
                                                          next_node, order + 1, prefix, "", who)
@@ -269,7 +287,7 @@ class BpmnDiagramGraphCsvExport:
             outgoing_node_b = bpmn_graph.get_node_by_id(outgoing_flow_b[2]["target_id"])
             prefix_b = prefix + str(order) + 'b'
             next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                              outgoing_node_b, 2, prefix_b, "", who)
+                                                              outgoing_node_b, 1, prefix_b, "", who)
             return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
                                                          next_node, order + 1, prefix, "", who)
         else:
@@ -311,7 +329,7 @@ class BpmnDiagramGraphCsvExport:
             prefix_b = prefix + str(order) + 'b'
             condition_b = outgoing_flow_b[2]["name"]
             next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                              outgoing_node_b, 2, prefix_b, condition_b, who)
+                                                              outgoing_node_b, 1, prefix_b, condition_b, who)
             return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
                                                          next_node, order + 1, prefix, "", who)
         else:

@@ -17,12 +17,13 @@ class CsvExportTests(unittest.TestCase):
     def test_create_simple_diagram_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
-        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event")
+        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event",
+                                                              start_event_definition="timer")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 1")
         [subprocess1_id, _] = bpmn_graph.add_subprocess_to_diagram(subprocess_name="Subprocess 1")
         [subprocess2_id, _] = bpmn_graph.add_subprocess_to_diagram(subprocess_name="Subprocess 2")
         [task2_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 2")
-        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="End event")
+        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="End event", end_event_definition="message")
 
         bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id,
                                                 sequence_flow_name="start_to_task_one")
@@ -41,7 +42,8 @@ class CsvExportTests(unittest.TestCase):
     def test_create_diagram_with_exclusive_parallel_gateway_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
-        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event")
+        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event",
+                                                              start_event_definition="timer")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 1")
 
         [exclusive_gate_fork_id, _] = bpmn_graph.add_exclusive_gateway_to_diagram(gateway_name="Exclusive gate fork")
@@ -55,7 +57,7 @@ class CsvExportTests(unittest.TestCase):
         [task5_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 5")
         [parallel_gate_join_id, _] = bpmn_graph.add_parallel_gateway_to_diagram(gateway_name="Parallel gateway join")
 
-        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="End event")
+        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="End event", end_event_definition="message")
 
         bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id,
                                                 sequence_flow_name="Start to one")
@@ -90,7 +92,8 @@ class CsvExportTests(unittest.TestCase):
     def test_create_diagram_with_inclusive_parallel_gateway_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
-        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event")
+        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event",
+                                                              start_event_definition="timer")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 1")
 
         [exclusive_gate_fork_id, _] = bpmn_graph.add_inclusive_gateway_to_diagram(gateway_name="Inclusive gate fork")
@@ -104,7 +107,7 @@ class CsvExportTests(unittest.TestCase):
         [task5_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 5")
         [parallel_gate_join_id, _] = bpmn_graph.add_parallel_gateway_to_diagram(gateway_name="Parallel gateway join")
 
-        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="End event")
+        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="End event", end_event_definition="message")
 
         bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id,
                                                 sequence_flow_name="Start to one")

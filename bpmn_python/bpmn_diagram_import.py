@@ -214,7 +214,7 @@ class BpmnDiagramGraphImport:
             event_def_xml = element.getElementsByTagNameNS("*", definition_type)
             for index in range(len(event_def_xml)):
                 # tuple - definition type, definition id
-                event_def_tmp = (definition_type, event_def_xml[index].getAttribute("id"))
+                event_def_tmp = {"id": event_def_xml[index].getAttribute("id"), "definition_type": definition_type}
                 event_def_list.append(event_def_tmp)
         diagram_graph.node[element_id]["event_definitions"] = event_def_list
 

@@ -322,7 +322,7 @@ class BpmnDiagramGraph:
         value is a full name of event definition, as defined in BPMN 2.0 XML Schema.
         """
         event_def_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
-        event_def = (event_definitions[event_type], event_def_id)
+        event_def = {"id": event_def_id, "definition_type": event_definitions[event_type]}
         return event_def
 
     def add_exclusive_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified", default=None):

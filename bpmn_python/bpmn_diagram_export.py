@@ -110,8 +110,8 @@ class BpmnDiagramGraphExport:
         output_element.set("parallelMultiple", node_params["parallelMultiple"])
         definitions = node_params["event_definitions"]
         for definition in definitions:
-            definition_type = definition[0]
-            definition_id = definition[1]
+            definition_id = definition["id"]
+            definition_type = definition["definition_type"]
             output_definition = eTree.SubElement(output_element, definition_type)
             if definition_id != "":
                 output_definition.set(BpmnDiagramGraphExport.id_param_name, definition_id)
@@ -128,8 +128,8 @@ class BpmnDiagramGraphExport:
         output_element.set("isInterrupting", node_params["isInterrupting"])
         definitions = node_params["event_definitions"]
         for definition in definitions:
-            definition_type = definition[0]
-            definition_id = definition[1]
+            definition_id = definition["id"]
+            definition_type = definition["definition_type"]
             output_definition = eTree.SubElement(output_element, definition_type)
             if definition_id != "":
                 output_definition.set(BpmnDiagramGraphExport.id_param_name, definition_id)
@@ -144,8 +144,8 @@ class BpmnDiagramGraphExport:
         """
         definitions = node_params["event_definitions"]
         for definition in definitions:
-            definition_type = definition[0]
-            definition_id = definition[1]
+            definition_id = definition["id"]
+            definition_type = definition["definition_type"]
             output_definition = eTree.SubElement(output_element, definition_type)
             if definition_id != "":
                 output_definition.set(BpmnDiagramGraphExport.id_param_name, definition_id)
