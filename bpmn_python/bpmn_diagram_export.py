@@ -102,12 +102,30 @@ class BpmnDiagramGraphExport:
     @staticmethod
     def export_catch_event_info(node_params, output_element):
         """
-        Adds StartEvent or IntermediateCatchEvent attributes to exported XML element
+        Adds IntermediateCatchEvent attributes to exported XML element
 
         :param node_params: dictionary with given intermediate catch event parameters,
         :param output_element: object representing BPMN XML 'intermediateCatchEvent' element.
         """
         output_element.set("parallelMultiple", node_params["parallelMultiple"])
+        definitions = node_params["event_definitions"]
+        for definition in definitions:
+            definition_type = definition[0]
+            definition_id = definition[1]
+            output_definition = eTree.SubElement(output_element, definition_type)
+            if definition_id != "":
+                output_definition.set(BpmnDiagramGraphExport.id_param_name, definition_id)
+
+    @staticmethod
+    def export_start_event_info(node_params, output_element):
+        """
+        Adds StartEvent attributes to exported XML element
+
+        :param node_params: dictionary with given intermediate catch event parameters,
+        :param output_element: object representing BPMN XML 'intermediateCatchEvent' element.
+        """
+        output_element.set("parallelMultiple", node_params["parallelMultiple"])
+        output_element.set("isInterrupting", node_params["isInterrupting"])
         definitions = node_params["event_definitions"]
         for definition in definitions:
             definition_type = definition[0]
@@ -213,7 +231,9 @@ class BpmnDiagramGraphExport:
             BpmnDiagramGraphExport.export_inclusive_exclusive_gateway_info(params, output_element)
         elif node_type == "parallelGateway":
             BpmnDiagramGraphExport.export_parallel_gateway_info(params, output_element)
-        elif node_type == "startEvent" or node_type == "intermediateCatchEvent":
+        elif node_type == "startEvent":
+            BpmnDiagramGraphExport.export_start_event_info(params, output_element)
+        elif node_type == "intermediateCatchEvent":
             BpmnDiagramGraphExport.export_catch_event_info(params, output_element)
         elif node_type == "endEvent" or node_type == "intermediateThrowEvent":
             BpmnDiagramGraphExport.export_throw_event_info(params, output_element)

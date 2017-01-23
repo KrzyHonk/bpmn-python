@@ -8,8 +8,8 @@ import networkx as nx
 
 import bpmn_diagram_exception as bpmn_exception
 import bpmn_python.bpmn_diagram_export as bpmn_export
-import bpmn_python.bpmn_process_csv_export as bpmn_csv_export
 import bpmn_python.bpmn_diagram_import as bpmn_import
+import bpmn_python.bpmn_process_csv_export as bpmn_csv_export
 
 
 class BpmnDiagramGraph:
@@ -97,7 +97,7 @@ class BpmnDiagramGraph:
         else:
             nodes = []
             for node in tmp_nodes:
-                if node[1]['type'] == node_type:
+                if node[1]["type"] == node_type:
                     nodes.append(node)
             return nodes
 
@@ -199,7 +199,7 @@ class BpmnDiagramGraph:
         self.diagram_graph.node[node_id]["incoming"] = []
         self.diagram_graph.node[node_id]["outgoing"] = []
 
-        # TODO Automated generation of rendering parameters
+        # Adding some dummy constant values
         self.diagram_graph.node[node_id]["width"] = "100"
         self.diagram_graph.node[node_id]["height"] = "100"
         self.diagram_graph.node[node_id]["x"] = "100"
@@ -237,23 +237,44 @@ class BpmnDiagramGraph:
         self.diagram_graph.node[subprocess_id]["triggeredByEvent"] = "true" if triggered_by_event else "false"
         return subprocess_id, self.diagram_graph.node[subprocess_id]
 
-    def add_start_event_to_diagram(self, start_event_name="", start_event_definition=None, parallel_multiple=False):
+    def add_start_event_to_diagram(self, start_event_name="", start_event_definition=None, parallel_multiple=False,
+                                   is_interrupting=True):
         """
         Adds a StartEvent element to BPMN diagram.
         User-defined attributes:
         - name
         - parallel_multiple
-        Returns a tuple, where first value is startEvent ID, second a reference to created object.
+        - is_interrupting
+        - event definition (creates a special type of start event). Supported event definitions -
+        'message': 'messageEventDefinition', 'timer': 'timerEventDefinition', 'signal': 'signalEventDefinition',
+        'conditional': 'conditionalEventDefinition', 'escalation': 'escalationEventDefinition'.
 
         :param start_event_name: string object. Name of start event,
         :param start_event_definition: list of event definitions. By default - empty,
-        :param parallel_multiple: boolean value for attribute "parallelMultiple".
+        :param parallel_multiple: boolean value for attribute "parallelMultiple",
+        :param is_interrupting: boolean value for attribute "isInterrupting.
+        :return a tuple, where first value is startEvent ID, second a reference to created object.
         """
         start_event_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("startEvent", start_event_id, start_event_name)
         self.diagram_graph.node[start_event_id]["parallelMultiple"] = "true" if parallel_multiple else "false"
-        # TODO Add event definition
-        self.diagram_graph.node[start_event_id]["event_definitions"] = []
+        self.diagram_graph.node[start_event_id]["isInterrupting"] = "true" if is_interrupting else "false"
+        start_event_definitions = {"message": "messageEventDefinition", "timer": "timerEventDefinition",
+                                   "conditional": "conditionalEventDefinition", "signal": "signalEventDefinition",
+                                   "escalation": "escalationEventDefinition"}
+        event_def_list = []
+        if start_event_definition == "message":
+            event_def_list.append(self.add_event_definition_element("message", start_event_definitions))
+        elif start_event_definition == "timer":
+            event_def_list.append(self.add_event_definition_element("timer", start_event_definitions))
+        elif start_event_definition == "conditional":
+            event_def_list.append(self.add_event_definition_element("conditional", start_event_definitions))
+        elif start_event_definition == "signal":
+            event_def_list.append(self.add_event_definition_element("signal", start_event_definitions))
+        elif start_event_definition == "escalation":
+            event_def_list.append(self.add_event_definition_element("escalation", start_event_definitions))
+
+        self.diagram_graph.node[start_event_id]["event_definitions"] = event_def_list
         return start_event_id, self.diagram_graph.node[start_event_id]
 
     def add_end_event_to_diagram(self, end_event_name="", end_event_definition=None):
@@ -261,16 +282,48 @@ class BpmnDiagramGraph:
         Adds an EndEvent element to BPMN diagram.
         User-defined attributes:
         - name
-        Returns a tuple, where first value is endEvent ID, second a reference to created object.
+        - event definition (creates a special type of end event). Supported event definitions -
+        'terminate': 'terminateEventDefinition', 'signal': 'signalEventDefinition', 'error': 'errorEventDefinition',
+        'escalation': 'escalationEventDefinition', 'message': 'messageEventDefinition',
+        'compensate': 'compensateEventDefinition'.
 
         :param end_event_name: string object. Name of end event,
         :param end_event_definition: list of event definitions. By default - empty.
+        :return a tuple, where first value is endEvent ID, second a reference to created object.
         """
         end_event_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.add_flow_node_to_diagram("endEvent", end_event_id, end_event_name)
-        # TODO Add event definition
-        self.diagram_graph.node[end_event_id]["event_definitions"] = []
+        end_event_definitions = {"terminate": "terminateEventDefinition", "escalation": "escalationEventDefinition",
+                                 "message": "messageEventDefinition", "compensate": "compensateEventDefinition",
+                                 "signal": "signalEventDefinition", "error": "errorEventDefinition"}
+        event_def_list = []
+        if end_event_definition == "terminate":
+            event_def_list.append(self.add_event_definition_element("terminate", end_event_definitions))
+        elif end_event_definition == "escalation":
+            event_def_list.append(self.add_event_definition_element("escalation", end_event_definitions))
+        elif end_event_definition == "message":
+            event_def_list.append(self.add_event_definition_element("message", end_event_definitions))
+        elif end_event_definition == "compensate":
+            event_def_list.append(self.add_event_definition_element("compensate", end_event_definitions))
+        elif end_event_definition == "signal":
+            event_def_list.append(self.add_event_definition_element("signal", end_event_definitions))
+        elif end_event_definition == "error":
+            event_def_list.append(self.add_event_definition_element("error", end_event_definitions))
+
+        self.diagram_graph.node[end_event_id]["event_definitions"] = event_def_list
         return end_event_id, self.diagram_graph.node[end_event_id]
+
+    def add_event_definition_element(self, event_type, event_definitions):
+        """
+        Helper function, that creates event definition element (special type of event) from given parameters.
+
+        :param event_type: string object. Short name of required event definition,
+        :param event_definitions: dictionary of event definitions. Key is a short name of event definition,
+        value is a full name of event definition, as defined in BPMN 2.0 XML Schema.
+        """
+        event_def_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
+        event_def = (event_definitions[event_type], event_def_id)
+        return event_def
 
     def add_exclusive_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified", default=None):
         """

@@ -212,14 +212,12 @@ class BpmnDiagramGraphImport:
         event_def_list = []
         for definition_type in event_definitions:
             event_def_xml = element.getElementsByTagNameNS("*", definition_type)
-            length = len(event_def_xml)
-            for index in range(length):
+            for index in range(len(event_def_xml)):
                 # tuple - definition type, definition id
                 event_def_tmp = (definition_type, event_def_xml[index].getAttribute("id"))
                 event_def_list.append(event_def_tmp)
         diagram_graph.node[element_id]["event_definitions"] = event_def_list
 
-    # TODO Add isInterrupting?
     @staticmethod
     def add_start_event_to_graph(diagram_graph, element, element_id):
         """
@@ -233,11 +231,13 @@ class BpmnDiagramGraphImport:
         :param element: object representing a BPMN XML 'startEvent' element,
         :param element_id: string with ID attribute value.
         """
-        start_event_definitions = {'messageEventDefinition', 'timerEventDefinition',
-                                   'conditionalEventDefinition', 'escalationEventDefinition'}
+        start_event_definitions = {'messageEventDefinition', 'timerEventDefinition', 'conditionalEventDefinition',
+                                   'escalationEventDefinition', 'signalEventDefinition'}
         BpmnDiagramGraphImport.add_flownode_to_graph(diagram_graph, element, element_id)
         diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") \
             if element.hasAttribute("parallelMultiple") else "false"
+        diagram_graph.node[element_id]["isInterrupting"] = element.getAttribute("isInterrupting") \
+            if element.hasAttribute("isInterrupting") else "true"
         BpmnDiagramGraphImport.add_event_definition_elements(diagram_graph, element,
                                                              element_id, start_event_definitions)
 
@@ -254,8 +254,9 @@ class BpmnDiagramGraphImport:
         :param element: object representing a BPMN XML 'intermediateCatchEvent' element,
         :param element_id: string with ID attribute value.
         """
-        intermediate_catch_event_definitions = {'messageEventDefinition', 'signalEventDefinition',
-                                                'conditionalEventDefinition', 'escalationEventDefinition'}
+        intermediate_catch_event_definitions = {'messageEventDefinition', 'timerEventDefinition',
+                                                'signalEventDefinition', 'conditionalEventDefinition',
+                                                'escalationEventDefinition'}
         BpmnDiagramGraphImport.add_flownode_to_graph(diagram_graph, element, element_id)
         diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") \
             if element.hasAttribute("parallelMultiple") else "false"
@@ -274,7 +275,8 @@ class BpmnDiagramGraphImport:
         :param element: object representing a BPMN XML 'endEvent' element,
         :param element_id: string with ID attribute value.
         """
-        end_event_definitions = {'messageEventDefinition', 'signalEventDefinition', 'escalationEventDefinition'}
+        end_event_definitions = {'messageEventDefinition', 'signalEventDefinition', 'escalationEventDefinition',
+                                 'errorEventDefinition', 'compensateEventDefinition', 'terminateEventDefinition'}
         BpmnDiagramGraphImport.add_flownode_to_graph(diagram_graph, element, element_id)
         BpmnDiagramGraphImport.add_event_definition_elements(diagram_graph, element, element_id, end_event_definitions)
 
@@ -290,8 +292,8 @@ class BpmnDiagramGraphImport:
         :param element: object representing a BPMN XML 'intermediateThrowEvent' element,
         :param element_id: string with ID attribute value.
         """
-        intermediate_throw_event_definitions = {'messageEventDefinition',
-                                                'signalEventDefinition', 'escalationEventDefinition'}
+        intermediate_throw_event_definitions = {'messageEventDefinition', 'signalEventDefinition',
+                                                'escalationEventDefinition', 'compensateEventDefinition'}
         BpmnDiagramGraphImport.add_flownode_to_graph(diagram_graph, element, element_id)
         BpmnDiagramGraphImport.add_event_definition_elements(diagram_graph, element,
                                                              element_id, intermediate_throw_event_definitions)

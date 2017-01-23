@@ -3,10 +3,10 @@
 Test unit, creates a simple graph using functions provided by package and exports it to XML and graphic format
 """
 import unittest
-import os
 
 import bpmn_python.bpmn_diagram_rep as diagram
 import bpmn_python.bpmn_diagram_visualizer as visualizer
+import bpmn_python.bpmn_diagram_layouter as layouter
 
 
 class ManualGenerationSimpleTests(unittest.TestCase):
@@ -22,7 +22,8 @@ class ManualGenerationSimpleTests(unittest.TestCase):
     def test_create_diagram_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
-        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
+        [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event",
+                                                              start_event_definition="timer")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="task1")
         bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id, "start_to_one")
 
@@ -38,9 +39,11 @@ class ManualGenerationSimpleTests(unittest.TestCase):
         bpmn_graph.add_sequence_flow_to_diagram(task2_ex_id, exclusive_gate_join_id, "ex_two_to_ex_join")
 
         [task2_id, _] = bpmn_graph.add_task_to_diagram(task_name="task2")
-        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="end_event")
+        [end_id, _] = bpmn_graph.add_end_event_to_diagram(end_event_name="end_event", end_event_definition="message")
         bpmn_graph.add_sequence_flow_to_diagram(exclusive_gate_join_id, task2_id, "ex_join_to_two")
         bpmn_graph.add_sequence_flow_to_diagram(task2_id, end_id, "two_to_end")
+
+        layouter.generate_layout(bpmn_graph)
 
         bpmn_graph.export_xml_file(self.output_directory, self.output_file_with_di)
         bpmn_graph.export_xml_file_no_di(self.output_directory, self.output_file_no_di)
@@ -48,6 +51,7 @@ class ManualGenerationSimpleTests(unittest.TestCase):
         # visualizer.visualize_diagram(bpmn_graph)
         visualizer.bpmn_diagram_to_dot_file(bpmn_graph, self.output_directory + self.output_dot_file)
         visualizer.bpmn_diagram_to_png(bpmn_graph, self.output_directory + self.output_png_file)
+
 
 if __name__ == '__main__':
     unittest.main()
