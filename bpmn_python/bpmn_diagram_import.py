@@ -158,8 +158,8 @@ class BpmnDiagramGraphImport:
         :param element_id: string with ID attribute value.
         """
         BpmnDiagramGraphImport.add_gateway_to_graph(diagram_graph, element, element_id)
-        diagram_graph.node[element_id]["default"] = element.getAttribute("default") \
-            if element.hasAttribute("default") else None
+        diagram_graph.node[element_id][consts.Consts.default] = element.getAttribute(consts.Consts.default) \
+            if element.hasAttribute(consts.Consts.default) else None
         # TODO sequence of conditions
         # Can't get any working example of Complex gateway, so I'm not sure how exactly those conditions are kept
 
@@ -194,8 +194,8 @@ class BpmnDiagramGraphImport:
         :param element_id: string with ID attribute value.
         """
         BpmnDiagramGraphImport.add_gateway_to_graph(diagram_graph, element, element_id)
-        diagram_graph.node[element_id]["default"] = element.getAttribute("default") \
-            if element.hasAttribute("default") else None
+        diagram_graph.node[element_id][consts.Consts.default] = element.getAttribute(consts.Consts.default) \
+            if element.hasAttribute(consts.Consts.default) else None
 
     @staticmethod
     def add_parallel_gateway_to_graph(diagram_graph, element, element_id):
