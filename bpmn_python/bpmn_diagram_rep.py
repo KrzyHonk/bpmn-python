@@ -324,64 +324,67 @@ class BpmnDiagramGraph:
         event_def = {consts.Consts.id: event_def_id, consts.Consts.definition_type: event_definitions[event_type]}
         return event_def
 
-    def add_exclusive_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified", default=None):
+    def add_gateway_to_diagram(self, gateway_type, gateway_name="", gateway_direction="Unspecified"):
         """
         Adds an exclusiveGateway element to BPMN diagram.
-        User-defined attributes:
-        - name
-        - gatewayDirection
-        - default
-        Returns a tuple, where first value is exculusiveGateway ID, second a reference to created object.
 
+        :param gateway_type: string object. Type of gateway to be added.
         :param gateway_name: string object. Name of exclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
-        Default value - "Unspecified". If passed value is not one of the allowed values, it is changed to "Unspecified"
-        :param default: string object. ID of flow node, target of gateway default path. Default value - None.
+        Default value - "Unspecified".
+        :return Returns a tuple, where first value is gateway ID, second a reference to created object.
         """
-        exclusive_gateway_id, exclusive_gateway = self.add_flow_node_to_diagram(consts.Consts.exclusive_gateway,
-                                                                                gateway_name)
+        gateway_id, gateway = self.add_flow_node_to_diagram(gateway_type, gateway_name)
         if not (gateway_direction in ("Unspecified", "Converging", "Diverging", "Mixed")):
             raise bpmn_exception.BpmnPythonError("Invalid value passed as gatewayDirection parameter. Value passed: "
                                                  + gateway_direction)
-        self.diagram_graph.node[exclusive_gateway_id][consts.Consts.gateway_direction] = gateway_direction
-        self.diagram_graph.node[exclusive_gateway_id]["default"] = default
+        self.diagram_graph.node[gateway_id][consts.Consts.gateway_direction] = gateway_direction
+        return gateway_id, gateway
+
+    def add_exclusive_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified", default=None):
+        """
+        Adds an exclusiveGateway element to BPMN diagram.
+
+        :param gateway_name: string object. Name of exclusive gateway,
+        :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
+        Default value - "Unspecified".
+        :param default: string object. ID of flow node, target of gateway default path. Default value - None.
+        :return Returns a tuple, where first value is exculusiveGateway ID, second a reference to created object.
+        """
+        exclusive_gateway_id, exclusive_gateway = self.add_gateway_to_diagram(consts.Consts.exclusive_gateway,
+                                                                              gateway_name=gateway_name,
+                                                                              gateway_direction=gateway_direction)
+        self.diagram_graph.node[exclusive_gateway_id][consts.Consts.default] = default
         return exclusive_gateway_id, exclusive_gateway
 
     def add_inclusive_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified", default=None):
         """
         Adds an inclusiveGateway element to BPMN diagram.
-        User-defined attributes:
-        - name
-        - gatewayDirection
-        - default
-        Returns a tuple, where first value is inclusiveGateway ID, second a reference to created object.
 
         :param gateway_name: string object. Name of inclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
         Default value - "Unspecified",
         :param default: string object. ID of flow node, target of gateway default path. Default value - None.
+        :return Returns a tuple, where first value is inclusiveGateway ID, second a reference to created object.
         """
-        inclusive_gateway_id, inclusive_gateway = self.add_flow_node_to_diagram(consts.Consts.inclusive_gateway,
-                                                                                gateway_name)
-        self.diagram_graph.node[inclusive_gateway_id][consts.Consts.gateway_direction] = gateway_direction
-        self.diagram_graph.node[inclusive_gateway_id]["default"] = default
+        inclusive_gateway_id, inclusive_gateway = self.add_gateway_to_diagram(consts.Consts.inclusive_gateway,
+                                                                              gateway_name=gateway_name,
+                                                                              gateway_direction=gateway_direction)
+        self.diagram_graph.node[inclusive_gateway_id][consts.Consts.default] = default
         return inclusive_gateway_id, inclusive_gateway
 
     def add_parallel_gateway_to_diagram(self, gateway_name="", gateway_direction="Unspecified"):
         """
         Adds an parallelGateway element to BPMN diagram.
-        User-defined attributes:
-        - name
-        - gatewayDirection
-        Returns a tuple, where first value is parallelGateway ID, second a reference to created object.
 
         :param gateway_name: string object. Name of inclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
         Default value - "Unspecified".
+        :return Returns a tuple, where first value is parallelGateway ID, second a reference to created object.
         """
-        parallel_gateway_id, parallel_gateway = self.add_flow_node_to_diagram(consts.Consts.parallel_gateway,
-                                                                              gateway_name)
-        self.diagram_graph.node[parallel_gateway_id][consts.Consts.gateway_direction] = gateway_direction
+        parallel_gateway_id, parallel_gateway = self.add_gateway_to_diagram(consts.Consts.parallel_gateway,
+                                                                            gateway_name=gateway_name,
+                                                                            gateway_direction=gateway_direction)
         return parallel_gateway_id, parallel_gateway
 
     def add_sequence_flow_to_diagram(self, source_ref_id, target_ref_id, sequence_flow_name=""):
