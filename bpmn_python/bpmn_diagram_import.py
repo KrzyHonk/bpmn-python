@@ -4,6 +4,8 @@ Package provides functionality for importing from BPMN 2.0 XML to graph represen
 """
 from xml.dom import minidom
 
+import bpmn_python.bmpn_python_consts as consts
+
 
 class BpmnDiagramGraphImport:
     """
@@ -11,6 +13,9 @@ class BpmnDiagramGraphImport:
     As a utility class, it only contains static methods.
     This class is meant to be used from BPMNDiagramGraph class.
     """
+
+    def __init__(self):
+        pass
 
     @staticmethod
     def add_process_attributes(process_attributes, process_element):
@@ -25,13 +30,13 @@ class BpmnDiagramGraphImport:
         :param process_attributes: dictionary that holds attribute values for imported 'process' element,
         :param process_element: object representing a BPMN XML 'process' element.
         """
-        process_attributes["id"] = process_element.getAttribute("id")
-        process_attributes["isClosed"] = process_element.getAttribute("isClosed") \
-            if process_element.hasAttribute("isClosed") else "false"
-        process_attributes["isExecutable"] = process_element.getAttribute("isExecutable") \
-            if process_element.hasAttribute("isExecutable") else "false"
-        process_attributes["processType"] = process_element.getAttribute("processType") \
-            if process_element.hasAttribute("processType") else "None"
+        process_attributes[consts.Consts.id] = process_element.getAttribute(consts.Consts.id)
+        process_attributes[consts.Consts.is_closed] = process_element.getAttribute(consts.Consts.is_closed) \
+            if process_element.hasAttribute(consts.Consts.is_closed) else "false"
+        process_attributes[consts.Consts.is_executable] = process_element.getAttribute(consts.Consts.is_executable) \
+            if process_element.hasAttribute(consts.Consts.is_executable) else "false"
+        process_attributes[consts.Consts.process_type] = process_element.getAttribute(consts.Consts.process_type) \
+            if process_element.hasAttribute(consts.Consts.process_type) else "None"
 
     @staticmethod
     def add_diagram_and_plane_attributes(diagram_attributes, plane_attributes, diagram_element, plane_element):
@@ -50,12 +55,12 @@ class BpmnDiagramGraphImport:
         :param diagram_element: object representing a BPMN XML 'diagram' element,
         :param plane_element: object representing a BPMN XML 'plane' element.
         """
-        diagram_attributes["id"] = diagram_element.getAttribute("id")
-        diagram_attributes["name"] = diagram_element.getAttribute("name") \
-            if diagram_element.hasAttribute("name") else ""
+        diagram_attributes[consts.Consts.id] = diagram_element.getAttribute(consts.Consts.id)
+        diagram_attributes[consts.Consts.name] = diagram_element.getAttribute(consts.Consts.name) \
+            if diagram_element.hasAttribute(consts.Consts.name) else ""
 
-        plane_attributes["id"] = plane_element.getAttribute("id")
-        plane_attributes["bpmnElement"] = plane_element.getAttribute("bpmnElement")
+        plane_attributes[consts.Consts.id] = plane_element.getAttribute(consts.Consts.id)
+        plane_attributes[consts.Consts.bpmn_element] = plane_element.getAttribute(consts.Consts.bpmn_element)
 
     @staticmethod
     def add_flownode_to_graph(diagram_graph, element, element_id):
@@ -73,26 +78,28 @@ class BpmnDiagramGraphImport:
         :param element_id: string with ID attribute value.
         """
         diagram_graph.add_node(element_id)
-        diagram_graph.node[element_id]["type"] = BpmnDiagramGraphImport.remove_namespace_from_tag_name(element.tagName)
-        diagram_graph.node[element_id]["node_name"] = element.getAttribute("name") if element.hasAttribute("name") else ""
+        diagram_graph.node[element_id][consts.Consts.type] = \
+            BpmnDiagramGraphImport.remove_namespace_from_tag_name(element.tagName)
+        diagram_graph.node[element_id][consts.Consts.name] = \
+            element.getAttribute(consts.Consts.name) if element.hasAttribute(consts.Consts.name) else ""
 
         # add incoming flow node list
-        incoming_xml = element.getElementsByTagNameNS("*", "incoming")
+        incoming_xml = element.getElementsByTagNameNS("*", consts.Consts.incoming_flows)
         length = len(incoming_xml)
         incoming_list = [None] * length
         for index in range(length):
             incoming_tmp = incoming_xml[index].firstChild.nodeValue
             incoming_list[index] = incoming_tmp
-        diagram_graph.node[element_id]["incoming"] = incoming_list
+        diagram_graph.node[element_id][consts.Consts.incoming_flows] = incoming_list
 
         # add outgoing flow node list
-        outgoing_xml = element.getElementsByTagNameNS("*", "outgoing")
+        outgoing_xml = element.getElementsByTagNameNS("*", consts.Consts.outgoing_flows)
         length = len(outgoing_xml)
         outgoing_list = [None] * length
         for index in range(length):
             outgoing_tmp = outgoing_xml[index].firstChild.nodeValue
             outgoing_list[index] = outgoing_tmp
-        diagram_graph.node[element_id]["outgoing"] = outgoing_list
+        diagram_graph.node[element_id][consts.Consts.outgoing_flows] = outgoing_list
 
     @staticmethod
     def add_task_to_graph(diagram_graph, element, element_id):
@@ -119,8 +126,9 @@ class BpmnDiagramGraphImport:
         :param element_id: string with ID attribute value.
         """
         BpmnDiagramGraphImport.add_flownode_to_graph(diagram_graph, element, element_id)
-        diagram_graph.node[element_id]["triggeredByEvent"] = element.getAttribute("triggeredByEvent") \
-            if element.hasAttribute("triggeredByEvent") else "false"
+        diagram_graph.node[element_id][consts.Consts.triggered_by_event] = \
+            element.getAttribute(consts.Consts.triggered_by_event) \
+            if element.hasAttribute(consts.Consts.triggered_by_event) else "false"
 
     @staticmethod
     def add_gateway_to_graph(diagram_graph, element, element_id):
@@ -134,8 +142,9 @@ class BpmnDiagramGraphImport:
         :param element_id: string with ID attribute value.
         """
         BpmnDiagramGraphImport.add_flownode_to_graph(diagram_graph, element, element_id)
-        diagram_graph.node[element_id]["gatewayDirection"] = element.getAttribute("gatewayDirection") \
-            if element.hasAttribute("gatewayDirection") else "Unspecified"
+        diagram_graph.node[element_id][consts.Consts.gateway_direction] = \
+            element.getAttribute(consts.Consts.gateway_direction) \
+            if element.hasAttribute(consts.Consts.gateway_direction) else "Unspecified"
 
     @staticmethod
     def add_complex_gateway_to_graph(diagram_graph, element, element_id):
@@ -167,13 +176,14 @@ class BpmnDiagramGraphImport:
         :param element_id: string with ID attribute value.
         """
         BpmnDiagramGraphImport.add_gateway_to_graph(diagram_graph, element, element_id)
-        diagram_graph.node[element_id]["instantiate"] = element.getAttribute("instantiate") \
-            if element.hasAttribute("instantiate") else "false"
-        diagram_graph.node[element_id]["eventGatewayType"] = element.getAttribute("eventGatewayType") \
-            if element.hasAttribute("eventGatewayType") else "Exclusive"
+        diagram_graph.node[element_id][consts.Consts.instantiate] = element.getAttribute(consts.Consts.instantiate) \
+            if element.hasAttribute(consts.Consts.instantiate) else "false"
+        diagram_graph.node[element_id][consts.Consts.event_gateway_type] = \
+            element.getAttribute(consts.Consts.event_gateway_type) \
+            if element.hasAttribute(consts.Consts.event_gateway_type) else "Exclusive"
 
     @staticmethod
-    def add_inclusive_or_exclusive_gateway_to_graph(diagram_graph, element, element_id):
+    def add_incl_or_excl_gateway_to_graph(diagram_graph, element, element_id):
         """
         Adds to graph the new element that represents BPMN inclusive or eclusive gateway.
         In addition to attributes inherited from Gateway type, inclusive and exclusive gateway have additional
@@ -214,9 +224,10 @@ class BpmnDiagramGraphImport:
             event_def_xml = element.getElementsByTagNameNS("*", definition_type)
             for index in range(len(event_def_xml)):
                 # tuple - definition type, definition id
-                event_def_tmp = {"id": event_def_xml[index].getAttribute("id"), "definition_type": definition_type}
+                event_def_tmp = {consts.Consts.id: event_def_xml[index].getAttribute(consts.Consts.id),
+                                 consts.Consts.definition_type: definition_type}
                 event_def_list.append(event_def_tmp)
-        diagram_graph.node[element_id]["event_definitions"] = event_def_list
+        diagram_graph.node[element_id][consts.Consts.event_definitions] = event_def_list
 
     @staticmethod
     def add_start_event_to_graph(diagram_graph, element, element_id):
@@ -234,10 +245,12 @@ class BpmnDiagramGraphImport:
         start_event_definitions = {'messageEventDefinition', 'timerEventDefinition', 'conditionalEventDefinition',
                                    'escalationEventDefinition', 'signalEventDefinition'}
         BpmnDiagramGraphImport.add_flownode_to_graph(diagram_graph, element, element_id)
-        diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") \
-            if element.hasAttribute("parallelMultiple") else "false"
-        diagram_graph.node[element_id]["isInterrupting"] = element.getAttribute("isInterrupting") \
-            if element.hasAttribute("isInterrupting") else "true"
+        diagram_graph.node[element_id][consts.Consts.parallel_multiple] = \
+            element.getAttribute(consts.Consts.parallel_multiple) \
+            if element.hasAttribute(consts.Consts.parallel_multiple) else "false"
+        diagram_graph.node[element_id][consts.Consts.is_interrupting] = \
+            element.getAttribute(consts.Consts.is_interrupting) \
+            if element.hasAttribute(consts.Consts.is_interrupting) else "true"
         BpmnDiagramGraphImport.add_event_definition_elements(diagram_graph, element,
                                                              element_id, start_event_definitions)
 
@@ -258,8 +271,9 @@ class BpmnDiagramGraphImport:
                                                 'signalEventDefinition', 'conditionalEventDefinition',
                                                 'escalationEventDefinition'}
         BpmnDiagramGraphImport.add_flownode_to_graph(diagram_graph, element, element_id)
-        diagram_graph.node[element_id]["parallelMultiple"] = element.getAttribute("parallelMultiple") \
-            if element.hasAttribute("parallelMultiple") else "false"
+        diagram_graph.node[element_id][consts.Consts.parallel_multiple] = \
+            element.getAttribute(consts.Consts.parallel_multiple) \
+            if element.hasAttribute(consts.Consts.parallel_multiple) else "false"
         BpmnDiagramGraphImport.add_event_definition_elements(diagram_graph, element,
                                                              element_id, intermediate_catch_event_definitions)
 
@@ -315,24 +329,25 @@ class BpmnDiagramGraphImport:
         flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param flow: object representing a BPMN XML 'sequenceFlow' element.
         """
-        flow_id = flow.getAttribute("id")
-        name = flow.getAttribute("name") if flow.hasAttribute("name") else ""
-        source_ref = flow.getAttribute("sourceRef")
-        target_ref = flow.getAttribute("targetRef")
-        sequence_flows[flow_id] = {"name": name, "sourceRef": source_ref, "targetRef": target_ref}
+        flow_id = flow.getAttribute(consts.Consts.id)
+        name = flow.getAttribute(consts.Consts.name) if flow.hasAttribute(consts.Consts.name) else ""
+        source_ref = flow.getAttribute(consts.Consts.source_ref)
+        target_ref = flow.getAttribute(consts.Consts.target_ref)
+        sequence_flows[flow_id] = {consts.Consts.name: name, consts.Consts.source_ref: source_ref,
+                                   consts.Consts.target_ref: target_ref}
         diagram_graph.add_edge(source_ref, target_ref)
-        diagram_graph.edge[source_ref][target_ref]["id"] = flow_id
-        diagram_graph.edge[source_ref][target_ref]["name"] = name
-        diagram_graph.edge[source_ref][target_ref]["source_id"] = source_ref
-        diagram_graph.edge[source_ref][target_ref]["target_id"] = target_ref
+        diagram_graph.edge[source_ref][target_ref][consts.Consts.id] = flow_id
+        diagram_graph.edge[source_ref][target_ref][consts.Consts.name] = name
+        diagram_graph.edge[source_ref][target_ref][consts.Consts.source_ref] = source_ref
+        diagram_graph.edge[source_ref][target_ref][consts.Consts.target_ref] = target_ref
 
         '''
         # Add incoming / outgoing nodes to corresponding elements. May be redundant action since this information is
         added when processing nodes, but listing incoming / outgoing nodes under node element is optional - this way
         we can make sure this info will be imported.
         '''
-        outgoing_list = diagram_graph.node[source_ref]["outgoing"]
-        incoming_list = diagram_graph.node[target_ref]["incoming"]
+        outgoing_list = diagram_graph.node[source_ref][consts.Consts.outgoing_flows]
+        incoming_list = diagram_graph.node[target_ref][consts.Consts.incoming_flows]
         if flow_id not in outgoing_list:
             outgoing_list.append(flow_id)
         if flow_id not in incoming_list:
@@ -352,16 +367,17 @@ class BpmnDiagramGraphImport:
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param shape_element: object representing a BPMN XML 'BPMNShape' element.
         """
-        element_id = shape_element.getAttribute("bpmnElement")
+        element_id = shape_element.getAttribute(consts.Consts.bpmn_element)
         bounds = shape_element.getElementsByTagNameNS("*", "Bounds")[0]
-        diagram_graph.node[element_id]["width"] = bounds.getAttribute("width")
-        diagram_graph.node[element_id]["height"] = bounds.getAttribute("height")
+        diagram_graph.node[element_id][consts.Consts.width] = bounds.getAttribute(consts.Consts.width)
+        diagram_graph.node[element_id][consts.Consts.height] = bounds.getAttribute(consts.Consts.height)
 
-        if diagram_graph.node[element_id]["type"] == "subProcess":
-            diagram_graph.node[element_id]["isExpanded"] = shape_element.getAttribute("isExpanded") \
-                if shape_element.hasAttribute("isExpanded") else "false"
-        diagram_graph.node[element_id]["x"] = bounds.getAttribute("x")
-        diagram_graph.node[element_id]["y"] = bounds.getAttribute("y")
+        if diagram_graph.node[element_id][consts.Consts.type] == consts.Consts.subprocess:
+            diagram_graph.node[element_id][consts.Consts.is_expanded] = \
+                shape_element.getAttribute(consts.Consts.is_expanded) \
+                if shape_element.hasAttribute(consts.Consts.is_expanded) else "false"
+        diagram_graph.node[element_id][consts.Consts.x] = bounds.getAttribute(consts.Consts.x)
+        diagram_graph.node[element_id][consts.Consts.y] = bounds.getAttribute(consts.Consts.y)
 
     @staticmethod
     def add_flow_di(diagram_graph, sequence_flows, flow_element):
@@ -377,20 +393,21 @@ class BpmnDiagramGraphImport:
         flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param flow_element: object representing a BPMN XML 'BPMNEdge' element.
         """
-        flow_id = flow_element.getAttribute("bpmnElement")
-        waypoints_xml = flow_element.getElementsByTagNameNS("*", "waypoint")
+        flow_id = flow_element.getAttribute(consts.Consts.bpmn_element)
+        waypoints_xml = flow_element.getElementsByTagNameNS("*", consts.Consts.waypoint)
         length = len(waypoints_xml)
 
         waypoints = [None] * length
         for index in range(length):
-            waypoint_tmp = (waypoints_xml[index].getAttribute("x"), waypoints_xml[index].getAttribute("y"))
+            waypoint_tmp = (waypoints_xml[index].getAttribute(consts.Consts.x),
+                            waypoints_xml[index].getAttribute(consts.Consts.y))
             waypoints[index] = waypoint_tmp
         flow_data = sequence_flows[flow_id]
-        name = flow_data["name"]
-        source_ref = flow_data["sourceRef"]
-        target_ref = flow_data["targetRef"]
-        diagram_graph.edge[source_ref][target_ref]["waypoints"] = waypoints
-        diagram_graph.edge[source_ref][target_ref]["name"] = name
+        name = flow_data[consts.Consts.name]
+        source_ref = flow_data[consts.Consts.source_ref]
+        target_ref = flow_data[consts.Consts.target_ref]
+        diagram_graph.edge[source_ref][target_ref][consts.Consts.waypoints] = waypoints
+        diagram_graph.edge[source_ref][target_ref][consts.Consts.name] = name
 
     @staticmethod
     def load_diagram_from_xml(filepath, diagram_graph, sequence_flows,
@@ -410,7 +427,7 @@ class BpmnDiagramGraphImport:
         """
         document = BpmnDiagramGraphImport.read_xml_file(filepath)
         # We assume that there's only one process element
-        process_element = document.getElementsByTagNameNS("*", "process")[0]
+        process_element = document.getElementsByTagNameNS("*", consts.Consts.process)[0]
         # We assume that there's only one diagram element with one plane element
         diagram_element = document.getElementsByTagNameNS("*", "BPMNDiagram")[0]
         plane_element = diagram_element.getElementsByTagNameNS("*", "BPMNPlane")[0]
@@ -422,45 +439,49 @@ class BpmnDiagramGraphImport:
         for element in BpmnDiagramGraphImport.iterate_elements(process_element):
             if element.nodeType != element.TEXT_NODE:
                 tag_name = BpmnDiagramGraphImport.remove_namespace_from_tag_name(element.tagName)
-                if tag_name == "task":
-                    BpmnDiagramGraphImport.add_task_to_graph(diagram_graph, element, element.getAttribute("id"))
-                elif tag_name == "subProcess":
-                    BpmnDiagramGraphImport.add_subprocess_to_graph(diagram_graph, element, element.getAttribute("id"))
-                elif tag_name == "inclusiveGateway" or tag_name == "exclusiveGateway":
-                    BpmnDiagramGraphImport.add_inclusive_or_exclusive_gateway_to_graph(diagram_graph, element,
-                                                                                       element.getAttribute("id"))
-                elif tag_name == "parallelGateway":
+                if tag_name == consts.Consts.task:
+                    BpmnDiagramGraphImport.add_task_to_graph(diagram_graph, element,
+                                                             element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.subprocess:
+                    BpmnDiagramGraphImport.add_subprocess_to_graph(diagram_graph, element,
+                                                                   element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.inclusive_gateway or tag_name == consts.Consts.exclusive_gateway:
+                    BpmnDiagramGraphImport.add_incl_or_excl_gateway_to_graph(diagram_graph, element,
+                                                                             element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.parallel_gateway:
                     BpmnDiagramGraphImport.add_parallel_gateway_to_graph(diagram_graph, element,
-                                                                         element.getAttribute("id"))
-                elif tag_name == "eventBasedGateway":
+                                                                         element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.event_based_gateway:
                     BpmnDiagramGraphImport.add_event_based_gateway_to_graph(diagram_graph, element,
-                                                                            element.getAttribute("id"))
-                elif tag_name == "complexGateway":
+                                                                            element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.complex_gateway:
                     BpmnDiagramGraphImport.add_complex_gateway_to_graph(diagram_graph, element,
-                                                                        element.getAttribute("id"))
-                elif tag_name == "startEvent":
-                    BpmnDiagramGraphImport.add_start_event_to_graph(diagram_graph, element, element.getAttribute("id"))
-                elif tag_name == "endEvent":
-                    BpmnDiagramGraphImport.add_end_event_to_graph(diagram_graph, element, element.getAttribute("id"))
-                elif tag_name == "intermediateCatchEvent":
+                                                                        element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.start_event:
+                    BpmnDiagramGraphImport.add_start_event_to_graph(diagram_graph, element,
+                                                                    element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.end_event:
+                    BpmnDiagramGraphImport.add_end_event_to_graph(diagram_graph, element,
+                                                                  element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.intermediate_catch_event:
                     BpmnDiagramGraphImport.add_intermediate_catch_event_to_graph(diagram_graph, element,
-                                                                                 element.getAttribute("id"))
-                elif tag_name == "intermediateThrowEvent":
+                                                                                 element.getAttribute(consts.Consts.id))
+                elif tag_name == consts.Consts.intermediate_throw_event:
                     BpmnDiagramGraphImport.add_intermediate_throw_event_to_graph(diagram_graph, element,
-                                                                                 element.getAttribute("id"))
+                                                                                 element.getAttribute(consts.Consts.id))
 
         for flow in BpmnDiagramGraphImport.iterate_elements(process_element):
             if flow.nodeType != flow.TEXT_NODE:
                 tag_name = BpmnDiagramGraphImport.remove_namespace_from_tag_name(flow.tagName)
-                if tag_name == "sequenceFlow":
+                if tag_name == consts.Consts.sequence_flow:
                     BpmnDiagramGraphImport.add_flow_to_graph(diagram_graph, sequence_flows, flow)
 
         for element in BpmnDiagramGraphImport.iterate_elements(plane_element):
             if element.nodeType != element.TEXT_NODE:
                 tag_name = BpmnDiagramGraphImport.remove_namespace_from_tag_name(element.tagName)
-                if tag_name == "BPMNShape":
+                if tag_name == consts.Consts.bpmn_shape:
                     BpmnDiagramGraphImport.add_shape_di(diagram_graph, element)
-                elif tag_name == "BPMNEdge":
+                elif tag_name == consts.Consts.bpmn_edge:
                     BpmnDiagramGraphImport.add_flow_di(diagram_graph, sequence_flows, element)
 
     @staticmethod

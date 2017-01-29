@@ -1,0 +1,64 @@
+# coding=utf-8
+"""
+Package used to unify the different constant values used in entire project
+"""
+
+
+class Consts:
+    """
+    Class used to unify the different constant values used in entire project
+    """
+    # BPMN 2.0 element attribute names
+    id = "id"
+    name = "name"
+    gateway_direction = "gatewayDirection"
+    default = "default"
+    instantiate = "instantiate"
+    event_gateway_type = "eventGatewayType"
+    source_ref = "sourceRef"
+    target_ref = "targetRef"
+    triggered_by_event = "triggeredByEvent"
+    parallel_multiple = "parallelMultiple"
+    is_interrupting = "isInterrupting"
+    is_closed = "isClosed"
+    is_executable = "isExecutable"
+    is_expanded = "isExpanded"
+    process_type = "processType"
+    sequence_flow = "sequenceFlow"
+
+    # BPMN 2.0 diagram interchange element attribute names
+    bpmn_element = "bpmnElement"
+    height = "height"
+    width = "width"
+    x = "x"
+    y = "y"
+
+    # BPMN 2.0 element names
+    definitions = "definitions"
+    process = "process"
+    task = "task"
+    subprocess = "subProcess"
+    complex_gateway = "complexGateway"
+    event_based_gateway = "eventBasedGateway"
+    inclusive_gateway = "inclusiveGateway"
+    exclusive_gateway = "exclusiveGateway"
+    parallel_gateway = "parallelGateway"
+    start_event = "startEvent"
+    intermediate_catch_event = "intermediateCatchEvent"
+    end_event = "endEvent"
+    intermediate_throw_event = "intermediateThrowEvent"
+
+    # BPMN 2.0 diagram interchange element names
+    bpmn_shape = "BPMNShape"
+    bpmn_edge = "BPMNEdge"
+
+    # BPMN 2.0 child element names
+    incoming_flows = "incoming"
+    outgoing_flows = "outgoing"
+    waypoint = "waypoint"
+    waypoints = "waypoints"
+
+    # Additional parameter names
+    type = "type"
+    event_definitions = "event_definitions"
+    definition_type = "definition_type"
