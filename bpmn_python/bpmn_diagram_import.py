@@ -80,7 +80,7 @@ class BpmnDiagramGraphImport:
         diagram_graph.add_node(element_id)
         diagram_graph.node[element_id][consts.Consts.type] = \
             BpmnDiagramGraphImport.remove_namespace_from_tag_name(element.tagName)
-        diagram_graph.node[element_id][consts.Consts.name] = \
+        diagram_graph.node[element_id][consts.Consts.node_name] = \
             element.getAttribute(consts.Consts.name) if element.hasAttribute(consts.Consts.name) else ""
 
         # add incoming flow node list

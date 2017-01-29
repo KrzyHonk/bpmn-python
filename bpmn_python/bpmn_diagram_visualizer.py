@@ -43,7 +43,7 @@ def visualize_diagram(bpmn_diagram):
 
     node_labels = {}
     for node in g.nodes(data=True):
-        node_labels[node[0]] = node[1].get(consts.Consts.name)
+        node_labels[node[0]] = node[1].get(consts.Consts.node_name)
     nx.draw_networkx_labels(g, pos, node_labels)
 
     nx.draw_networkx_edges(g, pos)
@@ -80,11 +80,11 @@ def bpmn_diagram_to_png(bpmn_diagram, file_name):
     for node in g.nodes(data=True):
 
         if node[1].get(consts.Consts.type) == consts.Consts.task:
-            n = pydotplus.Node(name=node[0], shape="box", style="rounded", label=node[1].get(consts.Consts.name))
+            n = pydotplus.Node(name=node[0], shape="box", style="rounded", label=node[1].get(consts.Consts.node_name))
         elif node[1].get(consts.Consts.type) == consts.Consts.exclusive_gateway:
-            n = pydotplus.Node(name=node[0], shape="diamond", label=node[1].get(consts.Consts.name))
+            n = pydotplus.Node(name=node[0], shape="diamond", label=node[1].get(consts.Consts.node_name))
         else:
-            n = pydotplus.Node(name=node[0], label=node[1].get(consts.Consts.name))
+            n = pydotplus.Node(name=node[0], label=node[1].get(consts.Consts.node_name))
         graph.add_node(n)
 
     for edge in g.edges(data=True):

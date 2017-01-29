@@ -199,7 +199,7 @@ class BpmnDiagramGraphExport:
         node_type = params[consts.Consts.type]
         output_element = eTree.SubElement(process, node_type)
         output_element.set(consts.Consts.id, process_id)
-        output_element.set(consts.Consts.name, params[consts.Consts.name])
+        output_element.set(consts.Consts.name, params[consts.Consts.node_name])
 
         for incoming in params[consts.Consts.incoming_flows]:
             incoming_element = eTree.SubElement(output_element, consts.Consts.incoming_flows)

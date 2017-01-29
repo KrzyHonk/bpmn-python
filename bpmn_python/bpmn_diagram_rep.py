@@ -196,7 +196,7 @@ class BpmnDiagramGraph:
         node_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.diagram_graph.add_node(node_id)
         self.diagram_graph.node[node_id][consts.Consts.type] = node_type
-        self.diagram_graph.node[node_id][consts.Consts.name] = name
+        self.diagram_graph.node[node_id][consts.Consts.node_name] = name
         self.diagram_graph.node[node_id][consts.Consts.incoming_flows] = []
         self.diagram_graph.node[node_id][consts.Consts.outgoing_flows] = []
 
@@ -263,15 +263,15 @@ class BpmnDiagramGraph:
                                    "escalation": "escalationEventDefinition"}
         event_def_list = []
         if start_event_definition == "message":
-            event_def_list.append(self.add_event_definition_element("message", start_event_definitions))
+            event_def_list.append(BpmnDiagramGraph.add_event_definition_element("message", start_event_definitions))
         elif start_event_definition == "timer":
-            event_def_list.append(self.add_event_definition_element("timer", start_event_definitions))
+            event_def_list.append(BpmnDiagramGraph.add_event_definition_element("timer", start_event_definitions))
         elif start_event_definition == "conditional":
-            event_def_list.append(self.add_event_definition_element("conditional", start_event_definitions))
+            event_def_list.append(BpmnDiagramGraph.add_event_definition_element("conditional", start_event_definitions))
         elif start_event_definition == "signal":
-            event_def_list.append(self.add_event_definition_element("signal", start_event_definitions))
+            event_def_list.append(BpmnDiagramGraph.add_event_definition_element("signal", start_event_definitions))
         elif start_event_definition == "escalation":
-            event_def_list.append(self.add_event_definition_element("escalation", start_event_definitions))
+            event_def_list.append(BpmnDiagramGraph.add_event_definition_element("escalation", start_event_definitions))
 
         self.diagram_graph.node[start_event_id][consts.Consts.event_definitions] = event_def_list
         return start_event_id, start_event

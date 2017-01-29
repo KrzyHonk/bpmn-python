@@ -124,11 +124,11 @@ class BpmnDiagramGraphCsvExport:
         # Assuming that there is only one event definition
         event_definition = node[1][consts.Consts.event_definitions][0]
         if event_definition[consts.Consts.definition_type] == "messageEventDefinition":
-            activity = "message " + node[1][consts.Consts.name]
+            activity = "message " + node[1][consts.Consts.node_name]
         elif event_definition[consts.Consts.definition_type] == "timerEventDefinition":
-            activity = "timer " + node[1][consts.Consts.name]
+            activity = "timer " + node[1][consts.Consts.node_name]
         else:
-            activity = node[1][consts.Consts.name]
+            activity = node[1][consts.Consts.node_name]
 
         export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": activity,
                                      "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""})
@@ -157,9 +157,9 @@ class BpmnDiagramGraphCsvExport:
         # Assuming that there is only one event definition
         event_definition = node[1][consts.Consts.event_definitions][0]
         if event_definition[consts.Consts.definition_type] == "messageEventDefinition":
-            activity = "message " + node[1][consts.Consts.name]
+            activity = "message " + node[1][consts.Consts.node_name]
         else:
-            activity = node[1][consts.Consts.name]
+            activity = node[1][consts.Consts.node_name]
 
         export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": activity,
                                      "Condition": condition, "Who": who, "Subprocess": "", "Terminated": "yes"})
@@ -179,7 +179,7 @@ class BpmnDiagramGraphCsvExport:
         :param who: the condition param of exported node,
         :return: None or the next node object if the exported node was a gateway join.
         """
-        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": node[1][consts.Consts.name],
+        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": node[1][consts.Consts.node_name],
                                      "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""})
         outgoing_flow_id = node[1][consts.Consts.outgoing_flows][0]
         outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
@@ -202,7 +202,7 @@ class BpmnDiagramGraphCsvExport:
         :param who: the condition param of exported node,
         :return: None or the next node object if the exported node was a gateway join.
         """
-        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": node[1][consts.Consts.name],
+        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": node[1][consts.Consts.node_name],
                                      "Condition": condition, "Who": who, "Subprocess": "yes", "Terminated": ""})
         outgoing_flow_id = node[1][consts.Consts.outgoing_flows][0]
         outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)

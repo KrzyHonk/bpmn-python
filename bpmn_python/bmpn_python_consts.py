@@ -11,6 +11,8 @@ class Consts:
     # BPMN 2.0 element attribute names
     id = "id"
     name = "name"
+    # Flow nodes cannot use "name" parameter in dictionary, due to the errors with PyDot
+    node_name = "node_name"
     gateway_direction = "gatewayDirection"
     default = "default"
     instantiate = "instantiate"
