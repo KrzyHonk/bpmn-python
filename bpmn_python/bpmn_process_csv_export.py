@@ -8,6 +8,7 @@ from __future__ import print_function
 import copy
 import errno
 import os
+import string
 
 import bpmn_diagram_exception as bpmn_exception
 import bpmn_python.bmpn_python_consts as consts
@@ -42,7 +43,7 @@ class BpmnDiagramGraphCsvExport:
         """
         nodes = copy.deepcopy(bpmn_graph.get_nodes())
         start_nodes = []
-        export_elements = {}
+        export_elements = []
 
         for node in nodes:
             incoming_list = node[1][consts.Consts.incoming_flows]
@@ -55,7 +56,6 @@ class BpmnDiagramGraphCsvExport:
         nodes.remove(start_node)
         BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, start_node, order=0, prefix="",
                                               condition="", who="")
-        sorted_nodes, backward_flows = BpmnDiagramGraphCsvExport.topological_sort_node_ids(bpmn_graph)
 
         try:
             os.makedirs(directory)
@@ -64,7 +64,7 @@ class BpmnDiagramGraphCsvExport:
                 raise
         file_object = open(directory + filename, "w")
         file_object.write("Order,Activity,Condition,Who,Subprocess,Terminated\n")
-        BpmnDiagramGraphCsvExport.write_export_node_to_file(file_object, export_elements, sorted_nodes)
+        BpmnDiagramGraphCsvExport.write_export_node_to_file(file_object, export_elements)
         file_object.close()
 
     @staticmethod
@@ -130,14 +130,13 @@ class BpmnDiagramGraphCsvExport:
         else:
             activity = node[1][consts.Consts.node_name]
 
-        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": activity,
-                                     "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""})
+        export_elements.append({"Order": prefix + str(order), "Activity": activity, "Condition": condition,
+                                "Who": who, "Subprocess": "", "Terminated": ""})
 
         outgoing_flow_id = node[1][consts.Consts.outgoing_flows][0]
         outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
         outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
-        return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                     outgoing_node, order + 1, prefix, who)
+        return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, outgoing_node, order + 1, prefix, who)
 
     @staticmethod
     def export_end_event(export_elements, node, order=0, prefix="", condition="", who=""):
@@ -161,8 +160,8 @@ class BpmnDiagramGraphCsvExport:
         else:
             activity = node[1][consts.Consts.node_name]
 
-        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": activity,
-                                     "Condition": condition, "Who": who, "Subprocess": "", "Terminated": "yes"})
+        export_elements.append({"Order": prefix + str(order), "Activity": activity, "Condition": condition, "Who": who,
+                                "Subprocess": "", "Terminated": "yes"})
 
     @staticmethod
     def export_task(bpmn_graph, export_elements, node, order=0, prefix="", condition="", who=""):
@@ -179,13 +178,12 @@ class BpmnDiagramGraphCsvExport:
         :param who: the condition param of exported node,
         :return: None or the next node object if the exported node was a gateway join.
         """
-        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": node[1][consts.Consts.node_name],
-                                     "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""})
+        export_elements.append({"Order": prefix + str(order), "Activity": node[1][consts.Consts.node_name],
+                                "Condition": condition, "Who": who, "Subprocess": "", "Terminated": ""})
         outgoing_flow_id = node[1][consts.Consts.outgoing_flows][0]
         outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
         outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
-        return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                     outgoing_node, order + 1, prefix, who)
+        return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, outgoing_node, order + 1, prefix, who)
 
     @staticmethod
     def export_sub_process(bpmn_graph, export_elements, node, order=0, prefix="", condition="", who=""):
@@ -202,13 +200,13 @@ class BpmnDiagramGraphCsvExport:
         :param who: the condition param of exported node,
         :return: None or the next node object if the exported node was a gateway join.
         """
-        export_elements[node[0]] = ({"Order": prefix + str(order), "Activity": node[1][consts.Consts.node_name],
-                                     "Condition": condition, "Who": who, "Subprocess": "yes", "Terminated": ""})
+        export_elements.append({"Order": prefix + str(order), "Activity": node[1][consts.Consts.node_name],
+                                "Condition": condition, "Who": who, "Subprocess": "yes", "Terminated": ""})
         outgoing_flow_id = node[1][consts.Consts.outgoing_flows][0]
         outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
         outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
-        return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                     outgoing_node, order + 1, prefix, "", who)
+        return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, outgoing_node, order + 1, prefix, "",
+                                                     who)
 
     @staticmethod
     def export_exclusive_gateway(bpmn_graph, export_elements, node, order=0, prefix="", condition="", who=""):
@@ -232,25 +230,25 @@ class BpmnDiagramGraphCsvExport:
             outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
 
             return outgoing_node
-        elif len(outgoing_flows) == 2:
-            outgoing_flow_id_a = outgoing_flows[0]
-            outgoing_flow_a = bpmn_graph.get_flow_by_id(outgoing_flow_id_a)
-            outgoing_node_a = bpmn_graph.get_node_by_id(outgoing_flow_a[2][consts.Consts.target_ref])
-            prefix_a = prefix + str(order) + 'a'
-            BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                  outgoing_node_a, 1, prefix_a, condition, who)
+        elif len(outgoing_flows) > 1:
+            next_node = None
+            alphabet_suffix_index = 0
+            for outgoing_flow_id in outgoing_flows:
+                outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
+                outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
 
-            outgoing_flow_id_b = outgoing_flows[1]
-            outgoing_flow_b = bpmn_graph.get_flow_by_id(outgoing_flow_id_b)
-            outgoing_node_b = bpmn_graph.get_node_by_id(outgoing_flow_b[2][consts.Consts.target_ref])
-            prefix_b = prefix + str(order) + 'b'
-            next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                              outgoing_node_b, 1, prefix_b, "else", who)
+                # This will work only up to 26 outgoing flows
+                suffix = string.ascii_lowercase[alphabet_suffix_index]
+                next_prefix = prefix + str(order) + suffix
+                alphabet_suffix_index += 1
+                # TODO add support for default path and add "else" condition
+                next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, outgoing_node, 1,
+                                                                  next_prefix, "", who)
 
-            return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                         next_node, order + 1, prefix, "", who)
+            return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, next_node, order + 1, prefix, "",
+                                                         who)
         else:
-            raise bpmn_exception.BpmnPythonError("Exporting to CSV format: gateways must have 1 or 2 outgoing flows")
+            raise bpmn_exception.BpmnPythonError("Exporting to CSV format: gateway must have at least 1 outgoing flow")
 
     @staticmethod
     def export_parallel_gateway(bpmn_graph, export_elements, node, order=0, prefix="", condition="", who=""):
@@ -274,22 +272,22 @@ class BpmnDiagramGraphCsvExport:
             outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
 
             return outgoing_node
-        elif len(outgoing_flows) == 2:
-            outgoing_flow_id_a = outgoing_flows[0]
-            outgoing_flow_a = bpmn_graph.get_flow_by_id(outgoing_flow_id_a)
-            outgoing_node_a = bpmn_graph.get_node_by_id(outgoing_flow_a[2][consts.Consts.target_ref])
-            prefix_a = prefix + str(order) + 'a'
-            BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                  outgoing_node_a, 1, prefix_a, condition, who)
+        elif len(outgoing_flows) > 1:
+            next_node = None
+            alphabet_suffix_index = 0
+            for outgoing_flow_id in outgoing_flows:
+                outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
+                outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
 
-            outgoing_flow_id_b = outgoing_flows[1]
-            outgoing_flow_b = bpmn_graph.get_flow_by_id(outgoing_flow_id_b)
-            outgoing_node_b = bpmn_graph.get_node_by_id(outgoing_flow_b[2][consts.Consts.target_ref])
-            prefix_b = prefix + str(order) + 'b'
-            next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                              outgoing_node_b, 1, prefix_b, "", who)
-            return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                         next_node, order + 1, prefix, "", who)
+                # This will work only up to 26 outgoing flows
+                suffix = string.ascii_lowercase[alphabet_suffix_index]
+                next_prefix = prefix + str(order) + suffix
+                alphabet_suffix_index += 1
+                next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, outgoing_node, 1,
+                                                                  next_prefix, "", who)
+
+            return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, next_node, order + 1, prefix, "",
+                                                         who)
         else:
             raise bpmn_exception.BpmnPythonError("Exporting to CSV format: gateways must have 1 or 2 outgoing flows")
 
@@ -314,107 +312,36 @@ class BpmnDiagramGraphCsvExport:
             outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
 
             return outgoing_node
-        elif len(outgoing_flows) == 2:
-            outgoing_flow_id_a = outgoing_flows[0]
-            outgoing_flow_a = bpmn_graph.get_flow_by_id(outgoing_flow_id_a)
-            outgoing_node_a = bpmn_graph.get_node_by_id(outgoing_flow_a[2][consts.Consts.target_ref])
-            prefix_a = prefix + str(order) + 'a'
-            condition_a = outgoing_flow_a[2][consts.Consts.name]
-            BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                  outgoing_node_a, 1, prefix_a, condition_a, who)
+        elif len(outgoing_flows) > 1:
+            next_node = None
+            alphabet_suffix_index = 0
+            for outgoing_flow_id in outgoing_flows:
+                outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
+                outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
 
-            outgoing_flow_id_b = outgoing_flows[1]
-            outgoing_flow_b = bpmn_graph.get_flow_by_id(outgoing_flow_id_b)
-            outgoing_node_b = bpmn_graph.get_node_by_id(outgoing_flow_b[2][consts.Consts.target_ref])
-            prefix_b = prefix + str(order) + 'b'
-            condition_b = outgoing_flow_b[2][consts.Consts.name]
-            next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                              outgoing_node_b, 1, prefix_b, condition_b, who)
-            return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements,
-                                                         next_node, order + 1, prefix, "", who)
+                # This will work only up to 26 outgoing flows
+                suffix = string.ascii_lowercase[alphabet_suffix_index]
+                next_prefix = prefix + str(order) + suffix
+                alphabet_suffix_index += 1
+                condition = outgoing_flow[2][consts.Consts.name]
+                next_node = BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, outgoing_node, 1,
+                                                                  next_prefix, condition, who)
+
+            return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, next_node, order + 1, prefix, "",
+                                                         who)
         else:
             raise bpmn_exception.BpmnPythonError("Exporting to CSV format: gateways must have 1 or 2 outgoing flows")
 
     @staticmethod
-    def write_export_node_to_file(file_object, export_elements, sorted_node_ids):
+    def write_export_node_to_file(file_object, export_elements):
         """
         Exporting process to CSV file
         :param file_object: object of File class,
         :param export_elements: a dictionary object. The key is a node ID, value is a dictionary of parameters that
-        will be used in exported CSV document,
-        :param sorted_node_ids: list of sorted node IDs.
+        will be used in exported CSV document.
         """
-        for node_id in sorted_node_ids:
-            export_element = export_elements[node_id]
+        for export_element in export_elements:
+            # Order,Activity,Condition,Who,Subprocess,Terminated
             file_object.write(
                 export_element["Order"] + "," + export_element["Activity"] + "," + export_element["Condition"] + "," +
                 export_element["Who"] + "," + export_element["Subprocess"] + "," + export_element["Terminated"] + "\n")
-
-    @staticmethod
-    def topological_sort_node_ids(bpmn_graph):
-        """
-        Topological sorting of process nodes. This method ignores the gateways, since those are not represented in
-        CSV file.
-        :param bpmn_graph: an instance of BpmnDiagramGraph class,
-        :return: a list of sorted nodes and a list of backward flows (part of cycle).
-        """
-        outgoing_flows_list_param_name = consts.Consts.outgoing_flows
-
-        nodes = bpmn_graph.get_nodes()
-        tmp_nodes = copy.deepcopy(bpmn_graph.get_nodes())
-        sorted_node_ids = []
-        no_incoming_flow_nodes = []
-        backward_flows = []
-
-        while tmp_nodes:
-            for node in tmp_nodes:
-                incoming_list = node[1][consts.Consts.incoming_flows]
-                if len(incoming_list) == 0:
-                    no_incoming_flow_nodes.append(node)
-            if len(no_incoming_flow_nodes) > 0:
-                while len(no_incoming_flow_nodes) > 0:
-                    node = no_incoming_flow_nodes.pop()
-                    tmp_nodes.remove(node)
-
-                    next_id = next((tmp_node[0] for tmp_node in nodes
-                                    if tmp_node[0] == node[0] and tmp_node[1][consts.Consts.type]
-                                    not in BpmnDiagramGraphCsvExport.gateways_list), None)
-                    if next_id is not None:
-                        sorted_node_ids.append(next_id)
-
-                    outgoing_list = list(node[1][outgoing_flows_list_param_name])
-                    tmp_outgoing_list = list(outgoing_list)
-
-                    for flow_id in tmp_outgoing_list:
-                        outgoing_list.remove(flow_id)
-                        node[1][outgoing_flows_list_param_name].remove(flow_id)
-
-                        flow = bpmn_graph.get_flow_by_id(flow_id)
-                        target_id = flow[2][consts.Consts.target_ref]
-                        target = next(tmp_node
-                                      for tmp_node in tmp_nodes
-                                      if tmp_node[0] == target_id)
-                        target[1][consts.Consts.incoming_flows].remove(flow_id)
-            else:
-                for node in tmp_nodes:
-                    if len(node[consts.Consts.incoming_flows]) > 0:
-                        incoming_list = list(node[1][consts.Consts.incoming_flows])
-                        tmp_incoming_list = list(incoming_list)
-                        for flow_id in tmp_incoming_list:
-                            incoming_list.remove(flow_id)
-                            flow = bpmn_graph.get_flow_by_id(flow_id)
-
-                            source_id = flow[2][consts.Consts.target_ref]
-                            source = next(tmp_node
-                                          for tmp_node in tmp_nodes
-                                          if tmp_node[0] == source_id)
-                            source[1][outgoing_flows_list_param_name].remove(flow_id)
-
-                            target_id = flow[2][consts.Consts.target_ref]
-                            target = next(tmp_node
-                                          for tmp_node in tmp_nodes
-                                          if tmp_node[0] == target_id)
-                            target[1][consts.Consts.incoming_flows].remove(flow_id)
-
-                            backward_flows.append(flow)
-        return sorted_node_ids, backward_flows
