@@ -17,6 +17,7 @@ class CsvExportTests(unittest.TestCase):
     def test_create_simple_diagram_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
+        bpmn_graph.add_process_to_diagram()
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event",
                                                               start_event_definition="timer")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 1")
@@ -42,6 +43,7 @@ class CsvExportTests(unittest.TestCase):
     def test_create_diagram_with_exclusive_parallel_gateway_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
+        bpmn_graph.add_process_to_diagram()
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event",
                                                               start_event_definition="timer")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 1")
@@ -92,6 +94,7 @@ class CsvExportTests(unittest.TestCase):
     def test_create_diagram_with_inclusive_parallel_gateway_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
+        bpmn_graph.add_process_to_diagram()
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="Start event",
                                                               start_event_definition="timer")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="Task 1")

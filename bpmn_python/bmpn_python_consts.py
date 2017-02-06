@@ -27,6 +27,8 @@ class Consts:
     is_expanded = "isExpanded"
     process_type = "processType"
     sequence_flow = "sequenceFlow"
+    message_flow = "messageFlow"
+    message_flows = "messageFlows"
 
     # BPMN 2.0 diagram interchange element attribute names
     bpmn_element = "bpmnElement"
@@ -37,7 +39,11 @@ class Consts:
 
     # BPMN 2.0 element names
     definitions = "definitions"
+    collaboration = "collaboration"
+    participant = "participant"
+    participants = "participants"
     process = "process"
+    process_ref = "processRef"
     task = "task"
     subprocess = "subProcess"
     complex_gateway = "complexGateway"

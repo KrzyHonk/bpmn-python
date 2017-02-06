@@ -7,10 +7,10 @@ import uuid
 import networkx as nx
 
 import bpmn_diagram_exception as bpmn_exception
+import bpmn_python.bmpn_python_consts as consts
 import bpmn_python.bpmn_diagram_export as bpmn_export
 import bpmn_python.bpmn_diagram_import as bpmn_import
 import bpmn_python.bpmn_process_csv_export as bpmn_csv_export
-import bpmn_python.bmpn_python_consts as consts
 
 
 class BpmnDiagramGraph:
@@ -24,7 +24,14 @@ class BpmnDiagramGraph:
     - sequence_flows - dictionary (associative list) of sequence flows existing in diagram.
     Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence flow
     name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
-    - process_attributes - dictionary that contains BPMN process element attributes,
+    - collaboration - a dictionary that contains two dictionaries:
+        "messageFlows" - dictionary (associative list) of message flows existing in diagram. Key attribute is
+        messageFlow ID, value is a dictionary consisting three key-value pairs: "name" (message flow name),
+        "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
+        "participants" - dictionary (associative list) of participants existing in diagram. Key attribute is
+        participant ID, value is a dictionary consisting participant attributes,
+    - process_elements_dictionary - dictionary that holds attribute values for imported 'process' elements. Key is
+    an ID of process, value is a dictionary of all process attributes,
     - diagram_attributes - dictionary that contains BPMN diagram element attributes,
     - plane_attributes - dictionary that contains BPMN plane element attributes.
     """
@@ -39,11 +46,12 @@ class BpmnDiagramGraph:
         """
         self.diagram_graph = nx.Graph()
         self.sequence_flows = {}
-        self.process_attributes = {}
+        self.process_elements = {}
         self.diagram_attributes = {}
         self.plane_attributes = {}
+        self.collaboration = {}
 
-    def load_diagram_from_xml(self, filepath):
+    def load_diagram_from_xml_file(self, filepath):
         """
         Reads an XML file from given filepath and maps it into inner representation of BPMN diagram.
         Returns an instance of BPMNDiagramGraph class.
@@ -51,9 +59,7 @@ class BpmnDiagramGraph:
         :param filepath: string with output filepath.
         """
 
-        bpmn_import.BpmnDiagramGraphImport.load_diagram_from_xml(filepath, self.diagram_graph,
-                                                                 self.sequence_flows, self.process_attributes,
-                                                                 self.diagram_attributes, self.plane_attributes)
+        bpmn_import.BpmnDiagramGraphImport.load_diagram_from_xml(filepath, self)
 
     def export_xml_file(self, directory, filename):
         """
@@ -62,8 +68,7 @@ class BpmnDiagramGraph:
         :param directory: strings representing output directory,
         :param filename: string representing output file name.
         """
-        bpmn_export.BpmnDiagramGraphExport.export_xml_file(directory, filename, self, self.process_attributes,
-                                                           self.diagram_attributes, self.plane_attributes)
+        bpmn_export.BpmnDiagramGraphExport.export_xml_file(directory, filename, self)
 
     def export_xml_file_no_di(self, directory, filename):
         """
@@ -72,8 +77,7 @@ class BpmnDiagramGraph:
         :param directory: strings representing output directory,
         :param filename: string representing output file name.
         """
-        bpmn_export.BpmnDiagramGraphExport.export_xml_file_no_di(directory, filename, self.diagram_graph,
-                                                                 self.process_attributes)
+        bpmn_export.BpmnDiagramGraphExport.export_xml_file_no_di(directory, filename, self)
 
     def export_csv_file(self, directory, filename):
         """
@@ -149,41 +153,52 @@ class BpmnDiagramGraph:
                 return flow
 
     # Diagram creating methods
-    def create_new_diagram_graph(self, process_is_closed=False, process_is_executable=False,
-                                 process_type="None", diagram_name=""):
+    def create_new_diagram_graph(self, diagram_name=""):
         """
-        Initializes a new BPMN diagram and sets up a basic process, diagram and plane attributes.
+        Initializes a new BPMN diagram and sets up a basic diagram attributes.
+        Accepts a user-defined values for following attributes:
+        (Diagram element)
+        - name - default value empty string.
+
+        :param diagram_name: string type. Represents a user-defined value of 'BPMNDiagram' element
+        attribute 'name'. Default value - empty string.
+        """
+        self.__init__()
+        diagram_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
+
+        self.diagram_attributes[consts.Consts.id] = diagram_id
+        self.diagram_attributes[consts.Consts.name] = diagram_name
+
+    def add_process_to_diagram(self, process_name="", process_is_closed=False, process_is_executable=False,
+                               process_type="None"):
+        # TODO add participant and initialize collaboration and plane if necessary
+        """
+        Adds a new process to diagram and corresponding participant
+         process, diagram and plane
         Accepts a user-defined values for following attributes:
         (Process element)
         - isClosed - default value false,
         - isExecutable - default value false,
         - processType - default value None.
-        (Diagram element)
-        - name - default value empty string.
-
+        :param process_name: string obejct, process name. Default value - empty string,
         :param process_is_closed: boolean type. Represents a user-defined value of 'process' element
         attribute 'isClosed'. Default value false,
         :param process_is_executable: boolean type. Represents a user-defined value of 'process' element
         attribute 'isExecutable'. Default value false,
         :param process_type: string type. Represents a user-defined value of 'process' element
         attribute 'procesType'. Default value "None",
-        :param diagram_name: string type. Represents a user-defined value of 'BPMNDiagram' element
-        attribute 'name'. Default value - empty string.
         """
-        self.__init__()
-        process_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
-        diagram_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         plane_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
-        self.process_attributes[consts.Consts.id] = process_id
-        self.process_attributes[consts.Consts.is_closed] = "true" if process_is_closed else "false"
-        self.process_attributes[consts.Consts.is_executable] = "true" if process_is_executable else "false"
-        self.process_attributes[consts.Consts.process_type] = process_type
+        process_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
 
-        self.diagram_attributes[consts.Consts.id] = diagram_id
-        self.diagram_attributes[consts.Consts.name] = diagram_name
+        self.process_elements[process_id] = {consts.Consts.name: process_name,
+                                             consts.Consts.is_closed: "true" if process_is_closed else "false",
+                                             consts.Consts.is_executable: "true" if process_is_executable else "false",
+                                             consts.Consts.process_type: process_type}
 
         self.plane_attributes[consts.Consts.id] = plane_id
         self.plane_attributes[consts.Consts.bpmn_element] = process_id
+        pass
 
     def add_flow_node_to_diagram(self, node_type, name):
         """

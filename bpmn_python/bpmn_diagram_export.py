@@ -141,12 +141,11 @@ class BpmnDiagramGraphExport:
                 output_definition.set(consts.Consts.id, definition_id)
 
     @staticmethod
-    def create_root_process_output(process_attributes):
+    def export_definitions_element():
         """
-        Creates root element ('definitions') and 'process' element for exported BPMN XML file.
-        Returns a tuple (root, process).
+        Creates root element ('definitions') for exported BPMN XML file.
 
-        :param process_attributes: dictionary that holds attribute values for imported 'process' element.
+        :return: definitions XML element.
         """
         root = eTree.Element(consts.Consts.definitions)
         root.set("xmlns", "http://www.omg.org/spec/BPMN/20100524/MODEL")
@@ -159,16 +158,27 @@ class BpmnDiagramGraphExport:
         root.set("expressionLanguage", "http://www.w3.org/1999/XPath")
         root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
 
-        process = eTree.SubElement(root, consts.Consts.process)
-        process.set(consts.Consts.id, process_attributes[consts.Consts.id])
-        process.set(consts.Consts.is_closed, process_attributes[consts.Consts.is_closed])
-        process.set(consts.Consts.is_executable, process_attributes[consts.Consts.is_executable])
-        process.set(consts.Consts.process_type, process_attributes[consts.Consts.process_type])
-
-        return root, process
+        return root
 
     @staticmethod
-    def create_diagram_plane_output(root, diagram_attributes, plane_attributes):
+    def export_process_element(definitions, process_id, process_attributes_dictionary):
+        """
+        Creates process element for exported BPMN XML file.
+
+        :param definitions: an XML element ('definitions'), root element of BPMN 2.0 document
+        :param process_attributes_dictionary: dictionary that holds attribute values of 'process' element
+        :return: process XML element
+        """
+        process = eTree.SubElement(definitions, consts.Consts.process)
+        process.set(consts.Consts.id, process_id)
+        process.set(consts.Consts.is_closed, process_attributes_dictionary[consts.Consts.is_closed])
+        process.set(consts.Consts.is_executable, process_attributes_dictionary[consts.Consts.is_executable])
+        process.set(consts.Consts.process_type, process_attributes_dictionary[consts.Consts.process_type])
+
+        return process
+
+    @staticmethod
+    def export_diagram_plane_elements(root, diagram_attributes, plane_attributes):
         """
         Creates 'diagram' and 'plane' elements for exported BPMN XML file.
         Returns a tuple (diagram, plane).
@@ -280,38 +290,44 @@ class BpmnDiagramGraphExport:
             waypoint_element.set(consts.Consts.y, waypoint[1])
 
     @staticmethod
-    def export_xml_file(directory, filename, bpmn_graph, process_attributes, diagram_attributes, plane_attributes):
+    def export_xml_file(directory, filename, bpmn_diagram):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (with Diagram Interchange data).
 
         :param directory: string representing output directory,
         :param filename: string representing output file name,
-        :param bpmn_graph: BPMNDiagramGraph class instantion representing a BPMN process diagram,
-        :param process_attributes: dictionary that holds attribute values for imported 'process' element,
-        :param diagram_attributes: dictionary that holds attribute values for imported 'BPMNDiagram' element,
-        :param plane_attributes: dictionary that holds attribute values for imported 'BPMNPlane' element.
+        :param bpmn_diagram: BPMNDiagramGraph class instantion representing a BPMN process diagram.
         """
-        [root, process] = BpmnDiagramGraphExport.create_root_process_output(process_attributes)
-        [_, plane] = BpmnDiagramGraphExport.create_diagram_plane_output(root, diagram_attributes, plane_attributes)
-        graph = bpmn_graph.diagram_graph
+        diagram_attributes = bpmn_diagram.diagram_attributes
+        plane_attributes = bpmn_diagram.plane_attributes
+        diagram_graph = bpmn_diagram.diagram_graph
+        process_elements_dict = bpmn_diagram.process_elements
+        definitions = BpmnDiagramGraphExport.export_definitions_element()
 
-        # for each node in graph add correct type of element, its attributes and BPMNShape element
-        nodes = graph.nodes(data=True)
-        for node in nodes:
-            node_id = node[0]
-            params = node[1]
-            BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
-            BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
+        [_, plane] = BpmnDiagramGraphExport.export_diagram_plane_elements(definitions, diagram_attributes,
+                                                                          plane_attributes)
 
-        # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
-        flows = graph.edges(data=True)
-        for flow in flows:
-            params = flow[2]
-            BpmnDiagramGraphExport.export_flow_process_data(params, process)
-            BpmnDiagramGraphExport.export_flow_di_data(params, plane)
+        for process_id in process_elements_dict:
+            process_element_attr = process_elements_dict[process_id]
+            process = BpmnDiagramGraphExport.export_process_element(definitions, process_id, process_element_attr)
 
-        BpmnDiagramGraphExport.indent(root)
-        tree = eTree.ElementTree(root)
+            # for each node in graph add correct type of element, its attributes and BPMNShape element
+            nodes = diagram_graph.nodes(data=True)
+            for node in nodes:
+                node_id = node[0]
+                params = node[1]
+                BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
+                BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
+
+            # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
+            flows = diagram_graph.edges(data=True)
+            for flow in flows:
+                params = flow[2]
+                BpmnDiagramGraphExport.export_flow_process_data(params, process)
+                BpmnDiagramGraphExport.export_flow_di_data(params, plane)
+
+        BpmnDiagramGraphExport.indent(definitions)
+        tree = eTree.ElementTree(definitions)
         try:
             os.makedirs(directory)
         except OSError as exception:
@@ -320,32 +336,37 @@ class BpmnDiagramGraphExport:
         tree.write(directory + filename, encoding='utf-8', xml_declaration=True)
 
     @staticmethod
-    def export_xml_file_no_di(directory, filename, graph, process_attributes):
+    def export_xml_file_no_di(directory, filename, bpmn_diagram):
         """
         Exports diagram inner graph to BPMN 2.0 XML file (without Diagram Interchange data).
 
         :param directory: string representing output directory,
         :param filename: string representing output file name,
-        :param graph: NetworkX graph representing a BPMN process diagram,
-        :param process_attributes: dictionary that holds attribute values for imported 'process' element.
+        :param bpmn_diagram: BPMNDiagramGraph class instantion representing a BPMN process diagram.
         """
-        [root, process] = BpmnDiagramGraphExport.create_root_process_output(process_attributes)
+        diagram_graph = bpmn_diagram.diagram_graph
+        process_elements_dict = bpmn_diagram.process_elements
+        definitions = BpmnDiagramGraphExport.export_definitions_element()
 
-        # for each node in graph add correct type of element, its attributes and BPMNShape element
-        nodes = graph.nodes(data=True)
-        for node in nodes:
-            node_id = node[0]
-            params = node[1]
-            BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
+        for process_id in process_elements_dict:
+            process_element_attr = process_elements_dict[process_id]
+            process = BpmnDiagramGraphExport.export_process_element(definitions, process_id, process_element_attr)
 
-        # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
-        flows = graph.edges(data=True)
-        for flow in flows:
-            params = flow[2]
-            BpmnDiagramGraphExport.export_flow_process_data(params, process)
+            # for each node in graph add correct type of element, its attributes and BPMNShape element
+            nodes = diagram_graph.nodes(data=True)
+            for node in nodes:
+                node_id = node[0]
+                params = node[1]
+                BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
 
-        BpmnDiagramGraphExport.indent(root)
-        tree = eTree.ElementTree(root)
+            # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
+            flows = diagram_graph.edges(data=True)
+            for flow in flows:
+                params = flow[2]
+                BpmnDiagramGraphExport.export_flow_process_data(params, process)
+
+        BpmnDiagramGraphExport.indent(definitions)
+        tree = eTree.ElementTree(definitions)
         try:
             os.makedirs(directory)
         except OSError as exception:

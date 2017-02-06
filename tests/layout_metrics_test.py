@@ -18,7 +18,7 @@ class MetricsTests(unittest.TestCase):
 
     def load_example_diagram(self, filepath):
         bpmn_graph = diagram.BpmnDiagramGraph()
-        bpmn_graph.load_diagram_from_xml(os.path.abspath(filepath))
+        bpmn_graph.load_diagram_from_xml_file(os.path.abspath(filepath))
         return bpmn_graph
 
     def test_count_crossing_points(self):

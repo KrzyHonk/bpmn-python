@@ -23,6 +23,7 @@ class BPMNEditorTests(unittest.TestCase):
         output_file = "layouter_simple_case.xml"
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
+        bpmn_graph.add_process_to_diagram()
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="task1")
         bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id, "start_to_one")
@@ -43,6 +44,7 @@ class BPMNEditorTests(unittest.TestCase):
         output_file = "layouter_split_join_case.xml"
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
+        bpmn_graph.add_process_to_diagram()
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="task1")
         bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id, "start_to_one")
@@ -74,6 +76,7 @@ class BPMNEditorTests(unittest.TestCase):
         output_file = "layouter_cycle_case.xml"
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
+        bpmn_graph.add_process_to_diagram()
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="task1")
         bpmn_graph.add_sequence_flow_to_diagram(start_id, task1_id, "start_to_one")

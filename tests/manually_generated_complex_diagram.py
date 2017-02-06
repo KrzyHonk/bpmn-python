@@ -21,6 +21,7 @@ class ManualGenerationComplexTests(unittest.TestCase):
     def test_create_diagram_manually(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
+        bpmn_graph.add_process_to_diagram()
 
         [start_id, _] = bpmn_graph.add_start_event_to_diagram(start_event_name="start_event")
         [task1_id, _] = bpmn_graph.add_task_to_diagram(task_name="First task")
