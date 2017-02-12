@@ -44,6 +44,12 @@ class Consts:
     participants = "participants"
     process = "process"
     process_ref = "processRef"
+    lane = "lane"
+    lanes = "lanes"
+    lane_set = "laneSet"
+    child_lane_set = "childLaneSet"
+    flow_node_ref = "flowNodeRef"
+    flow_node_refs = "flowNodeRefs"
     task = "task"
     subprocess = "subProcess"
     complex_gateway = "complexGateway"
@@ -69,4 +75,5 @@ class Consts:
     # Additional parameter names
     type = "type"
     event_definitions = "event_definitions"
+    node_ids = "node_ids"
     definition_type = "definition_type"

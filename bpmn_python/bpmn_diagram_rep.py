@@ -106,6 +106,20 @@ class BpmnDiagramGraph:
                     nodes.append(node)
             return nodes
 
+    def get_nodes_list_by_process_id(self, process_id):
+        """
+        Gets all nodes of requested type. If no type is provided by user, all nodes in BPMN diagram graph are returned.
+        Returns a dictionary, where key is an ID of node, value is a dictionary of all node attributes.
+
+        :param process_id: string object, representing an ID of parent process element.
+        """
+        tmp_nodes = self.diagram_graph.nodes(True)
+        nodes = []
+        for node in tmp_nodes:
+            if node[1][consts.Consts.process] == process_id:
+                nodes.append(node)
+        return nodes
+
     def get_node_by_id(self, node_id):
         """
         Gets a node with requested ID.
@@ -151,6 +165,20 @@ class BpmnDiagramGraph:
         for flow in tmp_flows:
             if flow[2][consts.Consts.id] == flow_id:
                 return flow
+
+    def get_flows_list_by_process_id(self, process_id):
+        """
+        Gets an edge (flow) with requested ID.
+        Returns a tuple, where first value is node ID, second - a dictionary of all node attributes.
+
+        :param process_id: string object, representing an ID of parent process element.
+        """
+        tmp_flows = self.diagram_graph.edges(data=True)
+        flows = []
+        for flow in tmp_flows:
+            if consts.Consts.process in flow[2] and flow[2][consts.Consts.process] == process_id:
+                flows.append(flow)
+        return flows
 
     # Diagram creating methods
     def create_new_diagram_graph(self, diagram_name=""):

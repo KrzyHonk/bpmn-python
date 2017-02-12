@@ -13,8 +13,8 @@ class MetricsTests(unittest.TestCase):
     """
     """
     output_directory = "./output/test-bpmneditor/"
-    crossing_points_example_path = "../examples/crossing_point_test.bpmn"
-    cycles_example_path = "../examples/cycles_test.bpmn"
+    crossing_points_example_path = "examples/crossing_point_test.bpmn"
+    cycles_example_path = "examples/cycles_test.bpmn"
 
     def load_example_diagram(self, filepath):
         bpmn_graph = diagram.BpmnDiagramGraph()

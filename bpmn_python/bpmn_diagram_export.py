@@ -5,6 +5,7 @@ Package provides functionality for exporting graph representation to BPMN 2.0 XM
 import errno
 import os
 import xml.etree.cElementTree as eTree
+
 import bpmn_python.bmpn_python_consts as consts
 
 
@@ -178,6 +179,31 @@ class BpmnDiagramGraphExport:
         return process
 
     @staticmethod
+    def export_lane_set(process, lane_set):
+        lane_set_xml = eTree.SubElement(process, consts.Consts.lane_set)
+        for key, value in lane_set[consts.Consts.lanes].items():
+            BpmnDiagramGraphExport.export_lane(lane_set_xml, key, value)
+
+    @staticmethod
+    def export_child_lane_set(parent_xml_element, child_lane_set):
+        lane_set_xml = eTree.SubElement(parent_xml_element, consts.Consts.lane_set)
+        for key, value in child_lane_set[consts.Consts.lanes].items():
+            BpmnDiagramGraphExport.export_lane(lane_set_xml, key, value)
+
+    @staticmethod
+    def export_lane(parent_xml_element, lane_id, lane_attr):
+        lane_xml = eTree.SubElement(parent_xml_element, consts.Consts.lane)
+        lane_xml.set(consts.Consts.id, lane_id)
+        lane_xml.set(consts.Consts.name, lane_attr[consts.Consts.name])
+        if consts.Consts.child_lane_set in lane_attr and len(lane_attr[consts.Consts.child_lane_set]):
+            child_lane_set = lane_attr[consts.Consts.child_lane_set]
+            BpmnDiagramGraphExport.export_child_lane_set(lane_xml, child_lane_set)
+        if consts.Consts.flow_node_refs in lane_attr and len(lane_attr[consts.Consts.flow_node_refs]):
+            for flow_node_ref_id in lane_attr[consts.Consts.flow_node_refs]:
+                flow_node_ref_xml = eTree.SubElement(lane_xml, consts.Consts.flow_node_ref)
+                flow_node_ref_xml.text = flow_node_ref_id
+
+    @staticmethod
     def export_diagram_plane_elements(root, diagram_attributes, plane_attributes):
         """
         Creates 'diagram' and 'plane' elements for exported BPMN XML file.
@@ -301,18 +327,46 @@ class BpmnDiagramGraphExport:
         diagram_attributes = bpmn_diagram.diagram_attributes
         plane_attributes = bpmn_diagram.plane_attributes
         diagram_graph = bpmn_diagram.diagram_graph
+        collabortion = bpmn_diagram.collaboration
         process_elements_dict = bpmn_diagram.process_elements
         definitions = BpmnDiagramGraphExport.export_definitions_element()
 
         [_, plane] = BpmnDiagramGraphExport.export_diagram_plane_elements(definitions, diagram_attributes,
                                                                           plane_attributes)
 
+        if collabortion is not None and len(collabortion) > 0:
+            message_flows = collabortion[consts.Consts.message_flows]
+            participants = collabortion[consts.Consts.participants]
+            collabortion = eTree.SubElement(definitions, consts.Consts.collaboration)
+            '''
+
+            "messageFlows" - dictionary (associative list) of message flows existing in diagram. Key attribute is
+            messageFlow ID, value is a dictionary consisting three key-value pairs: "name" (message flow name),
+            "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
+            "participants" - dictionary (associative list) of participants existing in diagram. Key attribute is
+            participant ID, value is a dictionary consisting participant attributes,
+            '''
+            for key, values in message_flows.items():
+                message_flow = eTree.SubElement(collabortion, consts.Consts.message_flow)
+                message_flow.set(consts.Consts.id, key)
+                message_flow.set(consts.Consts.name, values[consts.Consts.name])
+                message_flow.set(consts.Consts.source_ref, values[consts.Consts.source_ref])
+                message_flow.set(consts.Consts.target_ref, values[consts.Consts.target_ref])
+
+            for key, values in participants.items():
+                participant = eTree.SubElement(collabortion, consts.Consts.participant)
+                participant.set(consts.Consts.id, key)
+                participant.set(consts.Consts.name, values[consts.Consts.name])
+                participant.set(consts.Consts.process_ref, values[consts.Consts.process_ref])
+
         for process_id in process_elements_dict:
             process_element_attr = process_elements_dict[process_id]
             process = BpmnDiagramGraphExport.export_process_element(definitions, process_id, process_element_attr)
+            if consts.Consts.lane_set in process_element_attr:
+                BpmnDiagramGraphExport.export_lane_set(process, process_element_attr[consts.Consts.lane_set])
 
             # for each node in graph add correct type of element, its attributes and BPMNShape element
-            nodes = diagram_graph.nodes(data=True)
+            nodes = bpmn_diagram.get_nodes_list_by_process_id(process_id)
             for node in nodes:
                 node_id = node[0]
                 params = node[1]
@@ -320,7 +374,7 @@ class BpmnDiagramGraphExport:
                 BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
 
             # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
-            flows = diagram_graph.edges(data=True)
+            flows = bpmn_diagram.get_flows_list_by_process_id(process_id)
             for flow in flows:
                 params = flow[2]
                 BpmnDiagramGraphExport.export_flow_process_data(params, process)

@@ -62,5 +62,5 @@ target/
 .ipynb_checkpoints
 
 #Other
-tests/output/
+tests/xml_import_export/output/**
 .idea

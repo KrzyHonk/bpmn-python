@@ -17,13 +17,13 @@ class BPMNComplexityMetricsTests(unittest.TestCase):
                        }
 
         self.models['SIMPLE'].load_diagram_from_xml_file(
-            os.path.abspath("../examples/bpmn_editor_simple_example.xml")),
+            os.path.abspath("examples/bpmn_editor_simple_example.xml")),
         self.models['COMPLEX'].load_diagram_from_xml_file(
-            os.path.abspath("../examples/camunda_complex_example.bpmn")),
+            os.path.abspath("examples/camunda_complex_example.bpmn")),
         self.models['WITH_CYCLES'].load_diagram_from_xml_file(
-            os.path.abspath("../examples/cycles_test.bpmn")),
+            os.path.abspath("examples/cycles_test.bpmn")),
         self.models['WITH_CROSSING_POINT'].load_diagram_from_xml_file(
-            os.path.abspath("../examples/crossing_point_test.bpmn")),
+            os.path.abspath("examples/crossing_point_test.bpmn")),
 
     def testTNSEMetricForSimpleModel(self):
 
