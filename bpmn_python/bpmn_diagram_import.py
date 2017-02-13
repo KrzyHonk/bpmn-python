@@ -8,7 +8,7 @@ import bpmn_python.bmpn_python_consts as consts
 import bpmn_python.bpmn_import_utils as utils
 
 
-class BpmnDiagramGraphImport:
+class BpmnDiagramGraphImport(object):
     """
     Class BPMNDiagramGraphImport provides methods for importing BPMN 2.0 XML file.
     As a utility class, it only contains static methods. This class is meant to be used from BPMNDiagramGraph class.
@@ -40,7 +40,8 @@ class BpmnDiagramGraphImport:
         BpmnDiagramGraphImport.import_diagram_and_plane_attributes(diagram_attributes, plane_attributes,
                                                                    diagram_element, plane_element)
 
-        BpmnDiagramGraphImport.import_process_elements(document, diagram_graph, sequence_flows, process_elements_dict)
+        BpmnDiagramGraphImport.import_process_elements(document, diagram_graph, sequence_flows, process_elements_dict,
+                                                       plane_element)
 
         collaboration_element_list = document.getElementsByTagNameNS("*", consts.Consts.collaboration)
         if collaboration_element_list is not None and len(collaboration_element_list) > 0:
@@ -48,13 +49,20 @@ class BpmnDiagramGraphImport:
             collaboration_element = collaboration_element_list[0]
             BpmnDiagramGraphImport.import_collaboration_element(diagram_graph, collaboration_element, collaboration)
 
-        message_flows = collaboration[consts.Consts.message_flows]
+        if consts.Consts.message_flows in collaboration:
+            message_flows = collaboration[consts.Consts.message_flows]
+        else:
+            message_flows = {}
+
+        participants = None
+        if consts.Consts.participants in collaboration:
+            participants = collaboration[consts.Consts.participants]
 
         for element in utils.BpmnImportUtils.iterate_elements(plane_element):
             if element.nodeType != element.TEXT_NODE:
                 tag_name = utils.BpmnImportUtils.remove_namespace_from_tag_name(element.tagName)
                 if tag_name == consts.Consts.bpmn_shape:
-                    BpmnDiagramGraphImport.import_shape_di(diagram_graph, element)
+                    BpmnDiagramGraphImport.import_shape_di(participants, diagram_graph, element)
                 elif tag_name == consts.Consts.bpmn_edge:
                     BpmnDiagramGraphImport.import_flow_di(diagram_graph, sequence_flows, message_flows, element)
 
@@ -66,9 +74,10 @@ class BpmnDiagramGraphImport:
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param collaboration_element: XML doument element,
         :param collaboration_dict: dictionary, that consist all information imported from 'collaboration' element.
-        Includes two key-value pairs - 'participants' that keeps information about 'participant' elements and
-        'message_flows' that keeps information about message flows.
+        Includes three key-value pairs - 'id' which keeps ID of collaboration element, 'participants' that keeps
+        information about 'participant' elements and 'message_flows' that keeps information about message flows.
         """
+        collaboration_dict[consts.Consts.id] = collaboration_element.getAttribute(consts.Consts.id)
         collaboration_dict[consts.Consts.participants] = {}
         participants_dict = collaboration_dict[consts.Consts.participants]
         collaboration_dict[consts.Consts.message_flows] = {}
@@ -121,7 +130,7 @@ class BpmnDiagramGraphImport:
         plane_attributes[consts.Consts.bpmn_element] = plane_element.getAttribute(consts.Consts.bpmn_element)
 
     @staticmethod
-    def import_process_elements(document, diagram_graph, sequence_flows, process_elements_dict):
+    def import_process_elements(document, diagram_graph, sequence_flows, process_elements_dict, plane_element):
         """
         Method for importing all 'process' elements in diagram.
 
@@ -129,7 +138,8 @@ class BpmnDiagramGraphImport:
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param sequence_flows: a list of sequence flows existing in diagram,
         :param process_elements_dict: dictionary that holds attribute values for imported 'process' elements. Key is
-        an ID of process, value - a dictionary of process attributes.
+        an ID of process, value - a dictionary of process attributes,
+        :param plane_element: object representing a BPMN XML 'plane' element.
         """
         for process_element in document.getElementsByTagNameNS("*", consts.Consts.process):
             BpmnDiagramGraphImport.import_process_element(process_elements_dict, process_element)
@@ -141,7 +151,7 @@ class BpmnDiagramGraphImport:
             if lane_set_list is not None and len(lane_set_list) > 0:
                 # according to BPMN 2.0 XML Schema, there's at most one 'laneSet' element inside 'process'
                 lane_set = lane_set_list[0]
-                BpmnDiagramGraphImport.import_lane_set_element(process_attributes, lane_set)
+                BpmnDiagramGraphImport.import_lane_set_element(process_attributes, lane_set, plane_element)
 
             for element in utils.BpmnImportUtils.iterate_elements(process_element):
                 if element.nodeType != element.TEXT_NODE:
@@ -185,13 +195,14 @@ class BpmnDiagramGraphImport:
                                                                              flow)
 
     @staticmethod
-    def import_lane_set_element(process_attributes, lane_set_element):
+    def import_lane_set_element(process_attributes, lane_set_element, plane_element):
         """
         Method for importing 'laneSet' element from diagram file.
 
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
         imported flow node,
-        :param lane_set_element: XML document element.
+        :param lane_set_element: XML document element,
+        :param plane_element: object representing a BPMN XML 'plane' element.
         """
         lane_set_id = lane_set_element.getAttribute(consts.Consts.id)
         lanes_attr = {}
@@ -201,18 +212,19 @@ class BpmnDiagramGraphImport:
                 if tag_name == consts.Consts.lane:
                     lane = element
                     lane_id = lane.getAttribute(consts.Consts.id)
-                    lane_attr = BpmnDiagramGraphImport.import_lane_element(lane)
+                    lane_attr = BpmnDiagramGraphImport.import_lane_element(lane, plane_element)
                     lanes_attr[lane_id] = lane_attr
 
         lane_set_attr = {consts.Consts.id: lane_set_id, consts.Consts.lanes: lanes_attr}
         process_attributes[consts.Consts.lane_set] = lane_set_attr
 
     @staticmethod
-    def import_child_lane_set_element(child_lane_set_element):
+    def import_child_lane_set_element(child_lane_set_element, plane_element):
         """
         Method for importing 'childLaneSet' element from diagram file.
 
-        :param child_lane_set_element: XML document element.
+        :param child_lane_set_element: XML document element,
+        :param plane_element: object representing a BPMN XML 'plane' element.
         """
         lane_set_id = child_lane_set_element.getAttribute(consts.Consts.id)
         lanes_attr = {}
@@ -222,18 +234,19 @@ class BpmnDiagramGraphImport:
                 if tag_name == consts.Consts.lane:
                     lane = element
                     lane_id = lane.getAttribute(consts.Consts.id)
-                    lane_attr = BpmnDiagramGraphImport.import_lane_element(lane)
+                    lane_attr = BpmnDiagramGraphImport.import_lane_element(lane, plane_element)
                     lanes_attr[lane_id] = lane_attr
 
         child_lane_set_attr = {consts.Consts.id: lane_set_id, consts.Consts.lanes: lanes_attr}
         return child_lane_set_attr
 
     @staticmethod
-    def import_lane_element(lane_element):
+    def import_lane_element(lane_element, plane_element):
         """
         Method for importing 'laneSet' element from diagram file.
 
-        :param lane_element: XML document element.
+        :param lane_element: XML document element,
+        :param plane_element: object representing a BPMN XML 'plane' element.
         """
         lane_id = lane_element.getAttribute(consts.Consts.id)
         lane_name = lane_element.getAttribute(consts.Consts.name)
@@ -243,7 +256,7 @@ class BpmnDiagramGraphImport:
             if element.nodeType != element.TEXT_NODE:
                 tag_name = utils.BpmnImportUtils.remove_namespace_from_tag_name(element.tagName)
                 if tag_name == consts.Consts.child_lane_set:
-                    child_lane_set_attr = BpmnDiagramGraphImport.import_child_lane_set_element(element)
+                    child_lane_set_attr = BpmnDiagramGraphImport.import_child_lane_set_element(element, plane_element)
                 elif tag_name == consts.Consts.flow_node_ref:
                     flow_node_ref_id = element.firstChild.nodeValue
                     flow_node_refs.append(flow_node_ref_id)
@@ -251,6 +264,18 @@ class BpmnDiagramGraphImport:
         lane_attr = {consts.Consts.id: lane_id, consts.Consts.name: lane_name,
                      consts.Consts.child_lane_set: child_lane_set_attr,
                      consts.Consts.flow_node_refs: flow_node_refs}
+
+        shape_element = None
+        for element in utils.BpmnImportUtils.iterate_elements(plane_element):
+            if element.nodeType != element.TEXT_NODE and element.getAttribute(consts.Consts.bpmn_element) == lane_id:
+                shape_element = element
+        if shape_element is not None:
+            bounds = shape_element.getElementsByTagNameNS("*", "Bounds")[0]
+            lane_attr[consts.Consts.is_horizontal] = shape_element.getAttribute(consts.Consts.is_horizontal)
+            lane_attr[consts.Consts.width] = bounds.getAttribute(consts.Consts.width)
+            lane_attr[consts.Consts.height] = bounds.getAttribute(consts.Consts.height)
+            lane_attr[consts.Consts.x] = bounds.getAttribute(consts.Consts.x)
+            lane_attr[consts.Consts.y] = bounds.getAttribute(consts.Consts.y)
         return lane_attr
 
     @staticmethod
@@ -630,7 +655,8 @@ class BpmnDiagramGraphImport:
         name = flow_element.getAttribute(consts.Consts.name) if flow_element.hasAttribute(consts.Consts.name) else ""
         source_ref = flow_element.getAttribute(consts.Consts.source_ref)
         target_ref = flow_element.getAttribute(consts.Consts.target_ref)
-        message_flows[flow_id] = {consts.Consts.name: name, consts.Consts.source_ref: source_ref,
+        message_flows[flow_id] = {consts.Consts.id: flow_id, consts.Consts.name: name,
+                                  consts.Consts.source_ref: source_ref,
                                   consts.Consts.target_ref: target_ref}
         diagram_graph.add_edge(source_ref, target_ref)
         diagram_graph.edge[source_ref][target_ref][consts.Consts.id] = flow_id
@@ -651,7 +677,7 @@ class BpmnDiagramGraphImport:
             incoming_list.append(flow_id)
 
     @staticmethod
-    def import_shape_di(diagram_graph, shape_element):
+    def import_shape_di(participants_dict, diagram_graph, shape_element):
         """
         Adds Diagram Interchange information (information about rendering a diagram) to appropriate
         BPMN diagram element in graph node.
@@ -661,21 +687,31 @@ class BpmnDiagramGraphImport:
         - x - first coordinate of BPMNShape,
         - y - second coordinate of BPMNShape.
 
+        :param participants_dict: dictionary with 'participant' elements attributes,
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param shape_element: object representing a BPMN XML 'BPMNShape' element.
         """
         element_id = shape_element.getAttribute(consts.Consts.bpmn_element)
         bounds = shape_element.getElementsByTagNameNS("*", "Bounds")[0]
         if diagram_graph.has_node(element_id):
-            diagram_graph.node[element_id][consts.Consts.width] = bounds.getAttribute(consts.Consts.width)
-            diagram_graph.node[element_id][consts.Consts.height] = bounds.getAttribute(consts.Consts.height)
+            node = diagram_graph.node[element_id]
+            node[consts.Consts.width] = bounds.getAttribute(consts.Consts.width)
+            node[consts.Consts.height] = bounds.getAttribute(consts.Consts.height)
 
-            if diagram_graph.node[element_id][consts.Consts.type] == consts.Consts.subprocess:
-                diagram_graph.node[element_id][consts.Consts.is_expanded] = \
+            if node[consts.Consts.type] == consts.Consts.subprocess:
+                node[consts.Consts.is_expanded] = \
                     shape_element.getAttribute(consts.Consts.is_expanded) \
                     if shape_element.hasAttribute(consts.Consts.is_expanded) else "false"
-            diagram_graph.node[element_id][consts.Consts.x] = bounds.getAttribute(consts.Consts.x)
-            diagram_graph.node[element_id][consts.Consts.y] = bounds.getAttribute(consts.Consts.y)
+            node[consts.Consts.x] = bounds.getAttribute(consts.Consts.x)
+            node[consts.Consts.y] = bounds.getAttribute(consts.Consts.y)
+        elif element_id in participants_dict:
+            # BPMNShape is either connected with FlowNode or Participant
+            participant_attr = participants_dict[element_id]
+            participant_attr[consts.Consts.is_horizontal] = shape_element.getAttribute(consts.Consts.is_horizontal)
+            participant_attr[consts.Consts.width] = bounds.getAttribute(consts.Consts.width)
+            participant_attr[consts.Consts.height] = bounds.getAttribute(consts.Consts.height)
+            participant_attr[consts.Consts.x] = bounds.getAttribute(consts.Consts.x)
+            participant_attr[consts.Consts.y] = bounds.getAttribute(consts.Consts.y)
 
     @staticmethod
     def import_flow_di(diagram_graph, sequence_flows, message_flows, flow_element):

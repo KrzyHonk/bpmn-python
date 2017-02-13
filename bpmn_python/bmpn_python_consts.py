@@ -4,7 +4,7 @@ Package used to unify the different constant values used in entire project
 """
 
 
-class Consts:
+class Consts(object):
     """
     Class used to unify the different constant values used in entire project
     """
@@ -25,6 +25,7 @@ class Consts:
     is_closed = "isClosed"
     is_executable = "isExecutable"
     is_expanded = "isExpanded"
+    is_horizontal = "isHorizontal"
     process_type = "processType"
     sequence_flow = "sequenceFlow"
     message_flow = "messageFlow"
