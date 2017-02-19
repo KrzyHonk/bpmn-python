@@ -15,7 +15,7 @@ class SignavioSimpleTests(unittest.TestCase):
     created in Signavio Editor.
     """
     output_directory = "./output/test-signavio/simple/"
-    example_path = "../examples/signavio_simple_example.bpmn"
+    example_path = "../examples/xml_import_export/signavio_simple_example.bpmn"
     output_file_with_di = "signavio-example-output.xml"
     output_file_no_di = "signavio-example-output-no-di.xml"
     output_dot_file = "signavio-example"

@@ -15,7 +15,7 @@ class SignavioComplexTests(unittest.TestCase):
     created in Signavio Editor.
     """
     output_directory = "./output/test-signavio/complex/"
-    example_path = "../examples/signavio_complex_example.bpmn"
+    example_path = "../examples/xml_import_export/signavio_complex_example.bpmn"
     output_file_with_di = "signavio-complex-example-output.xml"
     output_file_no_di = "signavio-complex-example-output-no-di.xml"
     output_dot_file = "signavio-complex-example"

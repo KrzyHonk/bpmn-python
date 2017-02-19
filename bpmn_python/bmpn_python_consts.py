@@ -28,6 +28,7 @@ class Consts(object):
     is_horizontal = "isHorizontal"
     process_type = "processType"
     sequence_flow = "sequenceFlow"
+    condition_expression = "conditionExpression"
     message_flow = "messageFlow"
     message_flows = "messageFlows"
 

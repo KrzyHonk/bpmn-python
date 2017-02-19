@@ -15,7 +15,7 @@ class CamundaComplexTests(unittest.TestCase):
     created in bpmn-io (Camunda library implementation).
     """
     output_directory = "./output/test-camunda/complex/"
-    example_path = "../examples/camunda_complex_example.bpmn"
+    example_path = "../examples/xml_import_export/camunda_complex_example.bpmn"
     output_file_with_di = "camunda-complex-example-output.xml"
     output_file_no_di = "camunda-complex-example-output-no-di.xml"
     output_dot_file = "camunda-complex-example"

@@ -365,7 +365,7 @@ class BpmnDiagramGraphImport(object):
         imported flow node,
         :param element: object representing a BPMN XML 'task' element.
         """
-        BpmnDiagramGraphImport.import_flownode_to_graph(diagram_graph, process_id, process_attributes, element)
+        BpmnDiagramGraphImport.import_activity_to_graph(diagram_graph, process_id, process_attributes, element)
 
     @staticmethod
     def import_subprocess_to_graph(diagram_graph, process_id, process_attributes, element):
@@ -380,11 +380,31 @@ class BpmnDiagramGraphImport(object):
         imported flow node,
         :param element: object representing a BPMN XML 'subprocess' element
         """
+        BpmnDiagramGraphImport.import_activity_to_graph(diagram_graph, process_id, process_attributes, element)
+
         element_id = element.getAttribute(consts.Consts.id)
-        BpmnDiagramGraphImport.import_flownode_to_graph(diagram_graph, process_id, process_attributes, element)
         diagram_graph.node[element_id][consts.Consts.triggered_by_event] = \
             element.getAttribute(consts.Consts.triggered_by_event) \
             if element.hasAttribute(consts.Consts.triggered_by_event) else "false"
+
+    @staticmethod
+    def import_activity_to_graph(diagram_graph, process_id, process_attributes, element):
+        """
+        Method that adds the new element that represents BPMN activity.
+        Should not be used directly, only as a part of method, that imports an element which extends Activity element
+        (task, subprocess etc.)
+
+        :param diagram_graph: NetworkX graph representing a BPMN process diagram,
+        :param process_id: string object, representing an ID of process element,
+        :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
+        imported flow node,
+        :param element: object representing a BPMN XML element which extends 'activity'.
+        """
+        BpmnDiagramGraphImport.import_flownode_to_graph(diagram_graph, process_id, process_attributes, element)
+
+        element_id = element.getAttribute(consts.Consts.id)
+        diagram_graph.node[element_id][consts.Consts.default] = element.getAttribute(consts.Consts.default) \
+            if element.hasAttribute(consts.Consts.default) else None
 
     @staticmethod
     def import_gateway_to_graph(diagram_graph, process_id, process_attributes, element):
@@ -621,6 +641,15 @@ class BpmnDiagramGraphImport(object):
         diagram_graph.edge[source_ref][target_ref][consts.Consts.name] = name
         diagram_graph.edge[source_ref][target_ref][consts.Consts.source_ref] = source_ref
         diagram_graph.edge[source_ref][target_ref][consts.Consts.target_ref] = target_ref
+        for element in utils.BpmnImportUtils.iterate_elements(flow_element):
+            if element.nodeType != element.TEXT_NODE:
+                tag_name = utils.BpmnImportUtils.remove_namespace_from_tag_name(element.tagName)
+                if tag_name == consts.Consts.condition_expression:
+                    condition_expression = element.firstChild.nodeValue
+                    diagram_graph.edge[source_ref][target_ref][consts.Consts.condition_expression] = {
+                        consts.Consts.id: element.getAttribute(consts.Consts.id),
+                        consts.Consts.condition_expression: condition_expression
+                    }
 
         '''
         # Add incoming / outgoing nodes to corresponding elements. May be redundant action since this information is

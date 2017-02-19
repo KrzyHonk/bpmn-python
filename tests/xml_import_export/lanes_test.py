@@ -15,7 +15,7 @@ class BPMNEditorTests(unittest.TestCase):
     multiple pool and lane elements.
     """
     output_directory = "./output/test-lane/"
-    example_path = "../examples/lanes.bpmn"
+    example_path = "../examples/xml_import_export/lanes.bpmn"
     output_file_with_di = "lanes-example-output.xml"
     output_file_no_di = "lanes-example-output-no-di.xml"
 

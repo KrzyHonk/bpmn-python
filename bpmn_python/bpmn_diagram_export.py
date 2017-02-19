@@ -30,7 +30,8 @@ class BpmnDiagramGraphExport(object):
         :param node_params: dictionary with given task parameters,
         :param output_element: object representing BPMN XML 'task' element.
         """
-        pass
+        if consts.Consts.default in node_params and node_params[consts.Consts.default] is not None:
+            output_element.set(consts.Consts.default, node_params[consts.Consts.default])
 
     @staticmethod
     def export_subprocess_info(node_params, output_element):
@@ -41,6 +42,8 @@ class BpmnDiagramGraphExport(object):
         :param output_element: object representing BPMN XML 'subprocess' element.
         """
         output_element.set(consts.Consts.triggered_by_event, node_params[consts.Consts.triggered_by_event])
+        if consts.Consts.default in node_params and node_params[consts.Consts.default] is not None:
+            output_element.set(consts.Consts.default, node_params[consts.Consts.default])
 
     # TODO Complex gateway not fully supported
     #  need to find out how sequence of conditions is represented in BPMN 2.0 XML
@@ -53,7 +56,7 @@ class BpmnDiagramGraphExport(object):
         :param output_element: object representing BPMN XML 'complexGateway' element.
         """
         output_element.set(consts.Consts.gateway_direction, node_params[consts.Consts.gateway_direction])
-        if node_params[consts.Consts.default] is not None:
+        if consts.Consts.default in node_params and node_params[consts.Consts.default] is not None:
             output_element.set(consts.Consts.default, node_params[consts.Consts.default])
 
     @staticmethod
@@ -77,7 +80,7 @@ class BpmnDiagramGraphExport(object):
         :param output_element: object representing BPMN XML 'inclusiveGateway'/'exclusive' element.
         """
         output_element.set(consts.Consts.gateway_direction, node_params[consts.Consts.gateway_direction])
-        if node_params[consts.Consts.default] is not None:
+        if consts.Consts.default in node_params and node_params[consts.Consts.default] is not None:
             output_element.set(consts.Consts.default, node_params[consts.Consts.default])
 
     @staticmethod
@@ -332,6 +335,12 @@ class BpmnDiagramGraphExport(object):
         output_flow.set(consts.Consts.name, params[consts.Consts.name])
         output_flow.set(consts.Consts.source_ref, params[consts.Consts.source_ref])
         output_flow.set(consts.Consts.target_ref, params[consts.Consts.target_ref])
+        if consts.Consts.condition_expression in params:
+            condition_expression_params = params[consts.Consts.condition_expression]
+            condition_expression = eTree.SubElement(output_flow, consts.Consts.condition_expression)
+            condition_expression.set(consts.Consts.id, condition_expression_params[consts.Consts.id])
+            condition_expression.set(consts.Consts.id, condition_expression_params[consts.Consts.id])
+            condition_expression.text = condition_expression_params[consts.Consts.condition_expression]
 
     @staticmethod
     def export_flow_di_data(params, plane):
