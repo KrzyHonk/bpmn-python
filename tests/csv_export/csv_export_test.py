@@ -4,6 +4,7 @@ Unit tests for exporting process to CSV functionality.
 """
 
 import unittest
+import os
 
 import bpmn_python.bpmn_diagram_rep as diagram
 
@@ -13,8 +14,40 @@ class CsvExportTests(unittest.TestCase):
     This class contains test for manual diagram generation functionality.
     """
     output_directory = "./output/test-csv-export/"
+    example_directory = "../examples/csv_export/"
 
-    def test_create_simple_diagram_manually(self):
+    def test_csv_export_bank_account_example(self):
+        bpmn_graph = diagram.BpmnDiagramGraph()
+        bpmn_graph.load_diagram_from_xml_file(os.path.abspath(self.example_directory + "bank-account-process.bpmn"))
+        bpmn_graph.export_csv_file(self.output_directory, "bank-account-process.csv")
+
+    def test_csv_export_checkin_process_example(self):
+        bpmn_graph = diagram.BpmnDiagramGraph()
+        bpmn_graph.load_diagram_from_xml_file(os.path.abspath(self.example_directory + "checkin-process.bpmn"))
+        bpmn_graph.export_csv_file(self.output_directory, "checkin-process.csv")
+
+    def test_csv_export_credit_process_example(self):
+        bpmn_graph = diagram.BpmnDiagramGraph()
+        bpmn_graph.load_diagram_from_xml_file(os.path.abspath(self.example_directory + "credit-process.bpmn"))
+        bpmn_graph.export_csv_file(self.output_directory, "credit-process.csv")
+
+    def test_csv_export_order_processing_example(self):
+        bpmn_graph = diagram.BpmnDiagramGraph()
+        bpmn_graph.load_diagram_from_xml_file(os.path.abspath(self.example_directory + "order-processing.bpmn"))
+        bpmn_graph.export_csv_file(self.output_directory, "order-processing.csv")
+
+    def test_csv_export_pizza_order_example(self):
+        bpmn_graph = diagram.BpmnDiagramGraph()
+        bpmn_graph.load_diagram_from_xml_file(os.path.abspath(self.example_directory + "pizza-order.bpmn"))
+        bpmn_graph.export_csv_file(self.output_directory, "pizza-order.csv")
+
+    def test_csv_export_tram_process_example(self):
+        bpmn_graph = diagram.BpmnDiagramGraph()
+        bpmn_graph.load_diagram_from_xml_file(os.path.abspath(self.example_directory + "tram-process.bpmn"))
+        # TODO Problem with the loops
+        #bpmn_graph.export_csv_file(self.output_directory, "tram-process.csv")
+
+    def test_csv_export_manual_simple_diagram(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
         process_id = bpmn_graph.add_process_to_diagram()
@@ -41,7 +74,7 @@ class CsvExportTests(unittest.TestCase):
         bpmn_graph.export_csv_file(self.output_directory, "simple_diagram.csv")
         bpmn_graph.export_xml_file(self.output_directory, "simple_diagram.bpmn")
 
-    def test_create_diagram_with_exclusive_parallel_gateway_manually(self):
+    def test_csv_export_diagram_with_exclusive_parallel_gateway(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
         process_id = bpmn_graph.add_process_to_diagram()
@@ -97,7 +130,7 @@ class CsvExportTests(unittest.TestCase):
         bpmn_graph.export_csv_file(self.output_directory, "exclusive_parallel_gateways_diagram.csv")
         bpmn_graph.export_xml_file(self.output_directory, "exclusive_parallel_gateways_diagram.bpmn")
 
-    def test_create_diagram_with_inclusive_parallel_gateway_manually(self):
+    def test_csv_export_diagram_with_inclusive_parallel_gateway(self):
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.create_new_diagram_graph(diagram_name="diagram1")
         process_id = bpmn_graph.add_process_to_diagram()

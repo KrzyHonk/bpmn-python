@@ -454,7 +454,7 @@ class BpmnDiagramGraphExport(object):
 
         :param directory: string representing output directory,
         :param filename: string representing output file name,
-        :param bpmn_diagram: BPMNDiagramGraph class instantion representing a BPMN process diagram.
+        :param bpmn_diagram: BPMNDiagramGraph class instance representing a BPMN process diagram.
         """
         diagram_graph = bpmn_diagram.diagram_graph
         process_elements_dict = bpmn_diagram.process_elements
