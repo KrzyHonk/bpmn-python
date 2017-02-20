@@ -122,9 +122,6 @@ class BpmnImportUtils:
         :param classification_labels: list of labels attached to the element,
         :param nodes_classification: dictionary of classification labels. Key - node id. Value - a list of labels.
         """
-        node_param_name = "node"
-        classification_param_name = "classification"
-
         classification_join = "Join"
         classification_split = "Split"
         if len(element[1][consts.Consts.incoming_flows]) >= 2:

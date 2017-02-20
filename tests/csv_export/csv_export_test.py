@@ -32,6 +32,7 @@ class CsvExportTests(unittest.TestCase):
         bpmn_graph.export_csv_file(self.output_directory, "credit-process.csv")
 
     def test_csv_export_order_processing_example(self):
+        # TODO not working correctly, problem with nested splits
         bpmn_graph = diagram.BpmnDiagramGraph()
         bpmn_graph.load_diagram_from_xml_file(os.path.abspath(self.example_directory + "order-processing.bpmn"))
         bpmn_graph.export_csv_file(self.output_directory, "order-processing.csv")
