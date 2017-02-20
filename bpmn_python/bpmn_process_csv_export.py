@@ -88,6 +88,7 @@ class BpmnDiagramGraphCsvExport(object):
         the branch
         :param condition: the condition param of exported node,
         :param who: the condition param of exported node,
+        :param add_join: boolean flag. Used to indicate if "Join" element should be added to CSV.
         :return: None or the next node object if the exported node was a gateway join.
         """
         node_type = node[1][consts.Consts.type]
@@ -118,6 +119,7 @@ class BpmnDiagramGraphCsvExport(object):
         the branch
         :param condition: the condition param of exported node,
         :param who: the condition param of exported node,
+        :param add_join: boolean flag. Used to indicate if "Join" element should be added to CSV.
         :return: None or the next node object if the exported node was a gateway join.
         """
         node_type = node[1][consts.Consts.type]
@@ -186,15 +188,16 @@ class BpmnDiagramGraphCsvExport(object):
 
             if next_node is not None:
                 return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, next_node,
-                                                             nodes_classification, order + 1, prefix, "", who,
-                                                             add_join=True)
+                                                             nodes_classification, order=(order + 1), prefix=prefix,
+                                                             who=who, add_join=True)
 
         elif len(outgoing_flows) == 1:
             outgoing_flow_id = outgoing_flows[0]
             outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
             outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
             return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, outgoing_node,
-                                                         nodes_classification, order + 1, prefix, "", who)
+                                                         nodes_classification, order=(order + 1), prefix=prefix,
+                                                         who=who)
         else:
             return None
 
