@@ -4,9 +4,9 @@ Test unit, creates a simple graph using functions provided by package and export
 """
 import unittest
 
-import bpmn_python.bpmn_diagram_rep as diagram
-import bpmn_python.bpmn_diagram_visualizer as visualizer
 import bpmn_python.bpmn_diagram_layouter as layouter
+import bpmn_python.bpmn_diagram_visualizer as visualizer
+import graph.bpmn_diagram_rep as diagram
 
 
 class ManualGenerationSimpleTests(unittest.TestCase):

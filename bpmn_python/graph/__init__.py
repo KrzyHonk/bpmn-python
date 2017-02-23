@@ -2,4 +2,5 @@
 """
 Package init file
 """
-import bpmn_python
+import bpmn_diagram_rep
+import classes

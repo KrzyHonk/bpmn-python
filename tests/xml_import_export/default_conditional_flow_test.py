@@ -2,11 +2,10 @@
 """
 Test unit, using simple graph made in BPMNEditor editor for import/export operation
 """
-import unittest
 import os
+import unittest
 
-import bpmn_python.bpmn_diagram_rep as diagram
-import bpmn_python.bpmn_diagram_visualizer as visualizer
+import graph.bpmn_diagram_rep as diagram
 
 
 class DefaultConditionalFlowTests(unittest.TestCase):

@@ -2,11 +2,11 @@
 """
 Unit tests to test the complexity metrics implemented of BPMN models
 """
-import unittest
 import os
+import unittest
 
 from bpmn_python import bpmn_diagram_metrics as metrics
-from bpmn_python.bpmn_diagram_rep import BpmnDiagramGraph
+from graph.bpmn_diagram_rep import BpmnDiagramGraph
 
 
 class BPMNComplexityMetricsTests(unittest.TestCase):
