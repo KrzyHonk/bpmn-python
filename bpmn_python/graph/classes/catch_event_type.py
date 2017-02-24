@@ -51,7 +51,7 @@ class CatchEvent(Event):
         Setter for 'event_definition_list' field.
         :param value - a new value of 'event_definition_list' field. Must be a list of EventDefinition objects
         """
-        if value is None or type(value) is not list:
+        if value is None or not isinstance(value, list):
             raise TypeError("EventDefinitionList new value must be a list")
         else:
             for element in value:

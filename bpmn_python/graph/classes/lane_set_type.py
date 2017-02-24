@@ -54,7 +54,7 @@ class LaneSet(BaseElement):
         Setter for 'lane_list' field.
         :param value - a new value of 'lane_list' field. Must be a list of Lane objects
         """
-        if value is None or type(value) is not list:
+        if value is None or not isinstance(value, list):
             raise TypeError("LaneList new value must be a list")
         else:
             for element in value:

@@ -1,42 +1,41 @@
 # coding=utf-8
 """
-Class used for representing tGateway of BPMN 2.0 graph
+Class used for representing tActivity of BPMN 2.0 graph
 """
 from bpmn_python.graph.classes.flow_node_type import FlowNode
 
 
-class Gateway(FlowNode):
+class Activity(FlowNode):
     """
-    Class used for representing tGateway of BPMN 2.0 graph
+    Class used for representing tActivity of BPMN 2.0 graph
+    Fields (except inherited):
+    - default: ID of default flow of gateway. Must be either None (default is optional according to BPMN 2.0 XML Schema)
+    or String.
     """
-    __gateway_directions_list = ["Unspecified", "Converging", "Diverging", "Mixed"]
 
     def __init__(self):
         """
         Default constructor, initializes object fields with new instances.
         """
-        super(Gateway, self).__init__()
-        self.__gateway_direction = "Unspecified"
+        super(Activity, self).__init__()
+        self.__default = None
 
+    def get_default(self):
+        """
+        Getter for 'default' field.
+        :return:a value of 'default' field.
+        """
+        return self.__default
 
-"""
-<xsd:element name="activity" type="tActivity"/>
-	<xsd:complexType name="tActivity" abstract="true">
-		<xsd:complexContent>
-			<xsd:extension base="tFlowNode">
-				<xsd:sequence>
-					<xsd:element ref="ioSpecification" minOccurs="0" maxOccurs="1"/>
-					<xsd:element ref="property" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="dataInputAssociation" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="dataOutputAssociation" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="resourceRole" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="loopCharacteristics" minOccurs="0"/>
-				</xsd:sequence>
-				<xsd:attribute name="isForCompensation" type="xsd:boolean" default="false"/>
-				<xsd:attribute name="startQuantity" type="xsd:integer" default="1"/>
-				<xsd:attribute name="completionQuantity" type="xsd:integer" default="1"/>
-				<xsd:attribute name="default" type="xsd:IDREF" use="optional"/>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-"""
+    def set_default(self, value):
+        """
+        Setter for 'default' field.
+        :param value - a new value of 'default' field. Must be either None (default is optional according to
+        BPMN 2.0 XML Schema) or String.
+        """
+        if value is None:
+            self.__default = value
+        elif not isinstance(value, str):
+            raise TypeError("Default must be set to a String")
+        else:
+            self.__default = value

@@ -33,7 +33,7 @@ class FlowNode(FlowElement):
         Setter for 'incoming' field.
         :param value - a new value of 'incoming' field. List of IDs (String type) of incoming flows.
         """
-        if type(value) is not list:
+        if not isinstance(value, list):
             raise TypeError("IncomingList new value must be a list")
         for element in value:
             if not isinstance(element, str):
@@ -52,7 +52,7 @@ class FlowNode(FlowElement):
         Setter for 'outgoing' field.
         :param value - a new value of 'outgoing' field. Must be a list of IDs (String type) of outgoing flows.
         """
-        if type(value) is not list:
+        if not isinstance(value, list):
             raise TypeError("OutgoingList new value must be a list")
         for element in value:
             if not isinstance(element, str):

@@ -56,7 +56,7 @@ class Lane(BaseElement):
         Setter for 'flow_node_ref' field.
         :param value - a new value of 'flow_node_ref' field. Must be a list of String objects (ID of referenced nodes).
         """
-        if value is None or type(value) is not list:
+        if value is None or not isinstance(value, list):
             raise TypeError("FlowNodeRefList new value must be a list")
         else:
             for element in value:
@@ -77,7 +77,7 @@ class Lane(BaseElement):
         :param value - a new value of 'child_lane_set' field. Must be an object of LaneSet type.
         """
         if value is None:
-            self.__flow_node_ref_list = value
+            self.__child_lane_set = value
         elif not isinstance(value, LaneSet):
             raise TypeError("ChildLaneSet must be a LaneSet")
         else:
