@@ -2,12 +2,12 @@
 """
 Class used for representing tSubProcess of BPMN 2.0 graph
 """
-from graph.classes.activities.activity_type import Activity
-from graph.classes.flow_element_type import FlowElement
-from graph.classes.lane_set_type import LaneSet
+import graph.classes.activities.activity_type as activity
+import graph.classes.flow_element_type as flow_element
+import graph.classes.lane_set_type as lane_set
 
 
-class SubProcess(Activity):
+class SubProcess(activity.Activity):
     """
     Class used for representing tSubProcess of BPMN 2.0 graph
     Fields (except inherited):
@@ -58,7 +58,7 @@ class SubProcess(Activity):
             raise TypeError("LaneSetList new value must be a list")
         else:
             for element in value:
-                if not isinstance(element, LaneSet):
+                if not isinstance(element, lane_set.LaneSet):
                     raise TypeError("LaneSetList elements in variable must be of LaneSet class")
             self.__lane_set_list = value
 
@@ -78,6 +78,6 @@ class SubProcess(Activity):
             raise TypeError("FlowElementList new value must be a list")
         else:
             for element in value:
-                if not isinstance(element, FlowElement):
+                if not isinstance(element, flow_element.FlowElement):
                     raise TypeError("FlowElementList elements in variable must be of FlowElement class")
             self.__flow_element_list = value

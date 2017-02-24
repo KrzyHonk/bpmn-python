@@ -2,10 +2,10 @@
 """
 Class used for representing tIntermediateThrowEvent of BPMN 2.0 graph
 """
-from graph.classes.events.throw_event_type import ThrowEvent
+import graph.classes.events.throw_event_type as throw_event
 
 
-class IntermediateThrowEvent(ThrowEvent):
+class IntermediateThrowEvent(throw_event.ThrowEvent):
     """
     Class used for representing tIntermediateThrowEvent of BPMN 2.0 graph
     """

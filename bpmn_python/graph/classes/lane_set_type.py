@@ -2,11 +2,11 @@
 """
 Class used for representing tSetLane of BPMN 2.0 graph
 """
-from graph.classes.base_element_type import BaseElement
-from graph.classes.lane_type import Lane
+import graph.classes.base_element_type as base_element
+import graph.classes.lane_type as lane
 
 
-class LaneSet(BaseElement):
+class LaneSet(base_element.BaseElement):
     """
     Class used for representing tSetLane of BPMN 2.0 graph.
     Fields (except inherited):
@@ -58,6 +58,6 @@ class LaneSet(BaseElement):
             raise TypeError("LaneList new value must be a list")
         else:
             for element in value:
-                if not isinstance(element, Lane):
+                if not isinstance(element, lane.Lane):
                     raise TypeError("LaneList elements in variable must be of Lane class")
             self.__lane_list = value

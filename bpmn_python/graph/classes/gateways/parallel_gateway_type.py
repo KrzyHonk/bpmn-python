@@ -2,10 +2,10 @@
 """
 Class used for representing tParallelGateway of BPMN 2.0 graph
 """
-from graph.classes.gateways.gateway_type import Gateway
+import graph.classes.gateways.gateway_type as gateway
 
 
-class ParallelGateway(Gateway):
+class ParallelGateway(gateway.Gateway):
     """
     Class used for representing tParallelGateway of BPMN 2.0 graph
     """

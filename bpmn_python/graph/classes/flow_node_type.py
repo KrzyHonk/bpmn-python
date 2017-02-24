@@ -2,10 +2,10 @@
 """
 Class used for representing tFlowNode of BPMN 2.0 graph
 """
-from graph.classes.flow_element_type import FlowElement
+import bpmn_python.graph.classes.flow_element_type as flow_element_type
 
 
-class FlowNode(FlowElement):
+class FlowNode(flow_element_type.FlowElement):
     """
     Class used for representing tFlowNode of BPMN 2.0 graph
     """

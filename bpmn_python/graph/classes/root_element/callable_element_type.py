@@ -2,10 +2,10 @@
 """
 Class used for representing tCallableElement of BPMN 2.0 graph
 """
-from graph.classes.root_element.root_element_type import RootElement
+import graph.classes.root_element.root_element_type as root_element
 
 
-class CallableElement(RootElement):
+class CallableElement(root_element.RootElement):
     """
     Class used for representing tCallableElement of BPMN 2.0 graph.
     """

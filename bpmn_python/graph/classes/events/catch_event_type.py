@@ -2,11 +2,11 @@
 """
 Class used for representing tCatchEvent of BPMN 2.0 graph
 """
-from graph.classes.events.event_type import Event
-from graph.classes.root_element.event_definition_type import EventDefinition
+import graph.classes.events.event_type as event
+import graph.classes.root_element.event_definition_type as event_definition
 
 
-class CatchEvent(Event):
+class CatchEvent(event.Event):
     """
     Class used for representing tCatchEvent of BPMN 2.0 graph
     Fields (except inherited):
@@ -55,6 +55,6 @@ class CatchEvent(Event):
             raise TypeError("EventDefinitionList new value must be a list")
         else:
             for element in value:
-                if not isinstance(element, EventDefinition):
+                if not isinstance(element, event_definition.EventDefinition):
                     raise TypeError("EventDefinitionList elements in variable must be of Lane class")
             self.__event_definition_list = value

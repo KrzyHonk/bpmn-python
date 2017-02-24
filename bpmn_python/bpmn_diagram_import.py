@@ -309,7 +309,7 @@ class BpmnDiagramGraphImport(object):
         process_elements_dict[process_id] = process_element_attributes
 
     @staticmethod
-    def import_flownode_to_graph(diagram_graph, process_id, process_attributes, element):
+    def import_flownode_to_graph(bpmn_graph, process_id, process_attributes, element):
         """
         Adds a new node to graph.
         Input parameter is object of class xml.dom.Element.
@@ -319,19 +319,19 @@ class BpmnDiagramGraphImport(object):
         - type - tagName of element, used to identify type of BPMN diagram element,
         - name - optional attribute, empty string by default.
 
-        :param diagram_graph: NetworkX graph representing a BPMN process diagram,
+        :param bpmn_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
         imported flow node,
         :param element: object representing a BPMN XML element corresponding to given flownode,
         """
         element_id = element.getAttribute(consts.Consts.id)
-        diagram_graph.add_node(element_id)
-        diagram_graph.node[element_id][consts.Consts.type] = \
+        bpmn_graph.add_node(element_id)
+        bpmn_graph.node[element_id][consts.Consts.type] = \
             utils.BpmnImportUtils.remove_namespace_from_tag_name(element.tagName)
-        diagram_graph.node[element_id][consts.Consts.node_name] = \
+        bpmn_graph.node[element_id][consts.Consts.node_name] = \
             element.getAttribute(consts.Consts.name) if element.hasAttribute(consts.Consts.name) else ""
-        diagram_graph.node[element_id][consts.Consts.process] = process_id
+        bpmn_graph.node[element_id][consts.Consts.process] = process_id
         process_attributes[consts.Consts.node_ids].append(element_id)
 
         # add incoming flow node list
@@ -341,7 +341,7 @@ class BpmnDiagramGraphImport(object):
         for index in range(length):
             incoming_tmp = incoming_xml[index].firstChild.nodeValue
             incoming_list[index] = incoming_tmp
-        diagram_graph.node[element_id][consts.Consts.incoming_flows] = incoming_list
+        bpmn_graph.node[element_id][consts.Consts.incoming_flows] = incoming_list
 
         # add outgoing flow node list
         outgoing_xml = element.getElementsByTagNameNS("*", consts.Consts.outgoing_flows)
@@ -350,7 +350,7 @@ class BpmnDiagramGraphImport(object):
         for index in range(length):
             outgoing_tmp = outgoing_xml[index].firstChild.nodeValue
             outgoing_list[index] = outgoing_tmp
-        diagram_graph.node[element_id][consts.Consts.outgoing_flows] = outgoing_list
+        bpmn_graph.node[element_id][consts.Consts.outgoing_flows] = outgoing_list
 
     @staticmethod
     def import_task_to_graph(diagram_graph, process_id, process_attributes, element):

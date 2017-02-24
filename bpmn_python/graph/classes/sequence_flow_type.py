@@ -2,11 +2,11 @@
 """
 Class used for representing tSequenceFlow of BPMN 2.0 graph
 """
-from graph.classes.condition_expression_type import ConditionExpression
-from graph.classes.flow_element_type import FlowElement
+import graph.classes.condition_expression_type as condition_expression
+import graph.classes.flow_element_type as flow_element
 
 
-class SequenceFlow(FlowElement):
+class SequenceFlow(flow_element.FlowElement):
     """
     Class used for representing tSequenceFlow of BPMN 2.0 graph.
     Fields (except inherited):
@@ -100,7 +100,7 @@ class SequenceFlow(FlowElement):
         """
         if value is None:
             self.__condition_expression = value
-        if not isinstance(value, ConditionExpression):
+        if not isinstance(value, condition_expression.ConditionExpression):
             raise TypeError("ConditionExpression must be set to an instance of class ConditionExpression")
         else:
             self.__condition_expression = value

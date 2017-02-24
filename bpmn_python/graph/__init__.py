@@ -2,5 +2,3 @@
 """
 Package init file
 """
-import bpmn_diagram_rep
-import classes

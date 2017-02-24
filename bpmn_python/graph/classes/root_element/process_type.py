@@ -2,12 +2,12 @@
 """
 Class used for representing tProcess of BPMN 2.0 graph
 """
-from graph.classes.flow_element_type import FlowElement
-from graph.classes.lane_set_type import LaneSet
-from graph.classes.root_element.callable_element_type import CallableElement
+import graph.classes.flow_element_type as flow_element
+import graph.classes.lane_set_type as lane_set
+import graph.classes.root_element.callable_element_type as callable_element
 
 
-class Process(CallableElement):
+class Process(callable_element.CallableElement):
     """
     Class used for representing tProcess of BPMN 2.0 graph.
     """
@@ -93,7 +93,7 @@ class Process(CallableElement):
             raise TypeError("LaneSetList new value must be a list")
         else:
             for element in value:
-                if not isinstance(element, LaneSet):
+                if not isinstance(element, lane_set.LaneSet):
                     raise TypeError("LaneSetList elements in variable must be of LaneSet class")
             self.__lane_set_list = value
 
@@ -113,6 +113,6 @@ class Process(CallableElement):
             raise TypeError("FlowElementList new value must be a list")
         else:
             for element in value:
-                if not isinstance(element, FlowElement):
+                if not isinstance(element, flow_element.FlowElement):
                     raise TypeError("FlowElementList elements in variable must be of FlowElement class")
             self.__flow_element_list = value

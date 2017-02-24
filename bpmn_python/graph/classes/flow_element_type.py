@@ -2,10 +2,10 @@
 """
 Class used for representing tFlowElement of BPMN 2.0 graph
 """
-from graph.classes.base_element_type import BaseElement
+import graph.classes.base_element_type as base_element
 
 
-class FlowElement(BaseElement):
+class FlowElement(base_element.BaseElement):
     """
     Class used for representing tFlowElement of BPMN 2.0 graph.
     Fields (except inherited):

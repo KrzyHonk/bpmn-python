@@ -2,10 +2,10 @@
 """
 Class used for representing tStartEvent of BPMN 2.0 graph
 """
-from graph.classes.events.catch_event_type import CatchEvent
+import graph.classes.events.catch_event_type as catch_event
 
 
-class StartEvent(CatchEvent):
+class StartEvent(catch_event.CatchEvent):
     """
     Class used for representing tStartEvent of BPMN 2.0 graph
     """

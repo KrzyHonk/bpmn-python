@@ -2,11 +2,11 @@
 """
 Class used for representing tLane of BPMN 2.0 graph
 """
-from graph.classes.base_element_type import BaseElement
-from graph.classes.lane_set_type import LaneSet
+import graph.classes.base_element_type as base_element
+import graph.classes.lane_set_type as lane_set
 
 
-class Lane(BaseElement):
+class Lane(base_element.BaseElement):
     """
     Class used for representing tLane of BPMN 2.0 graph.
     Fields (except inherited):
@@ -78,7 +78,7 @@ class Lane(BaseElement):
         """
         if value is None:
             self.__child_lane_set = value
-        elif not isinstance(value, LaneSet):
+        elif not isinstance(value, lane_set.LaneSet):
             raise TypeError("ChildLaneSet must be a LaneSet")
         else:
             self.__child_lane_set = value

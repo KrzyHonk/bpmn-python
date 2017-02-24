@@ -10,8 +10,8 @@ import graph.bpmn_diagram_rep as diagram
 
 
 class MetricsTests(unittest.TestCase):
-    crossing_points_example_path = "../examples/crossing_point_test.bpmn"
-    cycles_example_path = "../examples/cycles_test.bpmn"
+    crossing_points_example_path = "../examples/metrics/crossing_point_test.bpmn"
+    cycles_example_path = "../examples/metrics/cycles_test.bpmn"
 
     @staticmethod
     def load_example_diagram(filepath):

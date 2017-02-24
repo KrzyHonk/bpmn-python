@@ -2,11 +2,10 @@
 """
 Class used for representing tMessageFlow of BPMN 2.0 graph
 """
+import graph.classes.base_element_type as base_element
 
-from graph.classes.base_element_type import BaseElement
 
-
-class MessageFlow(BaseElement):
+class MessageFlow(base_element.BaseElement):
     """
     Class used for representing tMessageFlow of BPMN 2.0 graph
     """

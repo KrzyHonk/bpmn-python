@@ -2,10 +2,10 @@
 """
 Class used for representing tActivity of BPMN 2.0 graph
 """
-from graph.classes.flow_node_type import FlowNode
+import graph.classes.flow_node_type as flow_node
 
 
-class Activity(FlowNode):
+class Activity(flow_node.FlowNode):
     """
     Class used for representing tActivity of BPMN 2.0 graph
     Fields (except inherited):
