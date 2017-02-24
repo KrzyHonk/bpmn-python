@@ -8,6 +8,10 @@ from bpmn_python.graph.classes.base_element_type import BaseElement
 class Participant(BaseElement):
     """
     Class used for representing tParticipant of BPMN 2.0 graph
+    Fields (except inherited):
+    - name: name of element. Must be either None (name is optional according to BPMN 2.0 XML Schema) or String.
+    - process_ref: an ID of referenced message element. Must be either None (process_ref is optional according to
+    BPMN 2.0 XML Schema) or String.
     """
 
     def __init__(self):
@@ -28,11 +32,15 @@ class Participant(BaseElement):
     def set_name(self, value):
         """
         Setter for 'name' field.
-        :param value - a new value of 'name' field.
+        :param value - a new value of 'name' field. Must be either None (name is optional according to BPMN 2.0 XML
+        Schema) or String.
         """
-        if not isinstance(value, str):
-            raise TypeError("Name must be set to a string")
-        self.__name = value
+        if value is None:
+            self.__name = value
+        elif not isinstance(value, str):
+            raise TypeError("Name must be set to a String")
+        else:
+            self.__name = value
 
     def get_process_ref(self):
         """
@@ -44,8 +52,9 @@ class Participant(BaseElement):
     def set_process_ref(self, value):
         """
         Setter for 'process_ref' field.
-        :param value - a new value of 'process_ref' field.
+        :param value - a new value of 'process_ref' field. Must be either None (process_ref is optional according to
+        BPMN 2.0 XML Schema) or String.
         """
         if not isinstance(value, str):
-            raise TypeError("ProcessRef must be set to a string")
+            raise TypeError("ProcessRef must be set to a String")
         self.__process_ref = value

@@ -11,14 +11,25 @@ class MessageFlow(BaseElement):
     Class used for representing tMessageFlow of BPMN 2.0 graph
     """
 
-    def __init__(self):
+    def __init__(self, source_ref, target_ref):
         """
         Default constructor, initializes object fields with new instances.
+        Fields (except inherited):
+        - name: name of element. Must be either None (name is optional according to BPMN 2.0 XML Schema) or String.
+        - source_ref: an ID of source node. Required field. Must be a String type.
+        - target_ref: an ID of target node. Required field. Must be a String type.
+        - message_ref: an ID of referenced message element. Must be either None (message_ref is optional according to
+        BPMN 2.0 XML Schema) or String.
         """
+        if source_ref is None or not isinstance(source_ref, str):
+            raise TypeError("SourceRef is required and must be set to a String")
+        if target_ref is None or not isinstance(source_ref, str):
+            raise TypeError("TargetRef is required and must be set to a String")
+
         super(MessageFlow, self).__init__()
         self.__name = None
-        self.__source_ref = None
-        self.__target_ref = None
+        self.__source_ref = source_ref
+        self.__target_ref = target_ref
         self.__message_ref = None
 
     def get_name(self):
@@ -31,11 +42,15 @@ class MessageFlow(BaseElement):
     def set_name(self, value):
         """
         Setter for 'name' field.
-        :param value - a new value of 'name' field.
+        :param value - a new value of 'name' field. Must be either None (name is optional according to BPMN 2.0 XML
+        Schema) or String.
         """
-        if not isinstance(value, str):
-            raise TypeError("Name must be set to a string")
-        self.__name = value
+        if value is None:
+            self.__name = value
+        elif not isinstance(value, str):
+            raise TypeError("Name must be set to a String")
+        else:
+            self.__name = value
 
     def get_source_ref(self):
         """
@@ -47,11 +62,12 @@ class MessageFlow(BaseElement):
     def set_source_ref(self, value):
         """
         Setter for 'source_ref' field.
-        :param value - a new value of 'source_ref' field.
+        :param value - a new value of 'source_ref' field. Must be a String type.
         """
-        if not None and not isinstance(value, str):
-            raise TypeError("SourceRef is required and must be set to a string")
-        self.__source_ref = value
+        if value is None or not isinstance(value, str):
+            raise TypeError("SourceRef is required and must be set to a String")
+        else:
+            self.__source_ref = value
 
     def get_target_ref(self):
         """
@@ -63,11 +79,12 @@ class MessageFlow(BaseElement):
     def set_target_ref(self, value):
         """
         Setter for 'target_ref' field.
-        :param value - a new value of 'target_ref' field.
+        :param value - a new value of 'target_ref' field. Must be a String type.
         """
-        if not None and not isinstance(value, str):
-            raise TypeError("TargetRef is required and must be set to a string")
-        self.__target_ref = value
+        if value is None or not isinstance(value, str):
+            raise TypeError("TargetRef is required and must be set to a String")
+        else:
+            self.__target_ref = value
 
     def get_message_ref(self):
         """
@@ -79,8 +96,12 @@ class MessageFlow(BaseElement):
     def set_message_ref(self, value):
         """
         Setter for 'message_ref' field.
-        :param value - a new value of 'message_ref' field.
+        :param value - a new value of 'message_ref' field. Must be either None (message_ref is optional according to
+        BPMN 2.0 XML Schema) or String.
         """
+        if value is None:
+            self.__message_ref = value
         if not isinstance(value, str):
-            raise TypeError("MessageRef must be set to a string")
-        self.__message_ref = value
+            raise TypeError("MessageRef must be set to a String")
+        else:
+            self.__message_ref = value

@@ -8,7 +8,10 @@ from bpmn_python.graph.classes.lane_type import Lane
 
 class LaneSet(BaseElement):
     """
-    Class used for representing tSetLane of BPMN 2.0 graph
+    Class used for representing tSetLane of BPMN 2.0 graph.
+    Fields (except inherited):
+    - name: name of element. Must be either None (name is optional according to BPMN 2.0 XML Schema) or String.
+    - lane_list: a list of Lane objects.
     """
 
     def __init__(self):
@@ -17,39 +20,44 @@ class LaneSet(BaseElement):
         """
         super(LaneSet, self).__init__()
         self.__name = None
-        self.__lane_list = None
+        self.__lane_list = []
 
     def get_name(self):
         """
         Getter for 'name' field.
-        :return:a value of 'name' field.
+        :return: value of 'name' field.
         """
         return self.__name
 
     def set_name(self, value):
         """
         Setter for 'name' field.
-        :param value - a new value of 'name' field.
+        :param value - a new value of 'name' field. Must be either None (name is optional according to BPMN 2.0 XML
+        Schema) or String.
         """
-        if not isinstance(value, str):
-            raise TypeError("Name must be set to a string")
-        self.__name = value
+        if value is None:
+            self.__name = value
+        elif not isinstance(value, str):
+            raise TypeError("Name must be set to a String")
+        else:
+            self.__name = value
 
     def get_lane_list(self):
         """
         Getter for 'lane_list' field.
-        :return:a value of 'lane_list' field.
+        :return: value of 'lane_list' field.
         """
         return self.__lane_list
 
     def set_lane_list(self, value):
         """
         Setter for 'lane_list' field.
-        :param value - a new value of 'lane_list' field.
+        :param value - a new value of 'lane_list' field. Must be a list of Lane objects
         """
-        if type(value) is not list:
+        if value is None or type(value) is not list:
             raise TypeError("LaneList new value must be a list")
-        for element in value:
-            if not isinstance(element, Lane):
-                raise TypeError("LaneList elements in variable must be of Lane class")
-        self.__lane_list = value
+        else:
+            for element in value:
+                if not isinstance(element, Lane):
+                    raise TypeError("LaneList elements in variable must be of Lane class")
+            self.__lane_list = value

@@ -7,7 +7,9 @@ from bpmn_python.graph.classes.base_element_type import BaseElement
 
 class FlowElement(BaseElement):
     """
-    Class used for representing tSetLane of BPMN 2.0 graph
+    Class used for representing tFlowElement of BPMN 2.0 graph.
+    Fields (except inherited):
+    - name: name of element. Must be either None (name is optional according to BPMN 2.0 XML Schema) or String.
     """
 
     def __init__(self):
@@ -27,8 +29,12 @@ class FlowElement(BaseElement):
     def set_name(self, value):
         """
         Setter for 'name' field.
-        :param value - a new value of 'name' field.
+        :param value - a new value of 'name' field. Must be either None (name is optional according to BPMN 2.0 XML
+        Schema) or String.
         """
-        if not isinstance(value, str):
-            raise TypeError("Name must be set to a string")
-        self.__name = value
+        if value is None:
+            self.__name = value
+        elif not isinstance(value, str):
+            raise TypeError("Name must be set to a String")
+        else:
+            self.__name = value
