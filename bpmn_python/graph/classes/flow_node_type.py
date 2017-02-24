@@ -2,7 +2,7 @@
 """
 Class used for representing tFlowNode of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.flow_element_type import FlowElement
+from graph.classes.flow_element_type import FlowElement
 
 
 class FlowNode(FlowElement):

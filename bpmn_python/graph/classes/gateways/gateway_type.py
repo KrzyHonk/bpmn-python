@@ -2,7 +2,7 @@
 """
 Class used for representing tGateway of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.flow_node_type import FlowNode
+from graph.classes.flow_node_type import FlowNode
 
 
 class Gateway(FlowNode):
@@ -33,8 +33,7 @@ class Gateway(FlowNode):
         if value is None or not isinstance(value, str):
             raise TypeError("GatewayDirection must be set to a String")
         elif value not in Gateway.__gateway_directions_list:
-            raise ValueError("GatewayDirection must be one of those: 'Unspecified', 'Converging', "
+            raise ValueError("GatewayDirection must be one of specified values: 'Unspecified', 'Converging', "
                              "'Diverging', 'Mixed'")
-
         else:
             self.__gateway_direction = value

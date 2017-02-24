@@ -2,7 +2,7 @@
 """
 Class used for representing tParallelGateway of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.gateway_type import Gateway
+from graph.classes.gateways.gateway_type import Gateway
 
 
 class ParallelGateway(Gateway):

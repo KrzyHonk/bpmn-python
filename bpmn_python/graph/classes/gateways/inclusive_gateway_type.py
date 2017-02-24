@@ -1,13 +1,13 @@
 # coding=utf-8
 """
-Class used for representing tActivity of BPMN 2.0 graph
+Class used for representing tInclusiveGateway of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.flow_node_type import FlowNode
+from graph.classes.gateways.gateway_type import Gateway
 
 
-class Activity(FlowNode):
+class InclusiveGateway(Gateway):
     """
-    Class used for representing tActivity of BPMN 2.0 graph
+    Class used for representing tInclusiveGateway of BPMN 2.0 graph
     Fields (except inherited):
     - default: ID of default flow of gateway. Must be either None (default is optional according to BPMN 2.0 XML Schema)
     or String.
@@ -17,7 +17,7 @@ class Activity(FlowNode):
         """
         Default constructor, initializes object fields with new instances.
         """
-        super(Activity, self).__init__()
+        super(InclusiveGateway, self).__init__()
         self.__default = None
 
     def get_default(self):

@@ -1,22 +1,20 @@
 # coding=utf-8
 """
-Class used for representing tFlowElement of BPMN 2.0 graph
+Class used for representing tCallableElement of BPMN 2.0 graph
 """
-from graph.classes.base_element_type import BaseElement
+from graph.classes.root_element.root_element_type import RootElement
 
 
-class FlowElement(BaseElement):
+class CallableElement(RootElement):
     """
-    Class used for representing tFlowElement of BPMN 2.0 graph.
-    Fields (except inherited):
-    - name: name of element. Must be either None (name is optional according to BPMN 2.0 XML Schema) or String.
+    Class used for representing tCallableElement of BPMN 2.0 graph.
     """
 
     def __init__(self):
         """
         Default constructor, initializes object fields with new instances.
         """
-        super(FlowElement, self).__init__()
+        super(CallableElement, self).__init__()
         self.__name = None
 
     def get_name(self):

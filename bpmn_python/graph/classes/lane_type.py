@@ -2,8 +2,8 @@
 """
 Class used for representing tLane of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.base_element_type import BaseElement
-from bpmn_python.graph.classes.lane_set_type import LaneSet
+from graph.classes.base_element_type import BaseElement
+from graph.classes.lane_set_type import LaneSet
 
 
 class Lane(BaseElement):

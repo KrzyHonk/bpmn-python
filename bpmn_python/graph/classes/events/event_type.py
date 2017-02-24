@@ -2,7 +2,7 @@
 """
 Class used for representing tEvent of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.flow_node_type import FlowNode
+from graph.classes.flow_node_type import FlowNode
 
 
 class Event(FlowNode):

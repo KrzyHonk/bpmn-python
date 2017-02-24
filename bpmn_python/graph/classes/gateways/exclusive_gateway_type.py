@@ -2,12 +2,12 @@
 """
 Class used for representing tInclusiveGateway of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.gateway_type import Gateway
+from graph.classes.gateways.gateway_type import Gateway
 
 
-class InclusiveGateway(Gateway):
+class ExclusiveGateway(Gateway):
     """
-    Class used for representing tInclusiveGateway of BPMN 2.0 graph
+    Class used for representing tExclusiveGateway of BPMN 2.0 graph
     Fields (except inherited):
     - default: ID of default flow of gateway. Must be either None (default is optional according to BPMN 2.0 XML Schema)
     or String.
@@ -17,7 +17,7 @@ class InclusiveGateway(Gateway):
         """
         Default constructor, initializes object fields with new instances.
         """
-        super(InclusiveGateway, self).__init__()
+        super(ExclusiveGateway, self).__init__()
         self.__default = None
 
     def get_default(self):

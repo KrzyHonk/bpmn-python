@@ -2,7 +2,7 @@
 """
 Class used for representing tParticipant of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.base_element_type import BaseElement
+from graph.classes.base_element_type import BaseElement
 
 
 class Participant(BaseElement):

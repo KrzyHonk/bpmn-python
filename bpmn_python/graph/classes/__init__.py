@@ -2,26 +2,16 @@
 """
 Package init file
 """
-import activity_type
+import activities
 import base_element_type
-import catch_event_type
 import condition_expression_type
-import end_event_type
-import event_definition_type
-import event_type
-import exclusive_gateway_type
+import events
 import flow_element_type
 import flow_node_type
-import gateway_type
-import inclusive_gateway_type
-import intermediate_catch_event_type
-import intermediate_throw_event_type
+import gateways
 import lane_set_type
 import lane_type
 import message_flow_type
-import parallel_gateway_type
 import participant_type
-import root_element_type
+import root_element
 import sequence_flow_type
-import start_event_type
-import throw_event_type

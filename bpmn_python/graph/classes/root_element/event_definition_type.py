@@ -2,7 +2,7 @@
 """
 Class used for representing tEventDefinition of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.root_element_type import RootElement
+from graph.classes.root_element.root_element_type import RootElement
 
 
 class EventDefinition(RootElement):

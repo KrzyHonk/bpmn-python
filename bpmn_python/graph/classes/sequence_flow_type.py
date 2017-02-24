@@ -2,8 +2,8 @@
 """
 Class used for representing tSequenceFlow of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.condition_expression_type import ConditionExpression
-from bpmn_python.graph.classes.flow_element_type import FlowElement
+from graph.classes.condition_expression_type import ConditionExpression
+from graph.classes.flow_element_type import FlowElement
 
 
 class SequenceFlow(FlowElement):

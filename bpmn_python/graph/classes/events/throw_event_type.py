@@ -2,8 +2,8 @@
 """
 Class used for representing tThrowEvent of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.event_definition_type import EventDefinition
-from bpmn_python.graph.classes.event_type import Event
+from graph.classes.events.event_type import Event
+from graph.classes.root_element.event_definition_type import EventDefinition
 
 
 class ThrowEvent(Event):

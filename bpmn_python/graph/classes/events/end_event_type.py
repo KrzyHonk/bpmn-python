@@ -2,7 +2,7 @@
 """
 Class used for representing tEndEvent of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.throw_event_type import ThrowEvent
+from graph.classes.events.throw_event_type import ThrowEvent
 
 
 class EndEvent(ThrowEvent):

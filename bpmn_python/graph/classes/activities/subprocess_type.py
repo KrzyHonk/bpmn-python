@@ -2,9 +2,9 @@
 """
 Class used for representing tSubProcess of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.activity_type import Activity
-from bpmn_python.graph.classes.flow_element_type import FlowElement
-from bpmn_python.graph.classes.lane_set_type import LaneSet
+from graph.classes.activities.activity_type import Activity
+from graph.classes.flow_element_type import FlowElement
+from graph.classes.lane_set_type import LaneSet
 
 
 class SubProcess(Activity):

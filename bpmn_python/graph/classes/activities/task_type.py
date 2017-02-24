@@ -2,7 +2,7 @@
 """
 Class used for representing tTask of BPMN 2.0 graph
 """
-from bpmn_python.graph.classes.activity_type import Activity
+from graph.classes.activities.activity_type import Activity
 
 
 class Task(Activity):
