@@ -3,7 +3,7 @@
 Collection of different metrics used to compare diagram layout quality
 """
 import copy
-import bpmn_python.bmpn_python_consts as consts
+import bpmn_python.bpmn_python_consts as consts
 
 
 def count_crossing_points(bpmn_graph):

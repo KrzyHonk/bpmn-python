@@ -6,7 +6,7 @@ import errno
 import os
 import xml.etree.cElementTree as eTree
 
-import bpmn_python.bmpn_python_consts as consts
+import bpmn_python.bpmn_python_consts as consts
 
 
 class BpmnDiagramGraphExport(object):

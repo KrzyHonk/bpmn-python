@@ -4,7 +4,7 @@ Package with BPMNDiagramGraph - graph representation of BPMN diagram
 """
 import bpmn_python.grid_cell_class as cell_class
 import copy
-import bpmn_python.bmpn_python_consts as consts
+import bpmn_python.bpmn_python_consts as consts
 
 
 def generate_layout(bpmn_graph):
