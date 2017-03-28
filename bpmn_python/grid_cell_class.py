@@ -5,7 +5,7 @@ process
 """
 
 
-class GridCell:
+class GridCell(object):
     """
     Helper class used for Grid cell representation. Contains cell coordinates (row and column) and reference to fow node
     """
