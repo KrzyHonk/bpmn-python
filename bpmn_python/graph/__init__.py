@@ -2,5 +2,4 @@
 """
 Package init file
 """
-from classes import *
 __all__ = ["classes"]
