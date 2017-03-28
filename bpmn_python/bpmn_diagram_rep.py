@@ -6,7 +6,7 @@ import uuid
 
 import networkx as nx
 
-import bpmn_diagram_exception as bpmn_exception
+import bpmn_python.bpmn_diagram_exception as bpmn_exception
 import bpmn_python.bpmn_python_consts as consts
 import bpmn_python.bpmn_diagram_export as bpmn_export
 import bpmn_python.bpmn_diagram_import as bpmn_import
