@@ -27,6 +27,8 @@ def getNodeType(order, csv_line_dict):
         return consts.Consts.start_event
     if csv_line_dict[consts.Consts.csv_terminated] == 'yes':
         return consts.Consts.end_event
+    if csv_line_dict[consts.Consts.csv_subprocess] == 'yes':
+        return consts.Consts.subprocess
     else:
         return consts.Consts.task
 
@@ -152,13 +154,13 @@ def is_node_the_end_event(node_id, process_dict):
 def add_outgoing_flow(node_id, successor_node_id, diagram_graph):
     if diagram_graph.node[node_id].get(consts.Consts.outgoing_flows) is None:
         diagram_graph.node[node_id][consts.Consts.outgoing_flows] = []
-    diagram_graph.node[node_id][consts.Consts.outgoing_flows].append(successor_node_id)
+    diagram_graph.node[node_id][consts.Consts.outgoing_flows].append(get_flow_id(node_id, successor_node_id))
 
 
 def add_incoming_flow(node_id, from_node_id, diagram_graph):
     if diagram_graph.node[node_id].get(consts.Consts.incoming_flows) is None:
         diagram_graph.node[node_id][consts.Consts.incoming_flows] = []
-    diagram_graph.node[node_id][consts.Consts.incoming_flows].append(from_node_id)
+    diagram_graph.node[node_id][consts.Consts.incoming_flows].append(get_flow_id(from_node_id, node_id))
 
 
 def get_connection_condition_if_present(from_node_id, to_node_id, process_dict):
@@ -166,10 +168,14 @@ def get_connection_condition_if_present(from_node_id, to_node_id, process_dict):
         return process_dict[to_node_id].get(consts.Consts.csv_condition)
 
 
+def get_flow_id(from_node_id, to_node_id):
+    return from_node_id + "__" + to_node_id
+
+
 def add_edge(from_node_id, to_node_id, process_dict, diagram_graph, sequence_flows):
     condition = get_connection_condition_if_present(from_node_id, to_node_id, process_dict)
     diagram_graph.add_edge(from_node_id, to_node_id)
-    id = from_node_id + "__" + to_node_id
+    id = get_flow_id(from_node_id, to_node_id)
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.id] = id
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.process] = ""
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.name] = ""
@@ -242,6 +248,17 @@ def fill_graph_connections(process_dict, diagram_graph, sequence_flows):
             raise bpmn_exception.BpmnPythonError("Something wrong in csv file syntax - look for " + node_id)
 
 
+def legacy_adjustment(diagram_graph):
+    for node in diagram_graph.nodes(True):
+        if node[1].get(consts.Consts.incoming_flows) is None:
+            node[1][consts.Consts.incoming_flows] = []
+        if node[1].get(consts.Consts.outgoing_flows) is None:
+            node[1][consts.Consts.outgoing_flows] = []
+        # if node[1].get(consts.Consts.event_definitions) is None:
+        #     node[1][consts.Consts.event_definitions] = []
+
+
+
 class BpmnDiagramGraphCSVImport(object):
 
     @staticmethod
@@ -262,12 +279,12 @@ class BpmnDiagramGraphCSVImport(object):
 
         process_dict = BpmnDiagramGraphCSVImport.import_csv_file_as_dict(filepath)
         BpmnDiagramGraphCSVImport.import_nodes(process_dict, diagram_graph, sequence_flows)
-        pass
+        legacy_adjustment(diagram_graph)
 
 
     @staticmethod
     def import_csv_file_as_dict(filepath):
-        process_dict = pd.DataFrame.from_csv(filepath).to_dict('index')
+        process_dict = pd.DataFrame.from_csv(filepath).fillna("").to_dict('index')
         remove_white_spaces_in_orders(process_dict)
         return process_dict
 
