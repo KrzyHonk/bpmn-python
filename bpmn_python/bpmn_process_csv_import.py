@@ -13,13 +13,14 @@ import re
 import bpmn_python.bmpn_python_consts as consts
 import bpmn_python.bpmn_diagram_exception as bpmn_exception
 
-
 regex_pa_trailing_number = r'(.*[a-z|A-Z]|[^0-9]?)([0-9]+)'
 regex_pa_trailing_letter = r'(.+)([a-z|A-Z])'
 regex_pa_merge_node_finder = r'(.*[a-z|A-Z]|[^0-9]?)([0-9]+[a-z|A-Z])(.*)'
 regex_pa_num_let = r'([0-9]+)([a-z,A-Z])'
-regex_prefix_split_succ= r'^'
-regex_suffix_split_succ= r'([a-z|A-Z]|[a-z|A-Z][0-9]+)$'
+regex_prefix_split_succ = r'^'
+regex_suffix_split_succ = r'([a-z|A-Z]|[a-z|A-Z][0-9]+)$'
+
+default_proces_id = 'process_1'
 
 
 def getNodeType(order, csv_line_dict):
@@ -38,15 +39,24 @@ def add_node_info_to_diagram_graph(order, type, activity, process_id, diagram_gr
     diagram_graph.node[order][consts.Consts.type] = type
     diagram_graph.node[order][consts.Consts.node_name] = activity
     diagram_graph.node[order][consts.Consts.process] = process_id
+    if type == consts.Consts.start_event:
+        diagram_graph.node[order][consts.Consts.parallel_multiple] = "false"
+        diagram_graph.node[order][consts.Consts.is_interrupting] = "true"
+        diagram_graph.node[order][consts.Consts.event_definitions] = []
+    if type == consts.Consts.subprocess:
+        diagram_graph.node[order][consts.Consts.triggered_by_event] = "false"
+    if type == consts.Consts.end_event:
+        diagram_graph.node[order][consts.Consts.event_definitions] = []
+    if type == consts.Consts.inclusive_gateway:
+        diagram_graph.node[order][consts.Consts.gateway_direction] = "Unspecified"
 
 
 def import_nodes_info(process_dict, diagram_graph):
     for order, csv_line_dict in process_dict.items():
         type = getNodeType(order, csv_line_dict)
         activity = process_dict[order][consts.Consts.csv_activity]
-        process_id = ""
+        process_id = default_proces_id
         add_node_info_to_diagram_graph(order, type, activity, process_id, diagram_graph)
-
 
 
 def remove_white_spaces_in_orders(process_dict):
@@ -79,6 +89,7 @@ def get_possible_split_continuation_successor(node_id):
     else:
         return []
 
+
 def get_possible_merge_continuation_successors(node_id_arg):
     node_id = copy.deepcopy(node_id_arg)
     result_trailing_number = re.match(regex_pa_trailing_number, node_id)
@@ -94,7 +105,7 @@ def get_possible_merge_continuation_successors(node_id_arg):
             num_let_result = re.match(regex_pa_num_let, num_let_pair)
             num = num_let_result.group(1)
             inc_num = str(int(num) + 1)
-            possible_successors.append(prefix + inc_num )
+            possible_successors.append(prefix + inc_num)
         return possible_successors
     else:
         raise bpmn_exception.BpmnPythonError("Seems that sth wrong in csv file syntax - look for " + node_id_arg)
@@ -115,6 +126,7 @@ def get_possible_successor_present_in_node_ids_or_raise_excp(poissible_successor
     else:
         return possible_successor_set.pop()
 
+
 def get_all_split_successors(node_id, nodes_ids):
     result = re.match(regex_pa_trailing_number, node_id)
     if not result:
@@ -130,7 +142,6 @@ def get_all_split_successors(node_id, nodes_ids):
         if re.match(pattern, elem):
             split_successors.append(elem)
     return split_successors
-
 
 
 def is_there_sequence_continuation(node_id, nodes_ids):
@@ -150,6 +161,7 @@ def is_there_merge_continuation(node_id, nodes_ids):
 
 def is_node_the_end_event(node_id, process_dict):
     return process_dict[node_id][consts.Consts.csv_terminated] == 'yes'
+
 
 def add_outgoing_flow(node_id, successor_node_id, diagram_graph):
     if diagram_graph.node[node_id].get(consts.Consts.outgoing_flows) is None:
@@ -177,17 +189,16 @@ def add_edge(from_node_id, to_node_id, process_dict, diagram_graph, sequence_flo
     diagram_graph.add_edge(from_node_id, to_node_id)
     id = get_flow_id(from_node_id, to_node_id)
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.id] = id
-    diagram_graph.edge[from_node_id][to_node_id][consts.Consts.process] = ""
+    diagram_graph.edge[from_node_id][to_node_id][consts.Consts.process] = default_proces_id
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.name] = ""
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.source_ref] = from_node_id
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.target_ref] = to_node_id
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.condition_expression] = {
-        consts.Consts.id: id,
+        consts.Consts.id: id + "_cond",
         consts.Consts.condition_expression: condition
     }
     sequence_flows[id] = {consts.Consts.name: id, consts.Consts.source_ref: from_node_id,
-                               consts.Consts.target_ref: to_node_id}
-
+                          consts.Consts.target_ref: to_node_id}
 
 
 def add_connection(from_node_id, to_node_id, process_dict, diagram_graph, sequence_flows):
@@ -219,17 +230,17 @@ def add_merge_gateway_if_not_exists(merge_successor_id, process_dict, diagram_gr
         return (merge_gateway_id, just_created)
 
 
-
 def fill_graph_connections(process_dict, diagram_graph, sequence_flows):
     nodes_ids = sorted(list(diagram_graph.node.keys()))
     nodes_ids_to_process = nodes_ids
-    while(bool(nodes_ids_to_process)):
+    while (bool(nodes_ids_to_process)):
         node_id = nodes_ids_to_process.pop(0)
         if is_node_the_end_event(node_id, process_dict):
             pass
         elif is_there_sequence_continuation(node_id, nodes_ids):
             possible_sequence_successors = get_possible_sequence_continuation_successor(node_id)
-            successor_node_id = get_possible_successor_present_in_node_ids_or_raise_excp(possible_sequence_successors, nodes_ids)
+            successor_node_id = get_possible_successor_present_in_node_ids_or_raise_excp(possible_sequence_successors,
+                                                                                         nodes_ids)
             add_connection(node_id, successor_node_id, process_dict, diagram_graph, sequence_flows)
         elif is_there_split_continuation(node_id, nodes_ids):
             split_gateway_id = add_split_gateway(node_id, process_dict, diagram_graph)
@@ -239,8 +250,10 @@ def fill_graph_connections(process_dict, diagram_graph, sequence_flows):
             pass
         elif is_there_merge_continuation(node_id, nodes_ids):
             possible_merge_successors = get_possible_merge_continuation_successors(node_id)
-            merge_successor_id = get_possible_successor_present_in_node_ids_or_raise_excp(possible_merge_successors, nodes_ids)
-            merge_gateway_id, just_created = add_merge_gateway_if_not_exists(merge_successor_id, process_dict, diagram_graph)
+            merge_successor_id = get_possible_successor_present_in_node_ids_or_raise_excp(possible_merge_successors,
+                                                                                          nodes_ids)
+            merge_gateway_id, just_created = add_merge_gateway_if_not_exists(merge_successor_id, process_dict,
+                                                                             diagram_graph)
             if just_created:
                 add_connection(merge_gateway_id, merge_successor_id, process_dict, diagram_graph, sequence_flows)
             add_connection(node_id, merge_gateway_id, process_dict, diagram_graph, sequence_flows)
@@ -254,13 +267,11 @@ def legacy_adjustment(diagram_graph):
             node[1][consts.Consts.incoming_flows] = []
         if node[1].get(consts.Consts.outgoing_flows) is None:
             node[1][consts.Consts.outgoing_flows] = []
-        # if node[1].get(consts.Consts.event_definitions) is None:
-        #     node[1][consts.Consts.event_definitions] = []
-
+            # if node[1].get(consts.Consts.event_definitions) is None:
+            #     node[1][consts.Consts.event_definitions] = []
 
 
 class BpmnDiagramGraphCSVImport(object):
-
     @staticmethod
     def load_diagram_from_csv(filepath, bpmn_diagram):
         """
@@ -279,8 +290,8 @@ class BpmnDiagramGraphCSVImport(object):
 
         process_dict = BpmnDiagramGraphCSVImport.import_csv_file_as_dict(filepath)
         BpmnDiagramGraphCSVImport.import_nodes(process_dict, diagram_graph, sequence_flows)
+        BpmnDiagramGraphCSVImport.populate_process_elements_dict(process_elements_dict, process_dict)
         legacy_adjustment(diagram_graph)
-
 
     @staticmethod
     def import_csv_file_as_dict(filepath):
@@ -297,5 +308,13 @@ class BpmnDiagramGraphCSVImport(object):
         import_nodes_info(process_dict, diagram_graph)
         fill_graph_connections(process_dict, diagram_graph, sequence_flows)
 
-
-
+    @staticmethod
+    def populate_process_elements_dict(process_elements_dict, process_dict):
+        process_id = default_proces_id
+        process_element_attributes = {consts.Consts.id: default_proces_id,
+                                      consts.Consts.name: "",
+                                      consts.Consts.is_closed: "false",
+                                      consts.Consts.is_executable: "false",
+                                      consts.Consts.process_type: "None",
+                                      consts.Consts.node_ids: list(process_dict.keys())}
+        process_elements_dict[process_id] = process_element_attributes

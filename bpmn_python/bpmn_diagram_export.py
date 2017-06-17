@@ -118,9 +118,9 @@ class BpmnDiagramGraphExport(object):
         :param node_params: dictionary with given intermediate catch event parameters,
         :param output_element: object representing BPMN XML 'intermediateCatchEvent' element.
         """
-        output_element.set(consts.Consts.parallel_multiple, node_params[consts.Consts.parallel_multiple])
-        output_element.set(consts.Consts.is_interrupting, node_params[consts.Consts.is_interrupting])
-        definitions = node_params[consts.Consts.event_definitions]
+        output_element.set(consts.Consts.parallel_multiple, node_params.get(consts.Consts.parallel_multiple))
+        output_element.set(consts.Consts.is_interrupting, node_params.get(consts.Consts.is_interrupting))
+        definitions = node_params.get(consts.Consts.event_definitions)
         for definition in definitions:
             definition_id = definition[consts.Consts.id]
             definition_type = definition[consts.Consts.definition_type]
