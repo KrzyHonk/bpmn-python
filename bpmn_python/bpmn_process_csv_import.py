@@ -13,12 +13,12 @@ import re
 import bpmn_python.bmpn_python_consts as consts
 import bpmn_python.bpmn_diagram_exception as bpmn_exception
 
-regex_pa_trailing_number = r'(.*[a-z|A-Z]|[^0-9]?)([0-9]+)'
+regex_pa_trailing_number = r'^(.*[a-z|A-Z]|[^0-9]?)([0-9]+)$'
 regex_pa_trailing_letter = r'(.+)([a-z|A-Z])'
-regex_pa_merge_node_finder = r'(.*[a-z|A-Z]|[^0-9]?)([0-9]+[a-z|A-Z])(.*)'
+regex_pa_merge_node_finder = r'(.*?)([0-9]+[a-z|A-Z])(.*?)'
 regex_pa_num_let = r'([0-9]+)([a-z,A-Z])'
 regex_prefix_split_succ = r'^'
-regex_suffix_split_succ = r'([a-z|A-Z]|[a-z|A-Z][0-9]+)$'
+regex_suffix_split_succ = r'([a-z|A-Z]|[a-z|A-Z][1]+)$'
 
 default_proces_id = 'process_1'
 
@@ -108,7 +108,7 @@ def get_possible_merge_continuation_successors(node_id_arg):
             possible_successors.append(prefix + inc_num)
         return possible_successors
     else:
-        raise bpmn_exception.BpmnPythonError("Seems that sth wrong in csv file syntax - look for " + node_id_arg)
+        return []
 
 
 def is_any_possible_successor_present_in_node_ids(possible_successors, nodes_ids):
@@ -231,8 +231,8 @@ def add_merge_gateway_if_not_exists(merge_successor_id, process_dict, diagram_gr
 
 
 def fill_graph_connections(process_dict, diagram_graph, sequence_flows):
-    nodes_ids = sorted(list(diagram_graph.node.keys()))
-    nodes_ids_to_process = nodes_ids
+    nodes_ids = list(diagram_graph.node.keys())
+    nodes_ids_to_process = copy.deepcopy(nodes_ids)
     while (bool(nodes_ids_to_process)):
         node_id = nodes_ids_to_process.pop(0)
         if is_node_the_end_event(node_id, process_dict):

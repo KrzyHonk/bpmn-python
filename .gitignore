@@ -68,3 +68,5 @@ tests/output/
 tests/layouter/output/
 tests/csv_export/output/
 tests/xml_import_export/output/
+tests/csv_import/output/
+

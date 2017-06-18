@@ -1,0 +1,10 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Receive Order,,,,
+2a1,Fill Order,Accepted,,,
+2a2a1,Send Invoice,,,,
+2a2a2,Make Payment,,,,
+2a2a3,Accept Payment,,,,
+2a2b,Ship Order,,,,
+2b,goto 3,Rejected,,,
+3,Close Order,,,,yes
