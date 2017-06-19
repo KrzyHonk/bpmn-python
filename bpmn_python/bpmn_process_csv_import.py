@@ -261,15 +261,6 @@ def fill_graph_connections(process_dict, diagram_graph, sequence_flows):
             raise bpmn_exception.BpmnPythonError("Something wrong in csv file syntax - look for " + node_id)
 
 
-def legacy_adjustment(diagram_graph):
-    for node in diagram_graph.nodes(True):
-        if node[1].get(consts.Consts.incoming_flows) is None:
-            node[1][consts.Consts.incoming_flows] = []
-        if node[1].get(consts.Consts.outgoing_flows) is None:
-            node[1][consts.Consts.outgoing_flows] = []
-            # if node[1].get(consts.Consts.event_definitions) is None:
-            #     node[1][consts.Consts.event_definitions] = []
-
 
 class BpmnDiagramGraphCSVImport(object):
     @staticmethod
@@ -291,7 +282,7 @@ class BpmnDiagramGraphCSVImport(object):
         process_dict = BpmnDiagramGraphCSVImport.import_csv_file_as_dict(filepath)
         BpmnDiagramGraphCSVImport.import_nodes(process_dict, diagram_graph, sequence_flows)
         BpmnDiagramGraphCSVImport.populate_process_elements_dict(process_elements_dict, process_dict)
-        legacy_adjustment(diagram_graph)
+        BpmnDiagramGraphCSVImport.legacy_adjustment(diagram_graph)
 
     @staticmethod
     def import_csv_file_as_dict(filepath):
@@ -318,3 +309,13 @@ class BpmnDiagramGraphCSVImport(object):
                                       consts.Consts.process_type: "None",
                                       consts.Consts.node_ids: list(process_dict.keys())}
         process_elements_dict[process_id] = process_element_attributes
+
+    @staticmethod
+    def legacy_adjustment(diagram_graph):
+        for node in diagram_graph.nodes(True):
+            if node[1].get(consts.Consts.incoming_flows) is None:
+                node[1][consts.Consts.incoming_flows] = []
+            if node[1].get(consts.Consts.outgoing_flows) is None:
+                node[1][consts.Consts.outgoing_flows] = []
+            if node[1].get(consts.Consts.event_definitions) is None:
+                node[1][consts.Consts.event_definitions] = []
