@@ -47,7 +47,7 @@ def add_node_info_to_diagram_graph(order, type, activity, process_id, diagram_gr
         diagram_graph.node[order][consts.Consts.triggered_by_event] = "false"
     if type == consts.Consts.end_event:
         diagram_graph.node[order][consts.Consts.event_definitions] = []
-    if type == consts.Consts.inclusive_gateway:
+    if type in [consts.Consts.inclusive_gateway, consts.Consts.exclusive_gateway, consts.Consts.parallel_gateway]:
         diagram_graph.node[order][consts.Consts.gateway_direction] = "Unspecified"
 
 
@@ -193,10 +193,11 @@ def add_edge(from_node_id, to_node_id, process_dict, diagram_graph, sequence_flo
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.name] = ""
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.source_ref] = from_node_id
     diagram_graph.edge[from_node_id][to_node_id][consts.Consts.target_ref] = to_node_id
-    diagram_graph.edge[from_node_id][to_node_id][consts.Consts.condition_expression] = {
-        consts.Consts.id: id + "_cond",
-        consts.Consts.condition_expression: condition
-    }
+    if bool(condition):
+        diagram_graph.edge[from_node_id][to_node_id][consts.Consts.condition_expression] = {
+            consts.Consts.id: id + "_cond",
+            consts.Consts.condition_expression: condition
+        }
     sequence_flows[id] = {consts.Consts.name: id, consts.Consts.source_ref: from_node_id,
                           consts.Consts.target_ref: to_node_id}
 
@@ -207,14 +208,62 @@ def add_connection(from_node_id, to_node_id, process_dict, diagram_graph, sequen
     add_edge(from_node_id, to_node_id, process_dict, diagram_graph, sequence_flows)
 
 
-def add_split_gateway(node_id_to_add_after, process_dict, diagram_graph):
+def get_node_conditions(split_successors, process_dict):
+    conditions = []
+    for succ in split_successors:
+        conditions.append(process_dict[succ][consts.Consts.csv_condition].strip())
+    return conditions
+
+
+def yes_no_conditions(node_conditions):
+    return set(node_conditions) == {"yes", "no"}
+
+
+def sth_else_conditions(node_conditions):
+    return "else" in node_conditions
+
+
+def no_conditions(node_conditions):
+    for node in node_conditions:
+        if bool(node):
+            return False
+    return True
+
+
+def get_gateway_type(node_id_to_add_after, nodes_ids, process_dict):
+    split_successors = get_all_split_successors(node_id_to_add_after, nodes_ids)
+    successors_conditions = get_node_conditions(split_successors, process_dict)
+    if len(split_successors) == 2:
+        if yes_no_conditions(successors_conditions) or sth_else_conditions(successors_conditions):
+            return consts.Consts.exclusive_gateway
+    if no_conditions(successors_conditions):
+        return consts.Consts.parallel_gateway
+    return consts.Consts.inclusive_gateway
+
+
+def add_split_gateway(node_id_to_add_after, nodes_ids, process_dict, diagram_graph):
     split_gateway_id = node_id_to_add_after + "_split"
     process_id = process_dict[node_id_to_add_after].get(consts.Consts.process)
-    type = consts.Consts.inclusive_gateway
+    type = get_gateway_type(node_id_to_add_after, nodes_ids, process_dict)
     activity = ""
     add_node_info_to_diagram_graph(split_gateway_id, type, activity, process_id, diagram_graph)
     return split_gateway_id
 
+
+def get_merge_node_type(merge_successor_id, diagram_graph):
+    result = re.match(regex_pa_trailing_number, merge_successor_id)
+    if result:
+        trailing_number= result.group(2)
+        prev_prev_number = int(trailing_number) - 2
+        if prev_prev_number < 0:
+            raise bpmn_exception.BpmnPythonError("Something wrong in csv file syntax - look for " + merge_successor_id)
+        prefix = result.group(1)
+        split_node_id = prefix + str(prev_prev_number) + "_split"
+        type = diagram_graph.node[split_node_id][consts.Consts.type]
+        if bool(type):
+            return type
+        else:
+            return consts.Consts.inclusive_gateway
 
 def add_merge_gateway_if_not_exists(merge_successor_id, process_dict, diagram_graph):
     merge_gateway_id = merge_successor_id + "_join"
@@ -224,7 +273,7 @@ def add_merge_gateway_if_not_exists(merge_successor_id, process_dict, diagram_gr
     else:
         just_created = True
         process_id = process_dict[merge_successor_id].get(consts.Consts.process)
-        type = consts.Consts.inclusive_gateway
+        type = get_merge_node_type(merge_successor_id, diagram_graph)
         activity = ""
         add_node_info_to_diagram_graph(merge_gateway_id, type, activity, process_id, diagram_graph)
         return (merge_gateway_id, just_created)
@@ -243,7 +292,7 @@ def fill_graph_connections(process_dict, diagram_graph, sequence_flows):
                                                                                          nodes_ids)
             add_connection(node_id, successor_node_id, process_dict, diagram_graph, sequence_flows)
         elif is_there_split_continuation(node_id, nodes_ids):
-            split_gateway_id = add_split_gateway(node_id, process_dict, diagram_graph)
+            split_gateway_id = add_split_gateway(node_id, nodes_ids, process_dict, diagram_graph)
             add_connection(node_id, split_gateway_id, process_dict, diagram_graph, sequence_flows)
             for successor_node_id in get_all_split_successors(node_id, nodes_ids):
                 add_connection(split_gateway_id, successor_node_id, process_dict, diagram_graph, sequence_flows)
@@ -259,6 +308,51 @@ def fill_graph_connections(process_dict, diagram_graph, sequence_flows):
             add_connection(node_id, merge_gateway_id, process_dict, diagram_graph, sequence_flows)
         else:
             raise bpmn_exception.BpmnPythonError("Something wrong in csv file syntax - look for " + node_id)
+
+
+def remove_outgoing_connection(base_node, diagram_graph, sequence_flows):
+    outgoing_flow_id = diagram_graph.node[base_node][consts.Consts.outgoing_flows][0]
+    neighbour_node = sequence_flows[outgoing_flow_id][consts.Consts.target_ref]
+    diagram_graph.node[neighbour_node][consts.Consts.incoming_flows].remove(outgoing_flow_id)
+    del sequence_flows[outgoing_flow_id]
+    diagram_graph.remove_edge(base_node, neighbour_node)
+    return neighbour_node
+
+
+def remove_incoming_connection(base_node, diagram_graph, sequence_flows):
+    incoming_flow_id = diagram_graph.node[base_node][consts.Consts.incoming_flows][0]
+    neighbour_node = sequence_flows[incoming_flow_id][consts.Consts.source_ref]
+    diagram_graph.node[neighbour_node][consts.Consts.outgoing_flows].remove(incoming_flow_id)
+    del sequence_flows[incoming_flow_id]
+    diagram_graph.remove_edge(neighbour_node, base_node)
+    return neighbour_node
+
+
+def remove_node(node_id_to_remove, process_dict, diagram_graph, sequence_flows):
+    new_source_node = remove_incoming_connection(node_id_to_remove, diagram_graph, sequence_flows)
+    new_target_node = remove_outgoing_connection(node_id_to_remove, diagram_graph, sequence_flows)
+    diagram_graph.remove_node(node_id_to_remove)
+    process_dict.pop(node_id_to_remove, None)
+    # add new connection
+    return new_source_node, new_target_node
+
+
+def remove_unnecessary_merge_gateways(process_dict, diagram_graph, sequence_flows):
+    for node in diagram_graph.nodes(True):
+        type = node[1].get(consts.Consts.type)
+        if type in [consts.Consts.inclusive_gateway, consts.Consts.exclusive_gateway, consts.Consts.parallel_gateway]:
+            if len(node[1].get(consts.Consts.incoming_flows)) < 2 and len(node[1].get(consts.Consts.outgoing_flows)) < 2:
+                new_source_node, new_target_node = remove_node(node[0], process_dict, diagram_graph, sequence_flows)
+                add_connection(new_source_node, new_target_node, process_dict, diagram_graph, sequence_flows)
+
+
+def remove_goto_nodes(process_dict, diagram_graph, sequence_flows):
+    for order, csv_line_dict in copy.deepcopy(process_dict).items():
+        if csv_line_dict[consts.Consts.csv_activity].lower().startswith("goto"):
+            source_node, _ = remove_node(order, process_dict, diagram_graph, sequence_flows)
+            target_node = csv_line_dict[consts.Consts.csv_activity].strip().split()[1]
+            add_connection(source_node, target_node, process_dict, diagram_graph, sequence_flows)
+
 
 
 
@@ -282,7 +376,7 @@ class BpmnDiagramGraphCSVImport(object):
         process_dict = BpmnDiagramGraphCSVImport.import_csv_file_as_dict(filepath)
         BpmnDiagramGraphCSVImport.import_nodes(process_dict, diagram_graph, sequence_flows)
         BpmnDiagramGraphCSVImport.populate_process_elements_dict(process_elements_dict, process_dict)
-        BpmnDiagramGraphCSVImport.legacy_adjustment(diagram_graph)
+        BpmnDiagramGraphCSVImport.representation_adjustment(process_dict, diagram_graph, sequence_flows)
 
     @staticmethod
     def import_csv_file_as_dict(filepath):
@@ -319,3 +413,10 @@ class BpmnDiagramGraphCSVImport(object):
                 node[1][consts.Consts.outgoing_flows] = []
             if node[1].get(consts.Consts.event_definitions) is None:
                 node[1][consts.Consts.event_definitions] = []
+
+    @staticmethod
+    def representation_adjustment(process_dict, diagram_graph, sequence_flows):
+        BpmnDiagramGraphCSVImport.legacy_adjustment(diagram_graph)
+        remove_goto_nodes(process_dict, diagram_graph, sequence_flows)
+        remove_unnecessary_merge_gateways(process_dict, diagram_graph, sequence_flows)
+
