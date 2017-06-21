@@ -9,6 +9,7 @@ import copy
 
 import pandas as pd
 import re
+import six
 
 import bpmn_python.bmpn_python_consts as consts
 import bpmn_python.bpmn_diagram_exception as bpmn_exception
@@ -61,9 +62,12 @@ def import_nodes_info(process_dict, diagram_graph):
 
 def remove_white_spaces_in_orders(process_dict):
     for order, csv_line_dict in process_dict.items():
-        if order.strip() != order:
-            del process_dict[order]
+        del process_dict[order]
+        if isinstance(order, six.string_types) and order.strip() != order:
             process_dict[order.strip()] = csv_line_dict
+        else:
+            process_dict[str(order)] = csv_line_dict
+
 
 
 def get_possible_sequence_continuation_successor(node_id):
