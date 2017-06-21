@@ -259,11 +259,12 @@ def get_merge_node_type(merge_successor_id, diagram_graph):
             raise bpmn_exception.BpmnPythonError("Something wrong in csv file syntax - look for " + merge_successor_id)
         prefix = result.group(1)
         split_node_id = prefix + str(prev_prev_number) + "_split"
-        type = diagram_graph.node[split_node_id][consts.Consts.type]
-        if bool(type):
-            return type
-        else:
-            return consts.Consts.inclusive_gateway
+        node_dict = diagram_graph.node[split_node_id]
+        if bool(node_dict):
+            type = node_dict[consts.Consts.type]
+            if bool(type):
+                return type
+        return consts.Consts.inclusive_gateway
 
 def add_merge_gateway_if_not_exists(merge_successor_id, process_dict, diagram_graph):
     merge_gateway_id = merge_successor_id + "_join"
