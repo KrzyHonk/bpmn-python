@@ -341,6 +341,7 @@ class BpmnDiagramGraphExport(object):
             condition_expression.set(consts.Consts.id, condition_expression_params[consts.Consts.id])
             condition_expression.set(consts.Consts.id, condition_expression_params[consts.Consts.id])
             condition_expression.text = condition_expression_params[consts.Consts.condition_expression]
+            output_flow.set(consts.Consts.name, condition_expression_params[consts.Consts.condition_expression])
 
     @staticmethod
     def export_flow_di_data(params, plane):

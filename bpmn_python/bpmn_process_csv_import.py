@@ -22,6 +22,7 @@ regex_prefix_split_succ = r'^'
 regex_suffix_split_succ = r'([a-z|A-Z]|[a-z|A-Z][1]+)$'
 
 default_proces_id = 'process_1'
+default_plane_id = 'plane_1'
 
 
 def getNodeType(order, csv_line_dict):
@@ -46,10 +47,17 @@ def add_node_info_to_diagram_graph(order, type, activity, process_id, diagram_gr
         diagram_graph.node[order][consts.Consts.event_definitions] = []
     if type == consts.Consts.subprocess:
         diagram_graph.node[order][consts.Consts.triggered_by_event] = "false"
+        diagram_graph.node[order][consts.Consts.is_expanded] = "false"
     if type == consts.Consts.end_event:
         diagram_graph.node[order][consts.Consts.event_definitions] = []
     if type in [consts.Consts.inclusive_gateway, consts.Consts.exclusive_gateway, consts.Consts.parallel_gateway]:
         diagram_graph.node[order][consts.Consts.gateway_direction] = "Unspecified"
+
+    # Adding some dummy constant values
+    diagram_graph.node[order][consts.Consts.width] = "100"
+    diagram_graph.node[order][consts.Consts.height] = "100"
+    diagram_graph.node[order][consts.Consts.x] = "100"
+    diagram_graph.node[order][consts.Consts.y] = "100"
 
 
 def import_nodes_info(process_dict, diagram_graph):
@@ -247,7 +255,7 @@ def get_gateway_type(node_id_to_add_after, nodes_ids, process_dict):
 
 def add_split_gateway(node_id_to_add_after, nodes_ids, process_dict, diagram_graph):
     split_gateway_id = node_id_to_add_after + "_split"
-    process_id = process_dict[node_id_to_add_after].get(consts.Consts.process)
+    process_id = default_proces_id
     type = get_gateway_type(node_id_to_add_after, nodes_ids, process_dict)
     activity = ""
     add_node_info_to_diagram_graph(split_gateway_id, type, activity, process_id, diagram_graph)
@@ -257,7 +265,7 @@ def add_split_gateway(node_id_to_add_after, nodes_ids, process_dict, diagram_gra
 def get_merge_node_type(merge_successor_id, diagram_graph):
     result = re.match(regex_pa_trailing_number, merge_successor_id)
     if result:
-        trailing_number= result.group(2)
+        trailing_number = result.group(2)
         prev_prev_number = int(trailing_number) - 2
         if prev_prev_number < 0:
             raise bpmn_exception.BpmnPythonError("Something wrong in csv file syntax - look for " + merge_successor_id)
@@ -276,7 +284,7 @@ def add_merge_gateway_if_not_exists(merge_successor_id, process_dict, diagram_gr
         return (merge_gateway_id, just_created)
     else:
         just_created = True
-        process_id = process_dict[merge_successor_id].get(consts.Consts.process)
+        process_id = default_proces_id
         type = get_merge_node_type(merge_successor_id, diagram_graph)
         activity = ""
         add_node_info_to_diagram_graph(merge_gateway_id, type, activity, process_id, diagram_graph)
@@ -345,7 +353,8 @@ def remove_unnecessary_merge_gateways(process_dict, diagram_graph, sequence_flow
     for node in diagram_graph.nodes(True):
         type = node[1].get(consts.Consts.type)
         if type in [consts.Consts.inclusive_gateway, consts.Consts.exclusive_gateway, consts.Consts.parallel_gateway]:
-            if len(node[1].get(consts.Consts.incoming_flows)) < 2 and len(node[1].get(consts.Consts.outgoing_flows)) < 2:
+            if len(node[1].get(consts.Consts.incoming_flows)) < 2 \
+                    and len(node[1].get(consts.Consts.outgoing_flows)) < 2:
                 new_source_node, new_target_node = remove_node(node[0], process_dict, diagram_graph, sequence_flows)
                 add_connection(new_source_node, new_target_node, process_dict, diagram_graph, sequence_flows)
 
@@ -373,13 +382,14 @@ class BpmnDiagramGraphCSVImport(object):
         diagram_graph = bpmn_diagram.diagram_graph
         sequence_flows = bpmn_diagram.sequence_flows
         process_elements_dict = bpmn_diagram.process_elements
-        # diagram_attributes = bpmn_diagram.diagram_attributes
-        # plane_attributes = bpmn_diagram.plane_attributes
-        collaboration = bpmn_diagram.collaboration
+        diagram_attributes = bpmn_diagram.diagram_attributes
+        plane_attributes = bpmn_diagram.plane_attributes
 
         process_dict = BpmnDiagramGraphCSVImport.import_csv_file_as_dict(filepath)
         BpmnDiagramGraphCSVImport.import_nodes(process_dict, diagram_graph, sequence_flows)
+        BpmnDiagramGraphCSVImport.populate_diagram_elements_dict(diagram_attributes)
         BpmnDiagramGraphCSVImport.populate_process_elements_dict(process_elements_dict, process_dict)
+        BpmnDiagramGraphCSVImport.populate_plane_elements_dict(plane_attributes)
         BpmnDiagramGraphCSVImport.representation_adjustment(process_dict, diagram_graph, sequence_flows)
 
     @staticmethod
@@ -398,6 +408,11 @@ class BpmnDiagramGraphCSVImport(object):
         fill_graph_connections(process_dict, diagram_graph, sequence_flows)
 
     @staticmethod
+    def populate_diagram_elements_dict(diagram_elements_dict):
+        diagram_elements_dict[consts.Consts.id] = "diagram1"
+        diagram_elements_dict[consts.Consts.name] = "diagram_name"
+
+    @staticmethod
     def populate_process_elements_dict(process_elements_dict, process_dict):
         process_id = default_proces_id
         process_element_attributes = {consts.Consts.id: default_proces_id,
@@ -407,6 +422,11 @@ class BpmnDiagramGraphCSVImport(object):
                                       consts.Consts.process_type: "None",
                                       consts.Consts.node_ids: list(process_dict.keys())}
         process_elements_dict[process_id] = process_element_attributes
+
+    @staticmethod
+    def populate_plane_elements_dict(plane_elements_dict):
+        plane_elements_dict[consts.Consts.id] = default_plane_id
+        plane_elements_dict[consts.Consts.bpmn_element] = default_proces_id
 
     @staticmethod
     def legacy_adjustment(diagram_graph):
@@ -423,4 +443,3 @@ class BpmnDiagramGraphCSVImport(object):
         BpmnDiagramGraphCSVImport.legacy_adjustment(diagram_graph)
         remove_goto_nodes(process_dict, diagram_graph, sequence_flows)
         remove_unnecessary_merge_gateways(process_dict, diagram_graph, sequence_flows)
-

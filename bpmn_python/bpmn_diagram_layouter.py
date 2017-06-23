@@ -370,8 +370,8 @@ def set_coordinates_for_nodes(bpmn_graph, grid):
     nodes = bpmn_graph.get_nodes()
     for node in nodes:
         cell = next(grid_cell for grid_cell in grid if grid_cell.node_id == node[0])
-        node[1][consts.Consts.x] = str(cell.col * 200 + 50)
-        node[1][consts.Consts.y] = str(cell.row * 200 + 50)
+        node[1][consts.Consts.x] = str(cell.col * 150 + 50)
+        node[1][consts.Consts.y] = str(cell.row * 100 + 50)
 
 
 def set_flows_waypoints(bpmn_graph):
