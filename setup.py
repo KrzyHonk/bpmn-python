@@ -1,4 +1,4 @@
-# coding=utf-8
+#coding=utf-8
 import os
 
 from setuptools import setup, find_packages
@@ -15,7 +15,7 @@ def read(fname):
 
 setup(
     name="bpmn_python",
-    version="0.0.11",
+    version="0.0.12",
     author="Izbela Smietana, Krzysztof Honkisz",
     # author_email = "honkiszkrzystof@gmail.com",
     description=("Python library that allows to import/export BPMN diagram (as an XML file) and provides a simple "
@@ -23,7 +23,7 @@ setup(
     license="GNU GENERAL PUBLIC LICENSE",
     keywords=["bpmn", "xml"],
     url="https://github.com/KrzyHonk/bpmn-python",
-    download_url="https://github.com/KrzyHonk/bpmn-python/tarball/0.0.11",
+    download_url="https://github.com/KrzyHonk/bpmn-python/tarball/0.0.12",
     packages=find_packages(exclude=['docs', 'tests*']),
     install_requires=[
         'networkx',
