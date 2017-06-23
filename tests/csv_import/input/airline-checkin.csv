@@ -1,0 +1,17 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Validate Passenger Ticket & Identification,,Check In Counter,,
+2a,Confirm Itinerary,Validity,,yes,
+2b,Reject Passenger,else,,,yes
+3,Ask Passenger for Prohibited Objects,,,,
+4a,Remove Prohibited Objects,Prohibited Objects,,,
+4b,goto 5,else,,,
+5,Ask Passenger for Baggages,,,,
+6,Weight Baggages,,,,
+7,Calculate Additional Fees,,,,
+8,Inform Passenger of Additional Fees,,,,
+9,Collect Payment of Fees,,,,
+10a,Generate and Print Boarding Pass,,,,
+10b1,Generate and Print Baggage Tags,,,,
+10b2,Identify and Move Baggages,,,,
+11,"Hand out Boarding Pass, Ticket and Identification",,,,yes

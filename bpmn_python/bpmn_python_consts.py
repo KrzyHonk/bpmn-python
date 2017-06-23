@@ -32,6 +32,15 @@ class Consts(object):
     message_flow = "messageFlow"
     message_flows = "messageFlows"
 
+    # CSV literals
+    csv_order = "Order"
+    csv_activity = "Activity"
+    csv_condition = "Condition"
+    csv_who = "Who"
+    csv_subprocess = "Subprocess"
+    csv_terminated = "Terminated"
+
+
     # BPMN 2.0 diagram interchange element attribute names
     bpmn_element = "bpmnElement"
     height = "height"

@@ -7,9 +7,12 @@ import uuid
 import networkx as nx
 
 import bpmn_python.bpmn_diagram_exception as bpmn_exception
+import bpmn_python.bmpn_python_consts as consts
+import bpmn_python.bpmn_diagram_exception as bpmn_exception
 import bpmn_python.bpmn_python_consts as consts
 import bpmn_python.bpmn_diagram_export as bpmn_export
 import bpmn_python.bpmn_diagram_import as bpmn_import
+import bpmn_python.bpmn_process_csv_import as bpmn_csv_import
 import bpmn_python.bpmn_process_csv_export as bpmn_csv_export
 
 
@@ -78,6 +81,18 @@ class BpmnDiagramGraph(object):
         :param filename: string representing output file name.
         """
         bpmn_export.BpmnDiagramGraphExport.export_xml_file_no_di(directory, filename, self)
+
+
+    def load_diagram_from_csv_file(self, filepath):
+        """
+        Reads an CSV file from given filepath and maps it into inner representation of BPMN diagram.
+        Returns an instance of BPMNDiagramGraph class.
+
+        :param filepath: string with output filepath.
+        """
+
+        bpmn_csv_import.BpmnDiagramGraphCSVImport.load_diagram_from_csv(filepath, self)
+
 
     def export_csv_file(self, directory, filename):
         """

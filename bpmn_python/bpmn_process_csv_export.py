@@ -10,6 +10,9 @@ import errno
 import os
 import string
 
+import bpmn_python.bmpn_python_consts as consts
+import bpmn_python.bpmn_diagram_exception as bpmn_exception
+import bpmn_python.bpmn_import_utils as utils
 import bpmn_python.bpmn_python_consts as consts
 import bpmn_python.bpmn_diagram_exception as bpmn_exception
 import bpmn_python.bpmn_import_utils as utils
@@ -53,7 +56,7 @@ class BpmnDiagramGraphCsvExport(object):
         export_elements = []
 
         for node in nodes:
-            incoming_list = node[1][consts.Consts.incoming_flows]
+            incoming_list = node[1].get(consts.Consts.incoming_flows)
             if len(incoming_list) == 0:
                 start_nodes.append(node)
         if len(start_nodes) != 1:
@@ -125,7 +128,7 @@ class BpmnDiagramGraphCsvExport(object):
         node_type = node[1][consts.Consts.type]
         node_classification = nodes_classification[node[0]]
 
-        outgoing_flows = node[1][consts.Consts.outgoing_flows]
+        outgoing_flows = node[1].get(consts.Consts.outgoing_flows)
         if node_type != consts.Consts.parallel_gateway and consts.Consts.default in node[1] \
                 and node[1][consts.Consts.default] is not None:
             default_flow_id = node[1][consts.Consts.default]
@@ -220,7 +223,7 @@ class BpmnDiagramGraphCsvExport(object):
         """
 
         # Assuming that there is only one event definition
-        event_definitions = node[1][consts.Consts.event_definitions]
+        event_definitions = node[1].get(consts.Consts.event_definitions)
         if event_definitions is not None and len(event_definitions) > 0:
             event_definition = node[1][consts.Consts.event_definitions][0]
         else:
@@ -260,7 +263,7 @@ class BpmnDiagramGraphCsvExport(object):
         """
 
         # Assuming that there is only one event definition
-        event_definitions = node[1][consts.Consts.event_definitions]
+        event_definitions = node[1].get(consts.Consts.event_definitions)
         if event_definitions is not None and len(event_definitions) > 0:
             event_definition = node[1][consts.Consts.event_definitions][0]
         else:
