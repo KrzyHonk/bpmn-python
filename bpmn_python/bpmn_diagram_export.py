@@ -145,6 +145,25 @@ class BpmnDiagramGraphExport(object):
                 output_definition.set(consts.Consts.id, definition_id)
 
     @staticmethod
+    def export_boundary_event_info(node_params, output_element):
+        """
+        Adds IntermediateCatchEvent attributes to exported XML element
+
+        :param node_params: dictionary with given intermediate catch event parameters,
+        :param output_element: object representing BPMN XML 'intermediateCatchEvent' element.
+        """
+        output_element.set(consts.Consts.parallel_multiple, node_params[consts.Consts.parallel_multiple])
+        output_element.set(consts.Consts.cancel_activity, node_params[consts.Consts.cancel_activity])
+        output_element.set(consts.Consts.attached_to_ref, node_params[consts.Consts.attached_to_ref])
+        definitions = node_params[consts.Consts.event_definitions]
+        for definition in definitions:
+            definition_id = definition[consts.Consts.id]
+            definition_type = definition[consts.Consts.definition_type]
+            output_definition = eTree.SubElement(output_element, definition_type)
+            if definition_id != "":
+                output_definition.set(consts.Consts.id, definition_id)
+
+    @staticmethod
     def export_definitions_element():
         """
         Creates root element ('definitions') for exported BPMN XML file.
@@ -300,6 +319,8 @@ class BpmnDiagramGraphExport(object):
             BpmnDiagramGraphExport.export_catch_event_info(params, output_element)
         elif node_type == consts.Consts.end_event or node_type == consts.Consts.intermediate_throw_event:
             BpmnDiagramGraphExport.export_throw_event_info(params, output_element)
+        elif node_type == consts.Consts.boundary_event:
+            BpmnDiagramGraphExport.export_boundary_event_info(params, output_element)
 
     @staticmethod
     def export_node_di_data(node_id, params, plane):

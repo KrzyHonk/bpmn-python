@@ -186,6 +186,9 @@ class BpmnDiagramGraphImport(object):
                     elif tag_name == consts.Consts.intermediate_throw_event:
                         BpmnDiagramGraphImport.import_intermediate_throw_event_to_graph(diagram_graph, process_id,
                                                                                         process_attributes, element)
+                    elif tag_name == consts.Consts.boundary_event:
+                        BpmnDiagramGraphImport.import_boundary_event_to_graph(diagram_graph, process_id,
+                                                                              process_attributes, element)
 
             for flow in utils.BpmnImportUtils.iterate_elements(process_element):
                 if flow.nodeType != flow.TEXT_NODE:
@@ -346,10 +349,13 @@ class BpmnDiagramGraphImport(object):
         # add outgoing flow node list
         outgoing_xml = element.getElementsByTagNameNS("*", consts.Consts.outgoing_flows)
         length = len(outgoing_xml)
-        outgoing_list = [None] * length
-        for index in range(length):
-            outgoing_tmp = outgoing_xml[index].firstChild.nodeValue
-            outgoing_list[index] = outgoing_tmp
+        if length <= 0:
+            outgoing_list = []
+        else:
+            outgoing_list = [None] * length
+            for index in range(length):
+                outgoing_tmp = outgoing_xml[index].firstChild.nodeValue
+                outgoing_list[index] = outgoing_tmp
         bpmn_graph.node[element_id][consts.Consts.outgoing_flows] = outgoing_list
 
     @staticmethod
@@ -612,6 +618,37 @@ class BpmnDiagramGraphImport(object):
                                                                 intermediate_throw_event_definitions)
 
     @staticmethod
+    def import_boundary_event_to_graph(diagram_graph, process_id, process_attributes, element):
+        """
+        Adds to graph the new element that represents BPMN boundary event.
+        Boundary event inherits sequence of eventDefinitionRef from Event type.
+        Separate methods for each event type are required since each of them has different variants
+        (Message, Error, Signal etc.).
+
+        :param diagram_graph: NetworkX graph representing a BPMN process diagram,
+        :param process_id: string object, representing an ID of process element,
+        :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
+        imported flow node,
+        :param element: object representing a BPMN XML 'endEvent' element.
+        """
+        element_id = element.getAttribute(consts.Consts.id)
+        boundary_event_definitions = {'messageEventDefinition', 'timerEventDefinition', 'signalEventDefinition',
+                                      'conditionalEventDefinition', 'escalationEventDefinition', 'errorEventDefinition'}
+        BpmnDiagramGraphImport.import_flownode_to_graph(diagram_graph, process_id, process_attributes, element)
+
+        diagram_graph.node[element_id][consts.Consts.parallel_multiple] = \
+            element.getAttribute(consts.Consts.parallel_multiple) \
+            if element.hasAttribute(consts.Consts.parallel_multiple) else "false"
+        diagram_graph.node[element_id][consts.Consts.cancel_activity] = \
+            element.getAttribute(consts.Consts.cancel_activity) \
+            if element.hasAttribute(consts.Consts.cancel_activity) else "true"
+        diagram_graph.node[element_id][consts.Consts.attached_to_ref] = \
+            element.getAttribute(consts.Consts.attached_to_ref)
+
+        BpmnDiagramGraphImport.import_event_definition_elements(diagram_graph, element,
+                                                                boundary_event_definitions)
+
+    @staticmethod
     def import_sequence_flow_to_graph(diagram_graph, sequence_flows, process_id, flow_element):
         """
         Adds a new edge to graph and a record to sequence_flows dictionary.
@@ -779,15 +816,18 @@ class BpmnDiagramGraphImport(object):
                             waypoints_xml[index].getAttribute(consts.Consts.y))
             waypoints[index] = waypoint_tmp
 
+        flow_data = None
         if flow_id in sequence_flows:
             flow_data = sequence_flows[flow_id]
-        else:
+        elif flow_id in message_flows:
             flow_data = message_flows[flow_id]
-        name = flow_data[consts.Consts.name]
-        source_ref = flow_data[consts.Consts.source_ref]
-        target_ref = flow_data[consts.Consts.target_ref]
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.waypoints] = waypoints
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.name] = name
+
+        if flow_data is not None:
+            name = flow_data[consts.Consts.name]
+            source_ref = flow_data[consts.Consts.source_ref]
+            target_ref = flow_data[consts.Consts.target_ref]
+            diagram_graph.edge[source_ref][target_ref][consts.Consts.waypoints] = waypoints
+            diagram_graph.edge[source_ref][target_ref][consts.Consts.name] = name
 
     @staticmethod
     def read_xml_file(filepath):
