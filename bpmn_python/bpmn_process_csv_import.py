@@ -386,10 +386,12 @@ class BpmnDiagramGraphCSVImport(object):
         plane_attributes = bpmn_diagram.plane_attributes
 
         process_dict = BpmnDiagramGraphCSVImport.import_csv_file_as_dict(filepath)
-        BpmnDiagramGraphCSVImport.import_nodes(process_dict, diagram_graph, sequence_flows)
+
         BpmnDiagramGraphCSVImport.populate_diagram_elements_dict(diagram_attributes)
         BpmnDiagramGraphCSVImport.populate_process_elements_dict(process_elements_dict, process_dict)
         BpmnDiagramGraphCSVImport.populate_plane_elements_dict(plane_attributes)
+
+        BpmnDiagramGraphCSVImport.import_nodes(process_dict, diagram_graph, sequence_flows)
         BpmnDiagramGraphCSVImport.representation_adjustment(process_dict, diagram_graph, sequence_flows)
 
     @staticmethod
