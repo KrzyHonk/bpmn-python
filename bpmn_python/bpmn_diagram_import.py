@@ -656,10 +656,15 @@ class BpmnDiagramGraphImport(object):
         added when processing nodes, but listing incoming / outgoing nodes under node element is optional - this way
         we can make sure this info will be imported.
         '''
+        if consts.Consts.outgoing_flows not in diagram_graph.node[source_ref]:
+            diagram_graph.node[source_ref][consts.Consts.outgoing_flows] = []
         outgoing_list = diagram_graph.node[source_ref][consts.Consts.outgoing_flows]
-        incoming_list = diagram_graph.node[target_ref][consts.Consts.incoming_flows]
         if flow_id not in outgoing_list:
             outgoing_list.append(flow_id)
+
+        if consts.Consts.incoming_flows not in diagram_graph.node[target_ref]:
+            diagram_graph.node[target_ref][consts.Consts.incoming_flows] = []
+        incoming_list = diagram_graph.node[target_ref][consts.Consts.incoming_flows]
         if flow_id not in incoming_list:
             incoming_list.append(flow_id)
 
@@ -698,10 +703,15 @@ class BpmnDiagramGraphImport(object):
         added when processing nodes, but listing incoming / outgoing nodes under node element is optional - this way
         we can make sure this info will be imported.
         '''
+        if consts.Consts.outgoing_flows not in diagram_graph.node[source_ref]:
+            diagram_graph.node[source_ref][consts.Consts.outgoing_flows] = []
         outgoing_list = diagram_graph.node[source_ref][consts.Consts.outgoing_flows]
-        incoming_list = diagram_graph.node[target_ref][consts.Consts.incoming_flows]
         if flow_id not in outgoing_list:
             outgoing_list.append(flow_id)
+
+        if consts.Consts.incoming_flows not in diagram_graph.node[target_ref]:
+            diagram_graph.node[target_ref][consts.Consts.incoming_flows] = []
+        incoming_list = diagram_graph.node[target_ref][consts.Consts.incoming_flows]
         if flow_id not in incoming_list:
             incoming_list.append(flow_id)
 
