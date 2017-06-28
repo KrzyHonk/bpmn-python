@@ -1,0 +1,15 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Start Process ,,,,
+2,Submit A Vacation Request ,,Employee ,,
+3,Register Requirement ,,,,
+4,Receive Request ,,,,
+5,Approve The Request ,,Supervisor ,,
+6,Reject The Request ,,Supervisor ,,
+7a1,Return Application ,Request is rejected ,,,
+7b1,goto 11,else,,,
+8,Review The Rejection Reasons ,,Who ,,
+9a1,Generate Notification ,Request is approved ,,,
+9b1,goto 11,else,,,
+10,Complete The Respective Management Procedures ,,Who ,,
+11,,,,,yes

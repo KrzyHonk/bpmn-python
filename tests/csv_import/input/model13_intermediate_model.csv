@@ -1,0 +1,10 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Search Police Report ,,,,
+2,Put A File ,,,,
+3,Serve Input ,,File ,,
+4,Calculate An Initial Claim Estimate ,,Who ,,
+5,Create An Action Plan ,,Claims Handler ,,
+6,Inform Claimant ,,Claimant ,,
+7,End The Process ,,,,
+8,,,,,yes

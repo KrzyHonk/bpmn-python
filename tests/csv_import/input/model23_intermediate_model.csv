@@ -1,0 +1,10 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Trigger Process ,,,,
+2,Advertise Post ,,Post ,,
+3,Apply Applicants ,,Applicants ,,
+4,Check Applications ,,,,
+5,Fill Post ,,Post ,,
+6,Finish The Conclusion ,,,,
+7,Fill Post ,,Post ,,
+8,,,,,yes

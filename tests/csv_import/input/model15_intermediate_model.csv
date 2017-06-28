@@ -1,0 +1,10 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Start Loan Approval Process ,,,,
+2,Invoke Assessment Web Service ,,Assessment Web Service ,,
+3a1,Approve Loan ,Customer is low risk ,Customer ,,
+3b1,Deny Loan ,Customer is high risk ,Customer ,,
+3c1,Send 10.000 ,Customer needs further review ,Customer ,,
+4,Send Request ,,,,
+5,Receive Feedback ,,Customer ,,
+6,,,,,yes

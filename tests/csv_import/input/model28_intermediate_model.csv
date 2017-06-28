@@ -1,0 +1,12 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Finalize Dates ,,Dates ,,
+2,Update All Group Calendars ,,Support Officer ,,
+3,Create Support Officer ,,Support Officer ,,
+4,Advise Committee Members ,,Committee Members ,,
+5,Hold Their Meeting ,,Committee Members ,,
+6,Produce Minutes ,,Support Office ,,
+7,Conduct A Qa Check ,,Coordination Unit ,,
+8,Send ,,,,
+9,Update All Departmental Records ,,Support Officer ,,
+10,,,,,yes

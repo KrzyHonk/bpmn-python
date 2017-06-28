@@ -1,0 +1,13 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Register Claim ,,,,
+2,Examine ,,,,
+3,Write A Settlement Recommendation ,,Claims Officer ,,
+4,Check Recommendation ,,,,
+5,Mark The Claim ,,Who ,,
+6a1,Send ,Claim is marked ,,,
+6b1,goto 9,else,,,
+7,Repeat Recommendation ,,,,
+8a1,Proceed Claim ,Claim is ok ,,,
+8b1,goto 9,else,,,
+9,,,,,yes

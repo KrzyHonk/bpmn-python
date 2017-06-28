@@ -1,0 +1,12 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Send A Possession Request ,,Party ,,
+2,Receive The Request ,,Back Office ,,
+3,Retrieve The Sct File ,,Back Office ,,
+4,Forward Sctwarrant Possession ,,,,
+5,Store Physical File ,,Physical File ,,
+6,Receive Report ,,,,
+7,Retrieve Respective Sct File ,,Respective Sct File ,,
+8,Attach The New Sct Document ,,Back Office ,,
+9,Receive The Sct File ,,Other Internal Staff ,,
+10,,,,,yes

@@ -1,0 +1,9 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Send The Context ,,,,
+2,Expect Claimant ,,Claimant ,,
+3a1,Send Reminder ,Response is received ,Response ,,
+3b1,goto 6,else,,,
+4,Send Reminder ,,Reminder ,,
+5,Receive Completed Questionnaire ,,,,
+6,,,,,yes

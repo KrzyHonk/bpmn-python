@@ -1,0 +1,15 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Verify The Deregistration ,,,,
+2,Reject The Deregistration ,,,,
+3,Confirm The Deregistration ,,,,
+4,Prepare The Readmission ,,,,
+5,Oblige The Mpoo ,,,,
+6a1,Confirm The Continuation ,Go binds mpoo ,,,
+6b1,goto 12,else,,,
+7,Perform The Equipment Acquisition ,,,,
+8,Assign The Go ,,,,
+9,Inform The Mpoo ,,,,
+10,Inform The Mspo ,,,,
+11,Inform The Sp ,,,,
+12,,,,,yes

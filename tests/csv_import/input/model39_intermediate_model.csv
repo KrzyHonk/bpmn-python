@@ -1,0 +1,13 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Report A Failure ,,,,
+2,Examine The Failure ,,,,
+3,Reject The Failure ,,,,
+4,Confirm The Failure ,,,,
+5a1,Inform The Go ,Mpo confirms failure ,,,
+5b1,goto 10,else,,,
+6,Fix The Fault ,,,,
+7,Share The Results ,,,,
+8,Inform The Go ,,,,
+9,Inform The Msp ,,,,
+10,,,,,yes

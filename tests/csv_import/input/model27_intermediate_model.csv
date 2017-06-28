@@ -1,0 +1,10 @@
+Order,Activity,Condition,Who,Subprocess,Terminated
+0,start,,,,
+1,Check The Dates ,,Support Officer ,,
+2,Suggest Modifications ,,Support Officer ,,
+3,Rechecks All Dates ,,Coordination Unit ,,
+4,Look Potential Conflicts ,,Coordination Unit ,,
+5,Send Final Schedule ,,,,
+6,Check Their Diaries ,,Who ,,
+7,Advise The Coordination Unit ,,Who ,,
+8,,,,,yes
