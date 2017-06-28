@@ -6,7 +6,7 @@ import os
 import unittest
 
 from bpmn_python import bpmn_diagram_metrics as metrics
-from graph.bpmn_diagram_rep import BpmnDiagramGraph
+from bpmn_diagram_rep import BpmnDiagramGraph
 
 
 class BPMNComplexityMetricsTests(unittest.TestCase):

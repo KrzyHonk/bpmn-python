@@ -6,7 +6,7 @@ import os
 import unittest
 
 import bpmn_python.bpmn_diagram_visualizer as visualizer
-import graph.bpmn_diagram_rep as diagram
+import bpmn_diagram_rep as diagram
 
 
 class CamundaComplexTests(unittest.TestCase):

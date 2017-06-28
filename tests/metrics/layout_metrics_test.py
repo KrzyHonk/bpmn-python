@@ -6,7 +6,7 @@ import os
 import unittest
 
 import bpmn_python.diagram_layout_metrics as metrics
-import graph.bpmn_diagram_rep as diagram
+import bpmn_diagram_rep as diagram
 
 
 class MetricsTests(unittest.TestCase):
