@@ -5,8 +5,7 @@ Test unit, using simple graph made in BPMNEditor editor for import/export operat
 import unittest
 
 import bpmn_python.bpmn_diagram_layouter as layouter
-import bpmn_diagram_rep as diagram
-
+import bpmn_python.bpmn_diagram_rep as diagram
 
 class BPMNEditorTests(unittest.TestCase):
     """
