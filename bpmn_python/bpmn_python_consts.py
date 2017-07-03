@@ -42,7 +42,6 @@ class Consts(object):
     csv_subprocess = "Subprocess"
     csv_terminated = "Terminated"
 
-
     # BPMN 2.0 diagram interchange element attribute names
     bpmn_element = "bpmnElement"
     height = "height"
@@ -81,8 +80,10 @@ class Consts(object):
     bpmn_edge = "BPMNEdge"
 
     # BPMN 2.0 child element names
-    incoming_flows = "incoming"
-    outgoing_flows = "outgoing"
+    incoming_flow = "incoming"
+    incoming_flow_list = "incoming_flow_list"
+    outgoing_flow = "outgoing"
+    outgoing_flow_list = "outgoing_flow_list"
     waypoint = "waypoint"
     waypoints = "waypoints"
 

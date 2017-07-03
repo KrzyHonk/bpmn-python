@@ -2,15 +2,16 @@
 """
 Package with BPMNDiagramGraph - graph representation of BPMN diagram
 """
-import bpmn_python.grid_cell_class as cell_class
 import copy
+
 import bpmn_python.bpmn_python_consts as consts
+import bpmn_python.grid_cell_class as cell_class
 
 
 def generate_layout(bpmn_graph):
     """
-        :param bpmn_graph: an instance of BPMNDiagramGraph class.
-        """
+    :param bpmn_graph: an instance of BPMNDiagramGraph class.
+    """
     classification = generate_elements_clasification(bpmn_graph)
     (sorted_nodes_with_classification, backward_flows) = topological_sort(bpmn_graph, classification[0])
     grid = grid_layout(bpmn_graph, sorted_nodes_with_classification)
@@ -37,99 +38,99 @@ def generate_elements_clasification(bpmn_graph):
     task_list = bpmn_graph.get_nodes(consts.Consts.task)
     for element in task_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     subprocess_list = bpmn_graph.get_nodes(consts.Consts.subprocess)
     for element in subprocess_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     complex_gateway_list = bpmn_graph.get_nodes(consts.Consts.complex_gateway)
     for element in complex_gateway_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     event_based_gateway_list = bpmn_graph.get_nodes(consts.Consts.event_based_gateway)
     for element in event_based_gateway_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     inclusive_gateway_list = bpmn_graph.get_nodes(consts.Consts.inclusive_gateway)
     for element in inclusive_gateway_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     exclusive_gateway_list = bpmn_graph.get_nodes(consts.Consts.exclusive_gateway)
     for element in exclusive_gateway_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     parallel_gateway_list = bpmn_graph.get_nodes(consts.Consts.parallel_gateway)
     for element in parallel_gateway_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     start_event_list = bpmn_graph.get_nodes(consts.Consts.start_event)
     for element in start_event_list:
         tmp = [classification_element, classification_start_event]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     intermediate_catch_event_list = bpmn_graph.get_nodes(consts.Consts.intermediate_catch_event)
     for element in intermediate_catch_event_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     end_event_list = bpmn_graph.get_nodes(consts.Consts.end_event)
     for element in end_event_list:
         tmp = [classification_element, classification_end_event]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
     intermediate_throw_event_list = bpmn_graph.get_nodes(consts.Consts.intermediate_throw_event)
     for element in intermediate_throw_event_list:
         tmp = [classification_element]
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             tmp.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             tmp.append(classification_split)
         nodes_classification += [{node_param_name: element, classification_param_name: tmp}]
 
@@ -155,18 +156,18 @@ def topological_sort(bpmn_graph, nodes_with_classification):
 
     while tmp_nodes_with_classification:
         for node_with_classification in tmp_nodes_with_classification:
-            incoming_list = node_with_classification[node_param_name][1][consts.Consts.incoming_flows]
+            incoming_list = node_with_classification[node_param_name][1][consts.Consts.incoming_flow]
             if len(incoming_list) == 0:
                 no_incoming_flow_nodes.append(node_with_classification)
         if len(no_incoming_flow_nodes) > 0:
             while len(no_incoming_flow_nodes) > 0:
                 node_with_classification = no_incoming_flow_nodes.pop()
                 tmp_nodes_with_classification.remove(node_with_classification)
-                sorted_nodes_with_classification\
+                sorted_nodes_with_classification \
                     .append(next(tmp_node for tmp_node in nodes_with_classification
                                  if tmp_node[node_param_name][0] == node_with_classification[node_param_name][0]))
 
-                outgoing_list = list(node_with_classification[node_param_name][1][consts.Consts.outgoing_flows])
+                outgoing_list = list(node_with_classification[node_param_name][1][consts.Consts.outgoing_flow])
                 tmp_outgoing_list = list(outgoing_list)
 
                 for flow_id in tmp_outgoing_list:
@@ -176,18 +177,18 @@ def topological_sort(bpmn_graph, nodes_with_classification):
                     - Remove the incoming flow for target flow node
                     '''
                     outgoing_list.remove(flow_id)
-                    node_with_classification[node_param_name][1][consts.Consts.outgoing_flows].remove(flow_id)
+                    node_with_classification[node_param_name][1][consts.Consts.outgoing_flow].remove(flow_id)
 
                     flow = bpmn_graph.get_flow_by_id(flow_id)
                     target_id = flow[2][consts.Consts.target_ref]
                     target = next(tmp_node[node_param_name]
                                   for tmp_node in tmp_nodes_with_classification
                                   if tmp_node[node_param_name][0] == target_id)
-                    target[1][consts.Consts.incoming_flows].remove(flow_id)
+                    target[1][consts.Consts.incoming_flow].remove(flow_id)
         else:
             for node_with_classification in tmp_nodes_with_classification:
                 if "Join" in node_with_classification[classification_param_name]:
-                    incoming_list = list(node_with_classification[node_param_name][1][consts.Consts.incoming_flows])
+                    incoming_list = list(node_with_classification[node_param_name][1][consts.Consts.incoming_flow])
                     tmp_incoming_list = list(incoming_list)
                     for flow_id in tmp_incoming_list:
                         incoming_list.remove(flow_id)
@@ -198,13 +199,13 @@ def topological_sort(bpmn_graph, nodes_with_classification):
                         source = next(tmp_node[node_param_name]
                                       for tmp_node in tmp_nodes_with_classification
                                       if tmp_node[node_param_name][0] == source_id)
-                        source[1][consts.Consts.outgoing_flows].remove(flow_id)
+                        source[1][consts.Consts.outgoing_flow].remove(flow_id)
 
                         target_id = flow[2][consts.Consts.target_ref]
                         target = next(tmp_node[node_param_name]
                                       for tmp_node in tmp_nodes_with_classification
                                       if tmp_node[node_param_name][0] == target_id)
-                        target[1][consts.Consts.incoming_flows].remove(flow_id)
+                        target[1][consts.Consts.incoming_flow].remove(flow_id)
                         backward_flows.append(flow)
     return sorted_nodes_with_classification, backward_flows
 
@@ -245,8 +246,8 @@ def place_element_in_grid(node_with_classification, grid, last_row, last_col, bp
     classification_param_name = "classification"
 
     node_id = node_with_classification[node_param_name][0]
-    incoming_flows = node_with_classification[node_param_name][1][consts.Consts.incoming_flows]
-    outgoing_flows = node_with_classification[node_param_name][1][consts.Consts.outgoing_flows]
+    incoming_flows = node_with_classification[node_param_name][1][consts.Consts.incoming_flow]
+    outgoing_flows = node_with_classification[node_param_name][1][consts.Consts.outgoing_flow]
 
     if len(incoming_flows) == 0:
         # if node has no incoming flow, put it in new row

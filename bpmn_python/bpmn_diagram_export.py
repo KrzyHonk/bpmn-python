@@ -34,16 +34,31 @@ class BpmnDiagramGraphExport(object):
             output_element.set(consts.Consts.default, node_params[consts.Consts.default])
 
     @staticmethod
-    def export_subprocess_info(node_params, output_element):
+    def export_subprocess_info(bpmn_diagram, subprocess_params, output_element):
         """
         Adds Subprocess node attributes to exported XML element
 
-        :param node_params: dictionary with given subprocess parameters,
+        :param bpmn_diagram: BPMNDiagramGraph class instantion representing a BPMN process diagram,
+        :param subprocess_params: dictionary with given subprocess parameters,
         :param output_element: object representing BPMN XML 'subprocess' element.
         """
-        output_element.set(consts.Consts.triggered_by_event, node_params[consts.Consts.triggered_by_event])
-        if consts.Consts.default in node_params and node_params[consts.Consts.default] is not None:
-            output_element.set(consts.Consts.default, node_params[consts.Consts.default])
+        output_element.set(consts.Consts.triggered_by_event, subprocess_params[consts.Consts.triggered_by_event])
+        if consts.Consts.default in subprocess_params and subprocess_params[consts.Consts.default] is not None:
+            output_element.set(consts.Consts.default, subprocess_params[consts.Consts.default])
+
+        # for each node in graph add correct type of element, its attributes and BPMNShape element
+        subprocess_id = subprocess_params[consts.Consts.id]
+        nodes = bpmn_diagram.get_nodes_list_by_process_id(subprocess_id)
+        for node in nodes:
+            node_id = node[0]
+            params = node[1]
+            BpmnDiagramGraphExport.export_node_data(bpmn_diagram, node_id, params, output_element)
+
+        # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
+        flows = bpmn_diagram.get_flows_list_by_process_id(subprocess_id)
+        for flow in flows:
+            params = flow[2]
+            BpmnDiagramGraphExport.export_flow_process_data(params, output_element)
 
     # TODO Complex gateway not fully supported
     #  need to find out how sequence of conditions is represented in BPMN 2.0 XML
@@ -86,7 +101,7 @@ class BpmnDiagramGraphExport(object):
     @staticmethod
     def export_parallel_gateway_info(node_params, output_element):
         """
-        Adds Subprocess node attributes to exported XML element
+        Adds parallel gateway node attributes to exported XML element
 
         :param node_params: dictionary with given parallel gateway parameters,
         :param output_element: object representing BPMN XML 'parallelGateway' element.
@@ -281,10 +296,11 @@ class BpmnDiagramGraphExport(object):
         return diagram, plane
 
     @staticmethod
-    def export_node_process_data(process_id, params, process):
+    def export_node_data(bpmn_diagram, process_id, params, process):
         """
         Creates a new XML element (depends on node type) for given node parameters and adds it to 'process' element.
 
+        :param bpmn_diagram: BPMNDiagramGraph class instantion representing a BPMN process diagram,
         :param process_id: string representing ID of given flow node,
         :param params: dictionary with node parameters,
         :param process: object of Element class, representing BPMN XML 'process' element (root for nodes).
@@ -294,17 +310,17 @@ class BpmnDiagramGraphExport(object):
         output_element.set(consts.Consts.id, process_id)
         output_element.set(consts.Consts.name, params[consts.Consts.node_name])
 
-        for incoming in params[consts.Consts.incoming_flows]:
-            incoming_element = eTree.SubElement(output_element, consts.Consts.incoming_flows)
+        for incoming in params[consts.Consts.incoming_flow]:
+            incoming_element = eTree.SubElement(output_element, consts.Consts.incoming_flow)
             incoming_element.text = incoming
-        for outgoing in params[consts.Consts.outgoing_flows]:
-            outgoing_element = eTree.SubElement(output_element, consts.Consts.outgoing_flows)
+        for outgoing in params[consts.Consts.outgoing_flow]:
+            outgoing_element = eTree.SubElement(output_element, consts.Consts.outgoing_flow)
             outgoing_element.text = outgoing
 
         if node_type == consts.Consts.task:
             BpmnDiagramGraphExport.export_task_info(params, output_element)
         elif node_type == consts.Consts.subprocess:
-            BpmnDiagramGraphExport.export_subprocess_info(params, output_element)
+            BpmnDiagramGraphExport.export_subprocess_info(bpmn_diagram, params, output_element)
         elif node_type == consts.Consts.complex_gateway:
             BpmnDiagramGraphExport.export_complex_gateway_info(params, output_element)
         elif node_type == consts.Consts.event_based_gateway:
@@ -450,15 +466,27 @@ class BpmnDiagramGraphExport(object):
             for node in nodes:
                 node_id = node[0]
                 params = node[1]
-                BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
-                BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
+                BpmnDiagramGraphExport.export_node_data(bpmn_diagram, node_id, params, process)
+                # BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
 
             # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
             flows = bpmn_diagram.get_flows_list_by_process_id(process_id)
             for flow in flows:
                 params = flow[2]
                 BpmnDiagramGraphExport.export_flow_process_data(params, process)
-                BpmnDiagramGraphExport.export_flow_di_data(params, plane)
+                # BpmnDiagramGraphExport.export_flow_di_data(params, plane)
+
+        # Export DI data
+        nodes = bpmn_diagram.get_nodes()
+        for node in nodes:
+            node_id = node[0]
+            params = node[1]
+            BpmnDiagramGraphExport.export_node_di_data(node_id, params, plane)
+
+        flows = bpmn_diagram.get_flows()
+        for flow in flows:
+            params = flow[2]
+            BpmnDiagramGraphExport.export_flow_di_data(params, plane)
 
         BpmnDiagramGraphExport.indent(definitions)
         tree = eTree.ElementTree(definitions)
@@ -491,7 +519,7 @@ class BpmnDiagramGraphExport(object):
             for node in nodes:
                 node_id = node[0]
                 params = node[1]
-                BpmnDiagramGraphExport.export_node_process_data(node_id, params, process)
+                BpmnDiagramGraphExport.export_node_data(bpmn_diagram, node_id, params, process)
 
             # for each edge in graph add sequence flow element, its attributes and BPMNEdge element
             flows = diagram_graph.edges(data=True)

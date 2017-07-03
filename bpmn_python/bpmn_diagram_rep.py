@@ -7,11 +7,11 @@ import uuid
 import networkx as nx
 
 import bpmn_python.bpmn_diagram_exception as bpmn_exception
-import bpmn_python.bpmn_python_consts as consts
 import bpmn_python.bpmn_diagram_export as bpmn_export
 import bpmn_python.bpmn_diagram_import as bpmn_import
-import bpmn_python.bpmn_process_csv_import as bpmn_csv_import
 import bpmn_python.bpmn_process_csv_export as bpmn_csv_export
+import bpmn_python.bpmn_process_csv_import as bpmn_csv_import
+import bpmn_python.bpmn_python_consts as consts
 
 
 class BpmnDiagramGraph(object):
@@ -80,7 +80,6 @@ class BpmnDiagramGraph(object):
         """
         bpmn_export.BpmnDiagramGraphExport.export_xml_file_no_di(directory, filename, self)
 
-
     def load_diagram_from_csv_file(self, filepath):
         """
         Reads an CSV file from given filepath and maps it into inner representation of BPMN diagram.
@@ -90,7 +89,6 @@ class BpmnDiagramGraph(object):
         """
 
         bpmn_csv_import.BpmnDiagramGraphCSVImport.load_diagram_from_csv(filepath, self)
-
 
     def export_csv_file(self, directory, filename):
         """
@@ -253,8 +251,8 @@ class BpmnDiagramGraph(object):
         self.diagram_graph.add_node(node_id)
         self.diagram_graph.node[node_id][consts.Consts.type] = node_type
         self.diagram_graph.node[node_id][consts.Consts.node_name] = name
-        self.diagram_graph.node[node_id][consts.Consts.incoming_flows] = []
-        self.diagram_graph.node[node_id][consts.Consts.outgoing_flows] = []
+        self.diagram_graph.node[node_id][consts.Consts.incoming_flow] = []
+        self.diagram_graph.node[node_id][consts.Consts.outgoing_flow] = []
         self.diagram_graph.node[node_id][consts.Consts.process] = process_id
 
         # Adding some dummy constant values
@@ -489,10 +487,10 @@ class BpmnDiagramGraph(object):
              (target_node[consts.Consts.x], target_node[consts.Consts.y])]
 
         # add target node (target_ref_id) as outgoing node from source node (source_ref_id)
-        source_node[consts.Consts.outgoing_flows].append(sequence_flow_id)
+        source_node[consts.Consts.outgoing_flow].append(sequence_flow_id)
 
         # add source node (source_ref_id) as incoming node to target node (target_ref_id)
-        target_node[consts.Consts.incoming_flows].append(sequence_flow_id)
+        target_node[consts.Consts.incoming_flow].append(sequence_flow_id)
         return sequence_flow_id, flow
 
     def get_nodes_positions(self):
