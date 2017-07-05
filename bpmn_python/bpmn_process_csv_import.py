@@ -176,15 +176,15 @@ def is_node_the_end_event(node_id, process_dict):
 
 
 def add_outgoing_flow(node_id, successor_node_id, diagram_graph):
-    if diagram_graph.node[node_id].get(consts.Consts.outgoing_flows) is None:
-        diagram_graph.node[node_id][consts.Consts.outgoing_flows] = []
-    diagram_graph.node[node_id][consts.Consts.outgoing_flows].append(get_flow_id(node_id, successor_node_id))
+    if diagram_graph.node[node_id].get(consts.Consts.outgoing_flow) is None:
+        diagram_graph.node[node_id][consts.Consts.outgoing_flow] = []
+    diagram_graph.node[node_id][consts.Consts.outgoing_flow].append(get_flow_id(node_id, successor_node_id))
 
 
 def add_incoming_flow(node_id, from_node_id, diagram_graph):
-    if diagram_graph.node[node_id].get(consts.Consts.incoming_flows) is None:
-        diagram_graph.node[node_id][consts.Consts.incoming_flows] = []
-    diagram_graph.node[node_id][consts.Consts.incoming_flows].append(get_flow_id(from_node_id, node_id))
+    if diagram_graph.node[node_id].get(consts.Consts.incoming_flow) is None:
+        diagram_graph.node[node_id][consts.Consts.incoming_flow] = []
+    diagram_graph.node[node_id][consts.Consts.incoming_flow].append(get_flow_id(from_node_id, node_id))
 
 
 def get_connection_condition_if_present(from_node_id, to_node_id, process_dict):
@@ -323,18 +323,18 @@ def fill_graph_connections(process_dict, diagram_graph, sequence_flows):
 
 
 def remove_outgoing_connection(base_node, diagram_graph, sequence_flows):
-    outgoing_flow_id = diagram_graph.node[base_node][consts.Consts.outgoing_flows][0]
+    outgoing_flow_id = diagram_graph.node[base_node][consts.Consts.outgoing_flow][0]
     neighbour_node = sequence_flows[outgoing_flow_id][consts.Consts.target_ref]
-    diagram_graph.node[neighbour_node][consts.Consts.incoming_flows].remove(outgoing_flow_id)
+    diagram_graph.node[neighbour_node][consts.Consts.incoming_flow].remove(outgoing_flow_id)
     del sequence_flows[outgoing_flow_id]
     diagram_graph.remove_edge(base_node, neighbour_node)
     return neighbour_node
 
 
 def remove_incoming_connection(base_node, diagram_graph, sequence_flows):
-    incoming_flow_id = diagram_graph.node[base_node][consts.Consts.incoming_flows][0]
+    incoming_flow_id = diagram_graph.node[base_node][consts.Consts.incoming_flow][0]
     neighbour_node = sequence_flows[incoming_flow_id][consts.Consts.source_ref]
-    diagram_graph.node[neighbour_node][consts.Consts.outgoing_flows].remove(incoming_flow_id)
+    diagram_graph.node[neighbour_node][consts.Consts.outgoing_flow].remove(incoming_flow_id)
     del sequence_flows[incoming_flow_id]
     diagram_graph.remove_edge(neighbour_node, base_node)
     return neighbour_node
@@ -353,8 +353,8 @@ def remove_unnecessary_merge_gateways(process_dict, diagram_graph, sequence_flow
     for node in diagram_graph.nodes(True):
         type = node[1].get(consts.Consts.type)
         if type in [consts.Consts.inclusive_gateway, consts.Consts.exclusive_gateway, consts.Consts.parallel_gateway]:
-            if len(node[1].get(consts.Consts.incoming_flows)) < 2 \
-                    and len(node[1].get(consts.Consts.outgoing_flows)) < 2:
+            if len(node[1].get(consts.Consts.incoming_flow)) < 2 \
+                    and len(node[1].get(consts.Consts.outgoing_flow)) < 2:
                 new_source_node, new_target_node = remove_node(node[0], process_dict, diagram_graph, sequence_flows)
                 add_connection(new_source_node, new_target_node, process_dict, diagram_graph, sequence_flows)
 
@@ -433,10 +433,10 @@ class BpmnDiagramGraphCSVImport(object):
     @staticmethod
     def legacy_adjustment(diagram_graph):
         for node in diagram_graph.nodes(True):
-            if node[1].get(consts.Consts.incoming_flows) is None:
-                node[1][consts.Consts.incoming_flows] = []
-            if node[1].get(consts.Consts.outgoing_flows) is None:
-                node[1][consts.Consts.outgoing_flows] = []
+            if node[1].get(consts.Consts.incoming_flow) is None:
+                node[1][consts.Consts.incoming_flow] = []
+            if node[1].get(consts.Consts.outgoing_flow) is None:
+                node[1][consts.Consts.outgoing_flow] = []
             if node[1].get(consts.Consts.event_definitions) is None:
                 node[1][consts.Consts.event_definitions] = []
 

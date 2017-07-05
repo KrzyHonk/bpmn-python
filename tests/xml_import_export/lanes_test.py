@@ -5,7 +5,7 @@ Test unit, using simple graph made in Signavio editor for import/export operatio
 import os
 import unittest
 
-import graph.bpmn_diagram_rep as diagram
+import bpmn_python.bpmn_diagram_rep as diagram
 
 
 class BPMNEditorTests(unittest.TestCase):

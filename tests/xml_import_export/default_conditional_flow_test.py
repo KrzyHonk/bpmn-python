@@ -5,7 +5,7 @@ Test unit, using simple graph made in BPMNEditor editor for import/export operat
 import os
 import unittest
 
-import graph.bpmn_diagram_rep as diagram
+import bpmn_python.bpmn_diagram_rep as diagram
 
 
 class DefaultConditionalFlowTests(unittest.TestCase):

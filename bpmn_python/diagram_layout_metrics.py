@@ -256,7 +256,7 @@ def find_longest_path_tasks(path, qualified_nodes, node, bpmn_graph):
     :return:
     """
     node_names = {"task", "subProcess"}
-    outgoing_flows_list = node[1][consts.Consts.outgoing_flows]
+    outgoing_flows_list = node[1][consts.Consts.outgoing_flow]
 
     if len(outgoing_flows_list) == 0:
         tmp_path = copy.deepcopy(path)

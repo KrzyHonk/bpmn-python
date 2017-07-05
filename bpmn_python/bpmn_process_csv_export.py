@@ -53,7 +53,7 @@ class BpmnDiagramGraphCsvExport(object):
         export_elements = []
 
         for node in nodes:
-            incoming_list = node[1].get(consts.Consts.incoming_flows)
+            incoming_list = node[1].get(consts.Consts.incoming_flow)
             if len(incoming_list) == 0:
                 start_nodes.append(node)
         if len(start_nodes) != 1:
@@ -125,7 +125,7 @@ class BpmnDiagramGraphCsvExport(object):
         node_type = node[1][consts.Consts.type]
         node_classification = nodes_classification[node[0]]
 
-        outgoing_flows = node[1].get(consts.Consts.outgoing_flows)
+        outgoing_flows = node[1].get(consts.Consts.outgoing_flow)
         if node_type != consts.Consts.parallel_gateway and consts.Consts.default in node[1] \
                 and node[1][consts.Consts.default] is not None:
             default_flow_id = node[1][consts.Consts.default]
@@ -238,7 +238,7 @@ class BpmnDiagramGraphCsvExport(object):
         export_elements.append({"Order": prefix + str(order), "Activity": activity, "Condition": condition,
                                 "Who": who, "Subprocess": "", "Terminated": ""})
 
-        outgoing_flow_id = node[1][consts.Consts.outgoing_flows][0]
+        outgoing_flow_id = node[1][consts.Consts.outgoing_flow][0]
         outgoing_flow = bpmn_graph.get_flow_by_id(outgoing_flow_id)
         outgoing_node = bpmn_graph.get_node_by_id(outgoing_flow[2][consts.Consts.target_ref])
         return BpmnDiagramGraphCsvExport.export_node(bpmn_graph, export_elements, outgoing_node, nodes_classification,

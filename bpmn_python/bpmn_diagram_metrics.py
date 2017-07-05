@@ -97,7 +97,7 @@ def all_control_flow_elements_count(bpmn_graph):
     gateway_counts = get_gateway_counts(bpmn_graph)
     events_counts = get_events_counts(bpmn_graph)
 
-    control_flow_elements_counts = dict(gateway_counts.items() + events_counts.items())
+    control_flow_elements_counts = dict(gateway_counts.items() | events_counts.items())
 
     return sum([
             count for name, count in control_flow_elements_counts.items()

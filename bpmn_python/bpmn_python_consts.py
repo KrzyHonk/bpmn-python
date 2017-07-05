@@ -21,6 +21,8 @@ class Consts(object):
     target_ref = "targetRef"
     triggered_by_event = "triggeredByEvent"
     parallel_multiple = "parallelMultiple"
+    cancel_activity = "cancelActivity"
+    attached_to_ref = "attachedToRef"
     is_interrupting = "isInterrupting"
     is_closed = "isClosed"
     is_executable = "isExecutable"
@@ -39,7 +41,6 @@ class Consts(object):
     csv_who = "Who"
     csv_subprocess = "Subprocess"
     csv_terminated = "Terminated"
-
 
     # BPMN 2.0 diagram interchange element attribute names
     bpmn_element = "bpmnElement"
@@ -72,14 +73,17 @@ class Consts(object):
     intermediate_catch_event = "intermediateCatchEvent"
     end_event = "endEvent"
     intermediate_throw_event = "intermediateThrowEvent"
+    boundary_event = "boundaryEvent"
 
     # BPMN 2.0 diagram interchange element names
     bpmn_shape = "BPMNShape"
     bpmn_edge = "BPMNEdge"
 
     # BPMN 2.0 child element names
-    incoming_flows = "incoming"
-    outgoing_flows = "outgoing"
+    incoming_flow = "incoming"
+    incoming_flow_list = "incoming_flow_list"
+    outgoing_flow = "outgoing"
+    outgoing_flow_list = "outgoing_flow_list"
     waypoint = "waypoint"
     waypoints = "waypoints"
 

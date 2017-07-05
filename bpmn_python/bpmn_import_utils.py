@@ -124,8 +124,8 @@ class BpmnImportUtils(object):
         """
         classification_join = "Join"
         classification_split = "Split"
-        if len(element[1][consts.Consts.incoming_flows]) >= 2:
+        if len(element[1][consts.Consts.incoming_flow]) >= 2:
             classification_labels.append(classification_join)
-        if len(element[1][consts.Consts.outgoing_flows]) >= 2:
+        if len(element[1][consts.Consts.outgoing_flow]) >= 2:
             classification_labels.append(classification_split)
         nodes_classification[element[0]] = classification_labels
