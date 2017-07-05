@@ -60,6 +60,17 @@ class BpmnDiagramGraphExport(object):
             params = flow[2]
             BpmnDiagramGraphExport.export_flow_process_data(params, output_element)
 
+    @staticmethod
+    def export_data_object_info(bpmn_diagram, data_object_params, output_element):
+        """
+        Adds DataObject node attributes to exported XML element
+
+        :param bpmn_diagram: BPMNDiagramGraph class instantion representing a BPMN process diagram,
+        :param data_object_params: dictionary with given subprocess parameters,
+        :param output_element: object representing BPMN XML 'subprocess' element.
+        """
+        output_element.set(consts.Consts.is_collection, data_object_params[consts.Consts.is_collection])
+
     # TODO Complex gateway not fully supported
     #  need to find out how sequence of conditions is represented in BPMN 2.0 XML
     @staticmethod
@@ -317,10 +328,15 @@ class BpmnDiagramGraphExport(object):
             outgoing_element = eTree.SubElement(output_element, consts.Consts.outgoing_flow)
             outgoing_element.text = outgoing
 
-        if node_type == consts.Consts.task:
+        if node_type == consts.Consts.task \
+                or node_type == consts.Consts.user_task \
+                or node_type == consts.Consts.service_task \
+                or node_type == consts.Consts.manual_task:
             BpmnDiagramGraphExport.export_task_info(params, output_element)
         elif node_type == consts.Consts.subprocess:
             BpmnDiagramGraphExport.export_subprocess_info(bpmn_diagram, params, output_element)
+        elif node_type == consts.Consts.data_object:
+            BpmnDiagramGraphExport.export_data_object_info(bpmn_diagram, params, output_element)
         elif node_type == consts.Consts.complex_gateway:
             BpmnDiagramGraphExport.export_complex_gateway_info(params, output_element)
         elif node_type == consts.Consts.event_based_gateway:
@@ -428,6 +444,7 @@ class BpmnDiagramGraphExport(object):
                 message_flow.set(consts.Consts.source_ref, message_flow_attr[consts.Consts.source_ref])
                 message_flow.set(consts.Consts.target_ref, message_flow_attr[consts.Consts.target_ref])
 
+                tmp = bpmn_diagram.get_flow_by_id(message_flow_id)
                 message_flow_params = bpmn_diagram.get_flow_by_id(message_flow_id)[2]
                 output_flow = eTree.SubElement(plane, BpmnDiagramGraphExport.bpmndi_namespace + consts.Consts.bpmn_edge)
                 output_flow.set(consts.Consts.id, message_flow_id + "_gui")
