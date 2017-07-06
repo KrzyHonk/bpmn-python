@@ -1,9 +1,0 @@
-Order,Activity,Condition,Who,Subprocess,Terminated
-0,start,,,,
-1a1,Examine The Bill ,Mpoo sends bill ,,,
-1b1,Examine The Bill ,Mspo sends bill ,,,
-1c1,Examine The Bill ,Mspo sends bill ,,,
-1d1,Examine The Bill ,Mpoo sends bill ,,,
-2,Confirm Go ,,,,
-3,Reject The Invoice ,,,,
-4,,,,,yes

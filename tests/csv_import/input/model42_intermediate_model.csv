@@ -1,6 +1,0 @@
-Order,Activity,Condition,Who,Subprocess,Terminated
-0,start,,,,
-1,Transmit The Transaction Data Request ,,,,
-2,Check The Request ,,,,
-3,Answer The Question ,,,,
-4,,,,,yes
