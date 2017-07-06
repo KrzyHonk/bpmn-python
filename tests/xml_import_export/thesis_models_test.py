@@ -39,14 +39,18 @@ class ThesisModelsTests(unittest.TestCase):
             "model23"
         ]
 
-        for model_name in names:
-            print(model_name)
-            hand_made_bpmn = diagram.BpmnDiagramGraph()
-            hand_made_bpmn.load_diagram_from_xml_file(self.input_directory + model_name + ".bpmn")
-            hand_made_bpmn.export_xml_file(self.output_directory, model_name + "-output.bpmn")
-            metrics.all_activities_count(hand_made_bpmn)
-            metrics.all_gateways_count(hand_made_bpmn)
-            # metrics.all_control_flow_elements_count(hand_made_bpmn)
+        with open(self.output_directory + "metrics", "w") as file:
+            # write header
+            file.write("Model name,Activities,Gateways\n")
+
+            for model_name in names:
+                bpmn_diagram = diagram.BpmnDiagramGraph()
+                bpmn_diagram.load_diagram_from_xml_file(self.input_directory + model_name + ".bpmn")
+                bpmn_diagram.export_xml_file(self.output_directory, model_name + "-output.bpmn")
+                activities_count = metrics.all_activities_count(bpmn_diagram)
+                gateways_count = metrics.all_gateways_count(bpmn_diagram)
+                # metrics.all_control_flow_elements_count(bpmn_diagram)
+                file.write(model_name + "," + str(activities_count) + "," + str(gateways_count) + "\n")
 
 if __name__ == '__main__':
     unittest.main()
