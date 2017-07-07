@@ -1,7 +1,0 @@
-Order,Activity,Condition,Who,Subprocess,Terminated
-0,start,,,,
-1,Sents The Dismissal ,,,,
-2,Review The Dismissal ,,,,
-3,Oppose The Dismissal ,,,,
-4,Confirm The Dismissal ,,,,
-5,,,,,yes
