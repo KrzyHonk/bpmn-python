@@ -444,7 +444,6 @@ class BpmnDiagramGraphExport(object):
                 message_flow.set(consts.Consts.source_ref, message_flow_attr[consts.Consts.source_ref])
                 message_flow.set(consts.Consts.target_ref, message_flow_attr[consts.Consts.target_ref])
 
-                tmp = bpmn_diagram.get_flow_by_id(message_flow_id)
                 message_flow_params = bpmn_diagram.get_flow_by_id(message_flow_id)[2]
                 output_flow = eTree.SubElement(plane, BpmnDiagramGraphExport.bpmndi_namespace + consts.Consts.bpmn_edge)
                 output_flow.set(consts.Consts.id, message_flow_id + "_gui")

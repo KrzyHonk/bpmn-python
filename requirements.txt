@@ -1,3 +1,5 @@
+six
+pandas
 networkx
 matplotlib
 pydotplus

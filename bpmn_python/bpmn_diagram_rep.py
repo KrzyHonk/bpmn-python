@@ -238,17 +238,20 @@ class BpmnDiagramGraph(object):
         self.plane_attributes[consts.Consts.bpmn_element] = process_id
         return process_id
 
-    def add_flow_node_to_diagram(self, process_id, node_type, name):
+    def add_flow_node_to_diagram(self, process_id, node_type, name, node_id=None):
         """
         Helper function that adds a new Flow Node to diagram. It is used to add a new node of specified type.
         Adds a basic information inherited from Flow Node type.
 
         :param process_id: string object. ID of parent process,
         :param node_type: string object. Represents type of BPMN node passed to method,
-        :param name: string object. Name of the node.
+        :param name: string object. Name of the node,
+        :param node_id: string object. ID of node. Default value - None.
         """
-        node_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
+        if node_id is None:
+            node_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.diagram_graph.add_node(node_id)
+        self.diagram_graph.node[node_id][consts.Consts.id] = node_id
         self.diagram_graph.node[node_id][consts.Consts.type] = node_type
         self.diagram_graph.node[node_id][consts.Consts.node_name] = name
         self.diagram_graph.node[node_id][consts.Consts.incoming_flow] = []
@@ -262,7 +265,7 @@ class BpmnDiagramGraph(object):
         self.diagram_graph.node[node_id][consts.Consts.y] = "100"
         return node_id, self.diagram_graph.node[node_id]
 
-    def add_task_to_diagram(self, process_id, task_name=""):
+    def add_task_to_diagram(self, process_id, task_name="", node_id=None):
         """
         Adds a Task element to BPMN diagram.
         User-defined attributes:
@@ -270,11 +273,13 @@ class BpmnDiagramGraph(object):
         Returns a tuple, where first value is task ID, second a reference to created object.
 
         :param process_id: string object. ID of parent process,
-        :param task_name: string object. Name of task.
+        :param task_name: string object. Name of task,
+        :param node_id: string object. ID of node. Default value - None.
         """
-        return self.add_flow_node_to_diagram(process_id, consts.Consts.task, task_name)
+        return self.add_flow_node_to_diagram(process_id, consts.Consts.task, task_name, node_id)
 
-    def add_subprocess_to_diagram(self, process_id, subprocess_name, is_expanded=False, triggered_by_event=False):
+    def add_subprocess_to_diagram(self, process_id, subprocess_name, is_expanded=False, triggered_by_event=False,
+                                  node_id=None):
         """
         Adds a SubProcess element to BPMN diagram.
         User-defined attributes:
@@ -285,16 +290,18 @@ class BpmnDiagramGraph(object):
         :param process_id: string object. ID of parent process,
         :param subprocess_name: string object. Name of subprocess,
         :param is_expanded: boolean value for attribute "isExpanded". Default value false,
-        :param triggered_by_event: boolean value for attribute "triggeredByEvent". Default value false.
+        :param triggered_by_event: boolean value for attribute "triggeredByEvent". Default value false,
+        :param node_id: string object. ID of node. Default value - None.
         """
-        subprocess_id, subprocess = self.add_flow_node_to_diagram(process_id, consts.Consts.subprocess, subprocess_name)
+        subprocess_id, subprocess = self.add_flow_node_to_diagram(process_id, consts.Consts.subprocess, subprocess_name,
+                                                                  node_id)
         self.diagram_graph.node[subprocess_id][consts.Consts.is_expanded] = "true" if is_expanded else "false"
         self.diagram_graph.node[subprocess_id][consts.Consts.triggered_by_event] = \
             "true" if triggered_by_event else "false"
         return subprocess_id, subprocess
 
     def add_start_event_to_diagram(self, process_id, start_event_name="", start_event_definition=None,
-                                   parallel_multiple=False, is_interrupting=True):
+                                   parallel_multiple=False, is_interrupting=True, node_id=None):
         """
         Adds a StartEvent element to BPMN diagram.
         User-defined attributes:
@@ -309,11 +316,13 @@ class BpmnDiagramGraph(object):
         :param start_event_name: string object. Name of start event,
         :param start_event_definition: list of event definitions. By default - empty,
         :param parallel_multiple: boolean value for attribute "parallelMultiple",
-        :param is_interrupting: boolean value for attribute "isInterrupting.
+        :param is_interrupting: boolean value for attribute "isInterrupting,
+        :param node_id: string object. ID of node. Default value - None.
+
         :return a tuple, where first value is startEvent ID, second a reference to created object.
         """
         start_event_id, start_event = self.add_flow_node_to_diagram(process_id, consts.Consts.start_event,
-                                                                    start_event_name)
+                                                                    start_event_name, node_id)
         self.diagram_graph.node[start_event_id][consts.Consts.parallel_multiple] = \
             "true" if parallel_multiple else "false"
         self.diagram_graph.node[start_event_id][consts.Consts.is_interrupting] = "true" if is_interrupting else "false"
@@ -335,7 +344,7 @@ class BpmnDiagramGraph(object):
         self.diagram_graph.node[start_event_id][consts.Consts.event_definitions] = event_def_list
         return start_event_id, start_event
 
-    def add_end_event_to_diagram(self, process_id, end_event_name="", end_event_definition=None):
+    def add_end_event_to_diagram(self, process_id, end_event_name="", end_event_definition=None, node_id=None):
         """
         Adds an EndEvent element to BPMN diagram.
         User-defined attributes:
@@ -348,9 +357,11 @@ class BpmnDiagramGraph(object):
         :param process_id: string object. ID of parent process,
         :param end_event_name: string object. Name of end event,
         :param end_event_definition: list of event definitions. By default - empty.
-        :return a tuple, where first value is endEvent ID, second a reference to created object.
+        :return a tuple, where first value is endEvent ID, second a reference to created object,
+        :param node_id: string object. ID of node. Default value - None.
         """
-        end_event_id, end_event = self.add_flow_node_to_diagram(process_id, consts.Consts.end_event, end_event_name)
+        end_event_id, end_event = self.add_flow_node_to_diagram(process_id, consts.Consts.end_event, end_event_name,
+                                                                node_id)
         end_event_definitions = {"terminate": "terminateEventDefinition", "escalation": "escalationEventDefinition",
                                  "message": "messageEventDefinition", "compensate": "compensateEventDefinition",
                                  "signal": "signalEventDefinition", "error": "errorEventDefinition"}
@@ -384,7 +395,8 @@ class BpmnDiagramGraph(object):
         event_def = {consts.Consts.id: event_def_id, consts.Consts.definition_type: event_definitions[event_type]}
         return event_def
 
-    def add_gateway_to_diagram(self, process_id, gateway_type, gateway_name="", gateway_direction="Unspecified"):
+    def add_gateway_to_diagram(self, process_id, gateway_type, gateway_name="", gateway_direction="Unspecified",
+                               node_id=None):
         """
         Adds an exclusiveGateway element to BPMN diagram.
 
@@ -392,10 +404,12 @@ class BpmnDiagramGraph(object):
         :param gateway_type: string object. Type of gateway to be added.
         :param gateway_name: string object. Name of exclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
-        Default value - "Unspecified".
+        Default value - "Unspecified",
+        :param node_id: string object. ID of node. Default value - None.
+
         :return Returns a tuple, where first value is gateway ID, second a reference to created object.
         """
-        gateway_id, gateway = self.add_flow_node_to_diagram(process_id, gateway_type, gateway_name)
+        gateway_id, gateway = self.add_flow_node_to_diagram(process_id, gateway_type, gateway_name, node_id)
         if not (gateway_direction in ("Unspecified", "Converging", "Diverging", "Mixed")):
             raise bpmn_exception.BpmnPythonError("Invalid value passed as gatewayDirection parameter. Value passed: "
                                                  + gateway_direction)
@@ -403,7 +417,7 @@ class BpmnDiagramGraph(object):
         return gateway_id, gateway
 
     def add_exclusive_gateway_to_diagram(self, process_id, gateway_name="", gateway_direction="Unspecified",
-                                         default=None):
+                                         default=None, node_id=None):
         """
         Adds an exclusiveGateway element to BPMN diagram.
 
@@ -411,18 +425,21 @@ class BpmnDiagramGraph(object):
         :param gateway_name: string object. Name of exclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
         Default value - "Unspecified".
-        :param default: string object. ID of flow node, target of gateway default path. Default value - None.
+        :param default: string object. ID of flow node, target of gateway default path. Default value - None,
+        :param node_id: string object. ID of node. Default value - None.
+        
         :return Returns a tuple, where first value is exculusiveGateway ID, second a reference to created object.
         """
         exclusive_gateway_id, exclusive_gateway = self.add_gateway_to_diagram(process_id,
                                                                               consts.Consts.exclusive_gateway,
                                                                               gateway_name=gateway_name,
-                                                                              gateway_direction=gateway_direction)
+                                                                              gateway_direction=gateway_direction,
+                                                                              node_id=node_id)
         self.diagram_graph.node[exclusive_gateway_id][consts.Consts.default] = default
         return exclusive_gateway_id, exclusive_gateway
 
     def add_inclusive_gateway_to_diagram(self, process_id, gateway_name="", gateway_direction="Unspecified",
-                                         default=None):
+                                         default=None, node_id=None):
         """
         Adds an inclusiveGateway element to BPMN diagram.
 
@@ -430,30 +447,37 @@ class BpmnDiagramGraph(object):
         :param gateway_name: string object. Name of inclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
         Default value - "Unspecified",
-        :param default: string object. ID of flow node, target of gateway default path. Default value - None.
+        :param default: string object. ID of flow node, target of gateway default path. Default value - None,
+        :param node_id: string object. ID of node. Default value - None.
+
         :return Returns a tuple, where first value is inclusiveGateway ID, second a reference to created object.
         """
         inclusive_gateway_id, inclusive_gateway = self.add_gateway_to_diagram(process_id,
                                                                               consts.Consts.inclusive_gateway,
                                                                               gateway_name=gateway_name,
-                                                                              gateway_direction=gateway_direction)
+                                                                              gateway_direction=gateway_direction,
+                                                                              node_id=node_id)
         self.diagram_graph.node[inclusive_gateway_id][consts.Consts.default] = default
         return inclusive_gateway_id, inclusive_gateway
 
-    def add_parallel_gateway_to_diagram(self, process_id, gateway_name="", gateway_direction="Unspecified"):
+    def add_parallel_gateway_to_diagram(self, process_id, gateway_name="", gateway_direction="Unspecified",
+                                        node_id=None):
         """
         Adds an parallelGateway element to BPMN diagram.
 
         :param process_id: string object. ID of parent process,
         :param gateway_name: string object. Name of inclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
-        Default value - "Unspecified".
+        Default value - "Unspecified",
+        :param node_id: string object. ID of node. Default value - None.
+
         :return Returns a tuple, where first value is parallelGateway ID, second a reference to created object.
         """
         parallel_gateway_id, parallel_gateway = self.add_gateway_to_diagram(process_id,
                                                                             consts.Consts.parallel_gateway,
                                                                             gateway_name=gateway_name,
-                                                                            gateway_direction=gateway_direction)
+                                                                            gateway_direction=gateway_direction,
+                                                                            node_id=node_id)
         return parallel_gateway_id, parallel_gateway
 
     def add_sequence_flow_to_diagram(self, process_id, source_ref_id, target_ref_id, sequence_flow_name=""):
