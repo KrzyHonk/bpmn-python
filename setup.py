@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 import os
 
 from setuptools import setup, find_packages
@@ -29,6 +29,8 @@ setup(
         'networkx',
         'matplotlib',
         'pydotplus',
+        'six',
+        'pandas',
     ],
     long_description=read('README.md'),
 )
