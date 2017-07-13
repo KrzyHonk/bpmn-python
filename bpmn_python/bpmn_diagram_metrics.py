@@ -27,6 +27,12 @@ def get_nodes_count(bpmn_graph, node_type=None):
 
 
 def get_all_gateways(bpmn_graph):
+    """
+    Returns a list with all gateways in diagram
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :return: a list with all gateways in diagram
+    """
     gateways = filter(lambda node: node[1]['type'] in GATEWAY_TYPES, bpmn_graph.get_nodes())
 
     return gateways
@@ -52,7 +58,6 @@ def get_events_counts(bpmn_graph):
             for event_type in EVENT_TYPES}
 
 
-
 def get_activities_counts(bpmn_graph):
     """
     Returns the count of the different types of activities
@@ -60,10 +65,10 @@ def get_activities_counts(bpmn_graph):
     """
 
     return {
-            "task": get_nodes_count(bpmn_graph,
-                                    node_type="task"),
-            "subProcess": get_nodes_count(bpmn_graph,
-                                          node_type="subProcess"),
+        "task": get_nodes_count(bpmn_graph,
+                                node_type="task"),
+        "subProcess": get_nodes_count(bpmn_graph,
+                                      node_type="subProcess"),
     }
 
 
@@ -73,8 +78,8 @@ def all_activities_count(bpmn_graph):
     """
 
     return sum([
-            count for name, count in get_activities_counts(bpmn_graph).items()
-            ])
+                   count for name, count in get_activities_counts(bpmn_graph).items()
+                   ])
 
 
 def all_gateways_count(bpmn_graph):
@@ -96,12 +101,12 @@ def all_control_flow_elements_count(bpmn_graph):
 
     gateway_counts = get_gateway_counts(bpmn_graph)
     events_counts = get_events_counts(bpmn_graph)
-
-    control_flow_elements_counts = dict(gateway_counts.items() | events_counts.items())
+    control_flow_elements_counts = gateway_counts.copy()
+    control_flow_elements_counts.update(events_counts)
 
     return sum([
-            count for name, count in control_flow_elements_counts.items()
-            ])
+                   count for name, count in control_flow_elements_counts.items()
+                   ])
 
 
 def all_events_count(bpmn_graph):
@@ -111,8 +116,8 @@ def all_events_count(bpmn_graph):
     """
 
     return sum([
-            count for name, count in get_events_counts(bpmn_graph).items()
-            ])
+                   count for name, count in get_events_counts(bpmn_graph).items()
+                   ])
 
 
 def TNSE_metric(bpmn_graph):
@@ -130,7 +135,7 @@ def TNIE_metric(bpmn_graph):
     for the BPMNDiagramGraph instance.
     """
 
-    return get_nodes_count(bpmn_graph, node_type='intermediateCatchEvent') +\
+    return get_nodes_count(bpmn_graph, node_type='intermediateCatchEvent') + \
            get_nodes_count(bpmn_graph, node_type='intermediateThrowEvent')
 
 
