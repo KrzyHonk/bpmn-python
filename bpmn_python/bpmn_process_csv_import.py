@@ -85,7 +85,8 @@ def remove_white_spaces_in_orders(process_dict):
 
     :param process_dict:
     """
-    for order, csv_line_dict in process_dict.items():
+    tmp_process_dict = copy.deepcopy(process_dict)
+    for order, csv_line_dict in tmp_process_dict.items():
         del process_dict[order]
         if isinstance(order, six.string_types) and order.strip() != order:
             process_dict[order.strip()] = csv_line_dict
@@ -468,7 +469,7 @@ def fill_graph_connections(process_dict, bpmn_diagram, sequence_flows):
     nodes_ids = list(bpmn_diagram.diagram_graph.node.keys())
     nodes_ids_to_process = copy.deepcopy(nodes_ids)
     while bool(nodes_ids_to_process):
-        node_id = nodes_ids_to_process.pop(0)
+        node_id = str(nodes_ids_to_process.pop(0))
         if is_node_the_end_event(node_id, process_dict):
             pass
         elif is_there_sequence_continuation(node_id, nodes_ids):
