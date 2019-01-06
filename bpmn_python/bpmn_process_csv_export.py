@@ -44,6 +44,7 @@ class BpmnDiagramGraphCsvExport(object):
     def export_process_to_csv(bpmn_diagram, directory, filename):
         """
         Root method of CSV export functionality.
+
         :param bpmn_diagram: an instance of BpmnDiagramGraph class,
         :param directory: a string object, which is a path of output directory,
         :param filename: a string object, which is a name of output file.
@@ -78,14 +79,15 @@ class BpmnDiagramGraphCsvExport(object):
                     add_join=False):
         """
         General method for node exporting
+
         :param bpmn_graph: an instance of BpmnDiagramGraph class,
         :param export_elements: a dictionary object. The key is a node ID, value is a dictionary of parameters that
-        will be used in exported CSV document,
+               will be used in exported CSV document,
         :param node: networkx.Node object,
         :param nodes_classification: dictionary of classification labels. Key - node id. Value - a list of labels,
         :param order: the order param of exported node,
         :param prefix: the prefix of exported node - if the task appears after some gateway, the prefix will identify
-        the branch
+               the branch
         :param condition: the condition param of exported node,
         :param who: the condition param of exported node,
         :param add_join: boolean flag. Used to indicate if "Join" element should be added to CSV.
@@ -109,14 +111,15 @@ class BpmnDiagramGraphCsvExport(object):
                        who="", add_join=False):
         """
         Export a node with "Element" classification (task, subprocess or gateway)
+
         :param bpmn_graph: an instance of BpmnDiagramGraph class,
         :param export_elements: a dictionary object. The key is a node ID, value is a dictionary of parameters that
-        will be used in exported CSV document,
+               will be used in exported CSV document,
         :param node: networkx.Node object,
         :param nodes_classification: dictionary of classification labels. Key - node id. Value - a list of labels,
         :param order: the order param of exported node,
         :param prefix: the prefix of exported node - if the task appears after some gateway, the prefix will identify
-        the branch
+               the branch
         :param condition: the condition param of exported node,
         :param who: the condition param of exported node,
         :param add_join: boolean flag. Used to indicate if "Join" element should be added to CSV.
@@ -206,14 +209,15 @@ class BpmnDiagramGraphCsvExport(object):
                            who=""):
         """
         Start event export
+
         :param bpmn_graph: an instance of BpmnDiagramGraph class,
         :param export_elements: a dictionary object. The key is a node ID, value is a dictionary of parameters that
-        will be used in exported CSV document,
+               will be used in exported CSV document,
         :param node: networkx.Node object,
         :param order: the order param of exported node,
         :param nodes_classification: dictionary of classification labels. Key - node id. Value - a list of labels,
         :param prefix: the prefix of exported node - if the task appears after some gateway, the prefix will identify
-        the branch
+               the branch
         :param condition: the condition param of exported node,
         :param who: the condition param of exported node,
         :return: None or the next node object if the exported node was a gateway join.
@@ -248,12 +252,13 @@ class BpmnDiagramGraphCsvExport(object):
     def export_end_event(export_elements, node, order=0, prefix="", condition="", who=""):
         """
         End event export
+
         :param export_elements: a dictionary object. The key is a node ID, value is a dictionary of parameters that
-        will be used in exported CSV document,
+               will be used in exported CSV document,
         :param node: networkx.Node object,
         :param order: the order param of exported node,
         :param prefix: the prefix of exported node - if the task appears after some gateway, the prefix will identify
-        the branch
+               the branch
         :param condition: the condition param of exported node,
         :param who: the condition param of exported node,
         :return: None or the next node object if the exported node was a gateway join.
@@ -282,9 +287,10 @@ class BpmnDiagramGraphCsvExport(object):
     def write_export_node_to_file(file_object, export_elements):
         """
         Exporting process to CSV file
+
         :param file_object: object of File class,
         :param export_elements: a dictionary object. The key is a node ID, value is a dictionary of parameters that
-        will be used in exported CSV document.
+               will be used in exported CSV document.
         """
         for export_element in export_elements:
             # Order,Activity,Condition,Who,Subprocess,Terminated

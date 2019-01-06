@@ -74,8 +74,8 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param collaboration_element: XML doument element,
         :param collaboration_dict: dictionary, that consist all information imported from 'collaboration' element.
-        Includes three key-value pairs - 'id' which keeps ID of collaboration element, 'participants' that keeps
-        information about 'participant' elements and 'message_flows' that keeps information about message flows.
+            Includes three key-value pairs - 'id' which keeps ID of collaboration element, 'participants' that keeps
+            information about 'participant' elements and 'message_flows' that keeps information about message flows.
         """
         collaboration_dict[consts.Consts.id] = collaboration_element.getAttribute(consts.Consts.id)
         collaboration_dict[consts.Consts.participants] = {}
@@ -98,7 +98,7 @@ class BpmnDiagramGraphImport(object):
 
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param participants_dictionary: dictionary with participant element attributes. Key is participant ID, value
-        is a dictionary of participant attributes,
+           is a dictionary of participant attributes,
         :param participant_element: object representing a BPMN XML 'participant' element.
         """
         participant_id = participant_element.getAttribute(consts.Consts.id)
@@ -116,9 +116,12 @@ class BpmnDiagramGraphImport(object):
         Adds attributes of BPMN diagram and plane elements to appropriate
         fields diagram_attributes and plane_attributes.
         Diagram inner representation contains following diagram element attributes:
+
         - id - assumed to be required in XML file, even thought BPMN 2.0 schema doesn't say so,
         - name - optional parameter, empty string by default,
+        
         Diagram inner representation contains following plane element attributes:
+
         - id - assumed to be required in XML file, even thought BPMN 2.0 schema doesn't say so,
         - bpmnElement - assumed to be required in XML file, even thought BPMN 2.0 schema doesn't say so,
 
@@ -143,7 +146,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param sequence_flows: a list of sequence flows existing in diagram,
         :param process_elements_dict: dictionary that holds attribute values for imported 'process' elements. Key is
-        an ID of process, value - a dictionary of process attributes,
+            an ID of process, value - a dictionary of process attributes,
         :param plane_element: object representing a BPMN XML 'plane' element.
         """
         for process_element in document.getElementsByTagNameNS("*", consts.Consts.process):
@@ -215,7 +218,7 @@ class BpmnDiagramGraphImport(object):
         Method for importing 'laneSet' element from diagram file.
 
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param lane_set_element: XML document element,
         :param plane_element: object representing a BPMN XML 'plane' element.
         """
@@ -298,6 +301,7 @@ class BpmnDiagramGraphImport(object):
         """
         Adds attributes of BPMN process element to appropriate field process_attributes.
         Diagram inner representation contains following process attributes:
+
         - id - assumed to be required in XML file, even thought BPMN 2.0 schema doesn't say so,
         - isClosed - optional parameter, default value 'false',
         - isExecutable - optional parameter, default value 'false',
@@ -305,7 +309,7 @@ class BpmnDiagramGraphImport(object):
         - node_ids - list of flow nodes IDs, associated with given process.
 
         :param process_elements_dict: dictionary that holds attribute values for imported 'process' element. Key is
-        process ID, value is a dictionary of attributes,
+           process ID, value is a dictionary of attributes,
         :param process_element: object representing a BPMN XML 'process' element.
         """
         process_id = process_element.getAttribute(consts.Consts.id)
@@ -330,6 +334,7 @@ class BpmnDiagramGraphImport(object):
         Input parameter is object of class xml.dom.Element.
         Nodes are identified by ID attribute of Element.
         Method adds basic attributes (shared by all BPMN elements) to node. Those elements are:
+
         - id - added as key value, we assume that this is a required value,
         - type - tagName of element, used to identify type of BPMN diagram element,
         - name - optional attribute, empty string by default.
@@ -337,7 +342,7 @@ class BpmnDiagramGraphImport(object):
         :param bpmn_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param flow_node_element: object representing a BPMN XML element corresponding to given flownode,
         """
         element_id = flow_node_element.getAttribute(consts.Consts.id)
@@ -382,7 +387,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param task_element: object representing a BPMN XML 'task' element.
         """
         BpmnDiagramGraphImport.import_activity_to_graph(diagram_graph, process_id, process_attributes, task_element)
@@ -398,7 +403,7 @@ class BpmnDiagramGraphImport(object):
         :param sequence_flows: a list of sequence flows existing in diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+           imported flow node,
         :param subprocess_element: object representing a BPMN XML 'subprocess' element
         """
         BpmnDiagramGraphImport.import_activity_to_graph(diagram_graph, process_id, process_attributes,
@@ -433,7 +438,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param data_object_element: object representing a BPMN XML 'dataObject' element.
         """
         BpmnDiagramGraphImport.import_flow_node_to_graph(diagram_graph, process_id, process_attributes,
@@ -453,7 +458,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+           imported flow node,
         :param element: object representing a BPMN XML element which extends 'activity'.
         """
         BpmnDiagramGraphImport.import_flow_node_to_graph(diagram_graph, process_id, process_attributes, element)
@@ -472,7 +477,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param element: object representing a BPMN XML element of Gateway type extension.
         """
         element_id = element.getAttribute(consts.Consts.id)
@@ -491,7 +496,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param element: object representing a BPMN XML 'complexGateway' element.
         """
         element_id = element.getAttribute(consts.Consts.id)
@@ -512,7 +517,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+           imported flow node,
         :param element: object representing a BPMN XML 'eventBasedGateway' element.
         """
         element_id = element.getAttribute(consts.Consts.id)
@@ -533,7 +538,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param element: object representing a BPMN XML 'inclusiveGateway' or 'exclusiveGateway' element.
         """
         element_id = element.getAttribute(consts.Consts.id)
@@ -550,7 +555,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param element: object representing a BPMN XML 'parallelGateway'.
         """
         BpmnDiagramGraphImport.import_gateway_to_graph(diagram_graph, process_id, process_attributes, element)
@@ -587,7 +592,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+           imported flow node,
         :param element: object representing a BPMN XML 'startEvent' element.
         """
         element_id = element.getAttribute(consts.Consts.id)
@@ -614,7 +619,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param element: object representing a BPMN XML 'intermediateCatchEvent' element.
         """
         element_id = element.getAttribute(consts.Consts.id)
@@ -639,7 +644,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param element: object representing a BPMN XML 'endEvent' element.
         """
         end_event_definitions = {'messageEventDefinition', 'signalEventDefinition', 'escalationEventDefinition',
@@ -658,7 +663,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+           imported flow node,
         :param element: object representing a BPMN XML 'intermediateThrowEvent' element.
         """
         intermediate_throw_event_definitions = {'messageEventDefinition', 'signalEventDefinition',
@@ -678,7 +683,7 @@ class BpmnDiagramGraphImport(object):
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param process_id: string object, representing an ID of process element,
         :param process_attributes: dictionary that holds attribute values of 'process' element, which is parent of
-        imported flow node,
+            imported flow node,
         :param element: object representing a BPMN XML 'endEvent' element.
         """
         element_id = element.getAttribute(consts.Consts.id)
@@ -706,13 +711,14 @@ class BpmnDiagramGraphImport(object):
         Edges are identified by pair of sourceRef and targetRef attributes of BPMNFlow element. We also
         provide a dictionary, that maps sequenceFlow ID attribute with its sourceRef and targetRef.
         Method adds basic attributes of sequenceFlow element to edge. Those elements are:
+
         - id - added as edge attribute, we assume that this is a required value,
         - name - optional attribute, empty string by default.
 
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param sequence_flows: dictionary (associative list) of sequence flows existing in diagram.
-        Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence
-        flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
+            Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence
+            flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param process_id: string object, representing an ID of process element,
         :param flow_element: object representing a BPMN XML 'sequenceFlow' element.
         """
@@ -763,13 +769,14 @@ class BpmnDiagramGraphImport(object):
         Edges are identified by pair of sourceRef and targetRef attributes of BPMNFlow element. We also
         provide a dictionary, that maps messageFlow ID attribute with its sourceRef and targetRef.
         Method adds basic attributes of messageFlow element to edge. Those elements are:
+
         - id - added as edge attribute, we assume that this is a required value,
         - name - optional attribute, empty string by default.
 
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param message_flows: dictionary (associative list) of message flows existing in diagram.
-        Key attribute is messageFlow ID, value is a dictionary consisting three key-value pairs: "name" (message
-        flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
+            Key attribute is messageFlow ID, value is a dictionary consisting three key-value pairs: "name" (message
+            flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param flow_element: object representing a BPMN XML 'messageFlow' element.
         """
         flow_id = flow_element.getAttribute(consts.Consts.id)
@@ -808,6 +815,7 @@ class BpmnDiagramGraphImport(object):
         Adds Diagram Interchange information (information about rendering a diagram) to appropriate
         BPMN diagram element in graph node.
         We assume that those attributes are required for each BPMNShape:
+
         - width - width of BPMNShape,
         - height - height of BPMNShape,
         - x - first coordinate of BPMNShape,
@@ -849,11 +857,11 @@ class BpmnDiagramGraphImport(object):
 
         :param diagram_graph: NetworkX graph representing a BPMN process diagram,
         :param sequence_flows: dictionary (associative list) of sequence flows existing in diagram.
-        Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence
-        flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
+            Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence
+            flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param message_flows: dictionary (associative list) of message flows existing in diagram.
-        Key attribute is messageFlow ID, value is a dictionary consisting three key-value pairs: "name" (message
-        flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
+            Key attribute is messageFlow ID, value is a dictionary consisting three key-value pairs: "name" (message
+            flow name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
         :param flow_element: object representing a BPMN XML 'BPMNEdge' element.
         """
         flow_id = flow_element.getAttribute(consts.Consts.bpmn_element)

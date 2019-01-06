@@ -18,7 +18,7 @@ def get_nodes_count(bpmn_graph, node_type=None):
     If no type is provided,
     the count of all nodes in BPMN diagram graph is returned.
 
-    :bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     :param node_type: string with valid BPMN XML tag name
                       (e.g. 'task', 'sequenceFlow').
     """
@@ -42,6 +42,9 @@ def get_gateway_counts(bpmn_graph):
     """
     Returns the count of the different types of gateways
     in the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :return: count of the different types of gateways in the BPMNDiagramGraph instance
     """
 
     return {gateway_type: get_nodes_count(bpmn_graph, node_type=gateway_type)
@@ -52,6 +55,9 @@ def get_events_counts(bpmn_graph):
     """
     Returns the count of the different types of event elements
     in the BPMNDiagramGraph instance.
+    
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :return: count of the different types of event elements in the BPMNDiagramGraph instance
     """
 
     return {event_type: get_nodes_count(bpmn_graph, node_type=event_type)
@@ -62,6 +68,9 @@ def get_activities_counts(bpmn_graph):
     """
     Returns the count of the different types of activities
     in the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :return: count of the different types of activities in the BPMNDiagramGraph instance
     """
 
     return {
@@ -75,6 +84,9 @@ def get_activities_counts(bpmn_graph):
 def all_activities_count(bpmn_graph):
     """
     Returns the total count of all activities in the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :return: total count of the activities in the BPMNDiagramGraph instance
     """
 
     return sum([
@@ -86,6 +98,9 @@ def all_gateways_count(bpmn_graph):
     """
     Returns the total count of all gateway elements
     in the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :return: total count of the gateway elements in the BPMNDiagramGraph instance
     """
 
     return sum([
@@ -97,6 +112,10 @@ def all_control_flow_elements_count(bpmn_graph):
     """
     Returns the total count of all control flow elements
     in the BPMNDiagramGraph instance.
+    
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :return: total count of the control flow elements in the BPMNDiagramGraph instance
     """
 
     gateway_counts = get_gateway_counts(bpmn_graph)
@@ -113,6 +132,9 @@ def all_events_count(bpmn_graph):
     """
     Returns the total count of all events elements
     in the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
+    :return: total count of the events elements elements in the BPMNDiagramGraph instance
     """
 
     return sum([
@@ -124,6 +146,8 @@ def TNSE_metric(bpmn_graph):
     """
     Returns the value of the TNSE metric (Total Number of Start Events of the Model)
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     return get_nodes_count(bpmn_graph, node_type='startEvent')
@@ -133,6 +157,8 @@ def TNIE_metric(bpmn_graph):
     """
     Returns the value of the TNIE metric (Total Number of Intermediate Events of the Model)
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     return get_nodes_count(bpmn_graph, node_type='intermediateCatchEvent') + \
@@ -143,6 +169,8 @@ def TNEE_metric(bpmn_graph):
     """
     Returns the value of the TNEE metric (Total Number of End Events of the Model)
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     return get_nodes_count(bpmn_graph, node_type='endEvent')
@@ -152,6 +180,8 @@ def TNE_metric(bpmn_graph):
     """
     Returns the value of the TNE metric (Total Number of Events of the Model)
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     events_counts = get_events_counts(bpmn_graph)
@@ -165,6 +195,8 @@ def NOA_metric(bpmn_graph):
     """
     Returns the value of the NOA metric (Number of Activities)
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     activities_counts = get_activities_counts(bpmn_graph)
@@ -176,6 +208,8 @@ def NOAC_metric(bpmn_graph):
     """
     Returns the value of the NOAC metric (Number of Activities and control flow elements)
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     activities_count = all_activities_count(bpmn_graph)
@@ -188,6 +222,8 @@ def NOAJS_metric(bpmn_graph):
     """
     Returns the value of the NOAJS metric (Number of Activities, joins and splits)
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     activities_count = all_activities_count(bpmn_graph)
@@ -201,6 +237,8 @@ def NumberOfNodes_metric(bpmn_graph):
     Returns the value of the Number of Nodes metric
     ("Number of activities and routing elements in a model")
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     activities_count = all_activities_count(bpmn_graph)
@@ -214,6 +252,8 @@ def GatewayHeterogenity_metric(bpmn_graph):
     Returns the value of the Gateway Heterogenity metric
     ("Number of different types of gateways used in a mode")
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     gateway_counts = get_gateway_counts(bpmn_graph)
@@ -229,6 +269,8 @@ def CoefficientOfNetworkComplexity_metric(bpmn_graph):
     Returns the value of the Coefficient of Network Complexity metric
     ("Ratio of the total number of arcs in a process model to its total number of nodes.")
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     return float(len(bpmn_graph.get_flows())) / float(len(bpmn_graph.get_nodes()))
@@ -239,6 +281,8 @@ def AverageGatewayDegree_metric(bpmn_graph):
     Returns the value of the Average Gateway Degree metric
     ("Average of the number of both incoming and outgoing arcs of the gateway nodes in the process model")
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     gateways_ids = [gateway[0] for gateway in get_all_gateways(bpmn_graph)]
@@ -255,6 +299,8 @@ def DurfeeSquare_metric(bpmn_graph):
      which occur at least d times in the model (each),
      and the other types of elements occur no more than d times (each)")
      for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     all_types_count = Counter([node[1]['type'] for node in bpmn_graph.get_nodes() if node[1]['type']])
@@ -282,6 +328,8 @@ def PerfectSquare_metric(bpmn_graph):
     such that the top p types occur(together)
     at least p2 times.")
     for the BPMNDiagramGraph instance.
+
+    :param bpmn_graph: an instance of BpmnDiagramGraph representing BPMN model.
     """
 
     all_types_count = Counter([node[1]['type'] for node in bpmn_graph.get_nodes() if node[1]['type']])

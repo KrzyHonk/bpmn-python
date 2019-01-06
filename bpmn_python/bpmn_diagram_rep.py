@@ -20,21 +20,23 @@ class BpmnDiagramGraph(object):
     based on NetworkX graph implementation
 
     Fields:
-    - diagram_graph - networkx.Graph object, stores elements of BPMN diagram as nodes. Each edge of graph represents
-    sequenceFlow element. Edges are identified by IDs of nodes connected by edge. IDs are passed as edge parameters,
-    - sequence_flows - dictionary (associative list) of sequence flows existing in diagram.
-    Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence flow
-    name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
-    - collaboration - a dictionary that contains two dictionaries:
-        "messageFlows" - dictionary (associative list) of message flows existing in diagram. Key attribute is
-        messageFlow ID, value is a dictionary consisting three key-value pairs: "name" (message flow name),
-        "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
-        "participants" - dictionary (associative list) of participants existing in diagram. Key attribute is
-        participant ID, value is a dictionary consisting participant attributes,
-    - process_elements_dictionary - dictionary that holds attribute values for imported 'process' elements. Key is
-    an ID of process, value is a dictionary of all process attributes,
-    - diagram_attributes - dictionary that contains BPMN diagram element attributes,
-    - plane_attributes - dictionary that contains BPMN plane element attributes.
+
+    * diagram_graph - networkx.Graph object, stores elements of BPMN diagram as nodes. Each edge of graph represents
+        sequenceFlow element. Edges are identified by IDs of nodes connected by edge. IDs are passed as edge parameters,
+    * sequence_flows - dictionary (associative list) of sequence flows existing in diagram.
+        Key attribute is sequenceFlow ID, value is a dictionary consisting three key-value pairs: "name" (sequence flow
+        name), "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
+    * collaboration - a dictionary that contains two dictionaries:
+        * "messageFlows" - dictionary (associative list) of message flows existing in diagram. Key attribute is
+            messageFlow ID, value is a dictionary consisting three key-value pairs: "name" (message flow name),
+        * "sourceRef" (ID of node, that is a flow source) and "targetRef" (ID of node, that is a flow target),
+        * "participants" - dictionary (associative list) of participants existing in diagram. Key attribute is
+            participant ID, value is a dictionary consisting participant attributes,
+    * process_elements_dictionary - dictionary that holds attribute values for imported 'process' elements. 
+        Key is an ID of process, value is a dictionary of all process attributes,
+
+    * diagram_attributes - dictionary that contains BPMN diagram element attributes,
+    * plane_attributes - dictionary that contains BPMN plane element attributes.
     """
 
     # String "constants" used in multiple places
@@ -197,10 +199,11 @@ class BpmnDiagramGraph(object):
         Initializes a new BPMN diagram and sets up a basic diagram attributes.
         Accepts a user-defined values for following attributes:
         (Diagram element)
+
         - name - default value empty string.
 
         :param diagram_name: string type. Represents a user-defined value of 'BPMNDiagram' element
-        attribute 'name'. Default value - empty string.
+            attribute 'name'. Default value - empty string.
         """
         self.__init__()
         diagram_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
@@ -212,19 +215,21 @@ class BpmnDiagramGraph(object):
                                process_type="None"):
         """
         Adds a new process to diagram and corresponding participant
-         process, diagram and plane
+            process, diagram and plane
+
         Accepts a user-defined values for following attributes:
         (Process element)
         - isClosed - default value false,
         - isExecutable - default value false,
         - processType - default value None.
+
         :param process_name: string obejct, process name. Default value - empty string,
         :param process_is_closed: boolean type. Represents a user-defined value of 'process' element
-        attribute 'isClosed'. Default value false,
+            attribute 'isClosed'. Default value false,
         :param process_is_executable: boolean type. Represents a user-defined value of 'process' element
-        attribute 'isExecutable'. Default value false,
+            attribute 'isExecutable'. Default value false,
         :param process_type: string type. Represents a user-defined value of 'process' element
-        attribute 'procesType'. Default value "None",
+            attribute 'procesType'. Default value "None",
         """
         plane_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         process_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
@@ -269,12 +274,14 @@ class BpmnDiagramGraph(object):
         """
         Adds a Task element to BPMN diagram.
         User-defined attributes:
+
         - name
-        Returns a tuple, where first value is task ID, second a reference to created object.
+
 
         :param process_id: string object. ID of parent process,
         :param task_name: string object. Name of task,
         :param node_id: string object. ID of node. Default value - None.
+        :return: a tuple, where first value is task ID, second a reference to created object.
         """
         return self.add_flow_node_to_diagram(process_id, consts.Consts.task, task_name, node_id)
 
@@ -283,15 +290,17 @@ class BpmnDiagramGraph(object):
         """
         Adds a SubProcess element to BPMN diagram.
         User-defined attributes:
+
         - name
         - triggered_by_event
-        Returns a tuple, where first value is subProcess ID, second a reference to created object.
+
 
         :param process_id: string object. ID of parent process,
         :param subprocess_name: string object. Name of subprocess,
         :param is_expanded: boolean value for attribute "isExpanded". Default value false,
         :param triggered_by_event: boolean value for attribute "triggeredByEvent". Default value false,
         :param node_id: string object. ID of node. Default value - None.
+        :return: a tuple, where first value is subProcess ID, second a reference to created object.
         """
         subprocess_id, subprocess = self.add_flow_node_to_diagram(process_id, consts.Consts.subprocess, subprocess_name,
                                                                   node_id)
@@ -304,13 +313,18 @@ class BpmnDiagramGraph(object):
                                    parallel_multiple=False, is_interrupting=True, node_id=None):
         """
         Adds a StartEvent element to BPMN diagram.
+
         User-defined attributes:
+
         - name
         - parallel_multiple
         - is_interrupting
         - event definition (creates a special type of start event). Supported event definitions -
-        'message': 'messageEventDefinition', 'timer': 'timerEventDefinition', 'signal': 'signalEventDefinition',
-        'conditional': 'conditionalEventDefinition', 'escalation': 'escalationEventDefinition'.
+            * 'message': 'messageEventDefinition', 
+            * 'timer': 'timerEventDefinition', 
+            * 'signal': 'signalEventDefinition',
+            * 'conditional': 'conditionalEventDefinition', 
+            * 'escalation': 'escalationEventDefinition'.
 
         :param process_id: string object. ID of parent process,
         :param start_event_name: string object. Name of start event,
@@ -319,7 +333,7 @@ class BpmnDiagramGraph(object):
         :param is_interrupting: boolean value for attribute "isInterrupting,
         :param node_id: string object. ID of node. Default value - None.
 
-        :return a tuple, where first value is startEvent ID, second a reference to created object.
+        :return: a tuple, where first value is startEvent ID, second a reference to created object.
         """
         start_event_id, start_event = self.add_flow_node_to_diagram(process_id, consts.Consts.start_event,
                                                                     start_event_name, node_id)
@@ -348,17 +362,21 @@ class BpmnDiagramGraph(object):
         """
         Adds an EndEvent element to BPMN diagram.
         User-defined attributes:
+
         - name
-        - event definition (creates a special type of end event). Supported event definitions -
-        'terminate': 'terminateEventDefinition', 'signal': 'signalEventDefinition', 'error': 'errorEventDefinition',
-        'escalation': 'escalationEventDefinition', 'message': 'messageEventDefinition',
-        'compensate': 'compensateEventDefinition'.
+        - event definition (creates a special type of end event). Supported event definitions
+            * `terminate`: 'terminateEventDefinition', 
+            * `signal`: 'signalEventDefinition', 
+            * `error`: 'errorEventDefinition',
+            * `escalation`: 'escalationEventDefinition', 
+            * `message`: 'messageEventDefinition',
+            * `compensate`: 'compensateEventDefinition'.
 
         :param process_id: string object. ID of parent process,
         :param end_event_name: string object. Name of end event,
         :param end_event_definition: list of event definitions. By default - empty.
-        :return a tuple, where first value is endEvent ID, second a reference to created object,
         :param node_id: string object. ID of node. Default value - None.
+        :return: a tuple, where first value is endEvent ID, second a reference to created object,
         """
         end_event_id, end_event = self.add_flow_node_to_diagram(process_id, consts.Consts.end_event, end_event_name,
                                                                 node_id)
@@ -389,7 +407,7 @@ class BpmnDiagramGraph(object):
 
         :param event_type: string object. Short name of required event definition,
         :param event_definitions: dictionary of event definitions. Key is a short name of event definition,
-        value is a full name of event definition, as defined in BPMN 2.0 XML Schema.
+           value is a full name of event definition, as defined in BPMN 2.0 XML Schema.
         """
         event_def_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         event_def = {consts.Consts.id: event_def_id, consts.Consts.definition_type: event_definitions[event_type]}
@@ -404,10 +422,10 @@ class BpmnDiagramGraph(object):
         :param gateway_type: string object. Type of gateway to be added.
         :param gateway_name: string object. Name of exclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
-        Default value - "Unspecified",
+            Default value - "Unspecified",
         :param node_id: string object. ID of node. Default value - None.
 
-        :return Returns a tuple, where first value is gateway ID, second a reference to created object.
+        :return: a tuple, where first value is gateway ID, second a reference to created object.
         """
         gateway_id, gateway = self.add_flow_node_to_diagram(process_id, gateway_type, gateway_name, node_id)
         if not (gateway_direction in ("Unspecified", "Converging", "Diverging", "Mixed")):
@@ -424,11 +442,11 @@ class BpmnDiagramGraph(object):
         :param process_id: string object. ID of parent process,
         :param gateway_name: string object. Name of exclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
-        Default value - "Unspecified".
+            Default value - "Unspecified".
         :param default: string object. ID of flow node, target of gateway default path. Default value - None,
         :param node_id: string object. ID of node. Default value - None.
         
-        :return Returns a tuple, where first value is exculusiveGateway ID, second a reference to created object.
+        :return: a tuple, where first value is exculusiveGateway ID, second a reference to created object.
         """
         exclusive_gateway_id, exclusive_gateway = self.add_gateway_to_diagram(process_id,
                                                                               consts.Consts.exclusive_gateway,
@@ -446,11 +464,11 @@ class BpmnDiagramGraph(object):
         :param process_id: string object. ID of parent process,
         :param gateway_name: string object. Name of inclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
-        Default value - "Unspecified",
+           Default value - "Unspecified",
         :param default: string object. ID of flow node, target of gateway default path. Default value - None,
         :param node_id: string object. ID of node. Default value - None.
 
-        :return Returns a tuple, where first value is inclusiveGateway ID, second a reference to created object.
+        :return: a tuple, where first value is inclusiveGateway ID, second a reference to created object.
         """
         inclusive_gateway_id, inclusive_gateway = self.add_gateway_to_diagram(process_id,
                                                                               consts.Consts.inclusive_gateway,
@@ -468,10 +486,10 @@ class BpmnDiagramGraph(object):
         :param process_id: string object. ID of parent process,
         :param gateway_name: string object. Name of inclusive gateway,
         :param gateway_direction: string object. Accepted values - "Unspecified", "Converging", "Diverging", "Mixed".
-        Default value - "Unspecified",
+            Default value - "Unspecified",
         :param node_id: string object. ID of node. Default value - None.
 
-        :return Returns a tuple, where first value is parallelGateway ID, second a reference to created object.
+        :return: a tuple, where first value is parallelGateway ID, second a reference to created object.
         """
         parallel_gateway_id, parallel_gateway = self.add_gateway_to_diagram(process_id,
                                                                             consts.Consts.parallel_gateway,
@@ -485,13 +503,14 @@ class BpmnDiagramGraph(object):
         Adds a SequenceFlow element to BPMN diagram.
         Requires that user passes a sourceRef and targetRef as parameters.
         User-defined attributes:
-        - name
-        Returns a tuple, where first value is sequenceFlow ID, second a reference to created object.
+
+            - name
 
         :param process_id: string object. ID of parent process,
         :param source_ref_id: string object. ID of source node,
         :param target_ref_id: string object. ID of target node,
         :param sequence_flow_name: string object. Name of sequence flow.
+        :return: a tuple, where first value is sequenceFlow ID, second a reference to created object.
         """
         sequence_flow_id = BpmnDiagramGraph.id_prefix + str(uuid.uuid4())
         self.sequence_flows[sequence_flow_id] = {consts.Consts.name: sequence_flow_name,
@@ -520,6 +539,7 @@ class BpmnDiagramGraph(object):
     def get_nodes_positions(self):
         """
         Getter method for nodes positions.
+
         :return: A dictionary with nodes as keys and positions as values
         """
         nodes = self.get_nodes()
