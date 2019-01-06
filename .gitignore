@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+ENV/
 build/
 develop-eggs/
 dist/
@@ -70,4 +71,4 @@ tests/layouter/output/
 tests/csv_export/output/
 tests/xml_import_export/output/
 tests/csv_import/output/
-
+**/*.sw[po]

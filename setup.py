@@ -25,12 +25,18 @@ setup(
     url="https://github.com/KrzyHonk/bpmn-python",
     download_url="https://github.com/KrzyHonk/bpmn-python/tarball/0.0.19-SNAPSHOT",
     packages=find_packages(exclude=['docs', 'tests*']),
-    install_requires=[
-        'networkx',
-        'matplotlib',
-        'pydotplus',
-        'six',
-        'pandas',
-    ],
-    long_description=read('README.md'),
+    install_requires=read('requirements.txt').split('\n'),
+    long_description="%s\n%s" % (
+        read('README.md'),
+        read('CHANGELOG.md')
+    ),
+    long_description_content_type='text/markdown',
+    classifiers=[
+        "License :: OSI Approved :: GNU General Public License (GPL)",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Text Processing :: Markup :: XML"
+    ]
 )
