@@ -609,7 +609,7 @@ class BpmnDiagramGraphCSVImport(object):
         :param filepath:
         :return:
         """
-        process_dict = pd.DataFrame.from_csv(filepath).fillna("").to_dict('index')
+        process_dict = pd.read_csv(filepath, index_col=0).fillna("").to_dict('index')
         remove_white_spaces_in_orders(process_dict)
         return process_dict
 
