@@ -311,13 +311,13 @@ def add_edge(from_node_id, to_node_id, process_dict, bpmn_diagram, sequence_flow
     condition = get_connection_condition_if_present(to_node_id, process_dict)
     bpmn_diagram.diagram_graph.add_edge(from_node_id, to_node_id)
     flow_id = get_flow_id(from_node_id, to_node_id)
-    bpmn_diagram.diagram_graph.edge[from_node_id][to_node_id][consts.Consts.id] = flow_id
-    bpmn_diagram.diagram_graph.edge[from_node_id][to_node_id][consts.Consts.process] = default_process_id
-    bpmn_diagram.diagram_graph.edge[from_node_id][to_node_id][consts.Consts.name] = ""
-    bpmn_diagram.diagram_graph.edge[from_node_id][to_node_id][consts.Consts.source_ref] = from_node_id
-    bpmn_diagram.diagram_graph.edge[from_node_id][to_node_id][consts.Consts.target_ref] = to_node_id
+    bpmn_diagram.diagram_graph[from_node_id][to_node_id][consts.Consts.id] = flow_id
+    bpmn_diagram.diagram_graph[from_node_id][to_node_id][consts.Consts.process] = default_process_id
+    bpmn_diagram.diagram_graph[from_node_id][to_node_id][consts.Consts.name] = ""
+    bpmn_diagram.diagram_graph[from_node_id][to_node_id][consts.Consts.source_ref] = from_node_id
+    bpmn_diagram.diagram_graph[from_node_id][to_node_id][consts.Consts.target_ref] = to_node_id
     if bool(condition):
-        bpmn_diagram.diagram_graph.edge[from_node_id][to_node_id][consts.Consts.condition_expression] = {
+        bpmn_diagram.diagram_graph[from_node_id][to_node_id][consts.Consts.condition_expression] = {
             consts.Consts.id: flow_id + "_cond",
             consts.Consts.condition_expression: condition
         }
@@ -551,7 +551,7 @@ def remove_unnecessary_merge_gateways(process_dict, bpmn_diagram, sequence_flows
     :param bpmn_diagram:
     :param sequence_flows:
     """
-    for node in bpmn_diagram.get_nodes():
+    for node in list(bpmn_diagram.get_nodes()):
         gateway_type = node[1].get(consts.Consts.type)
         if gateway_type in [consts.Consts.inclusive_gateway, consts.Consts.exclusive_gateway,
                             consts.Consts.parallel_gateway]:

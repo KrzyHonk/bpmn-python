@@ -517,7 +517,7 @@ class BpmnDiagramGraph(object):
                                                  consts.Consts.source_ref: source_ref_id,
                                                  consts.Consts.target_ref: target_ref_id}
         self.diagram_graph.add_edge(source_ref_id, target_ref_id)
-        flow = self.diagram_graph.edge[source_ref_id][target_ref_id]
+        flow = self.diagram_graph[source_ref_id][target_ref_id]
         flow[consts.Consts.id] = sequence_flow_id
         flow[consts.Consts.name] = sequence_flow_name
         flow[consts.Consts.process] = process_id
