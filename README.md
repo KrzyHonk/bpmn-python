@@ -12,9 +12,8 @@ Project structure
 
 Requirements: [pipenv](https://pipenv.readthedocs.io/en/latest/)
 
-To set up local development environment:
+To set up local development environment, clone the repository, enter it and execute:
 ```bash
-git clone https://github.com/KrzyHonk/bpmn-python
 pipenv install --dev -e .
 pipenv shell
 ```
