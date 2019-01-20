@@ -3,14 +3,11 @@
 Unit tests for exporting process to CSV functionality.
 """
 
-import os
-import sys
-import unittest
 import filecmp
+import os
+import unittest
 
 import bpmn_python.bpmn_diagram_rep as diagram
-
-os.chdir(sys.path[0])
 
 
 class CsvExportTests(unittest.TestCase):

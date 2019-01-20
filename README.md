@@ -6,3 +6,20 @@ Project structure
 * tests - unit tests for package
 * examples - examples of XML files used in tests
 * docs - documentation for package
+
+
+## Development
+
+Requirements: [pipenv](https://pipenv.readthedocs.io/en/latest/)
+
+To set up local development environment:
+```bash
+git clone https://github.com/KrzyHonk/bpmn-python
+pipenv install --dev -e .
+pipenv shell
+```
+
+Run tests with HTML coverage report:
+```bash
+pytest --cov-report html --cov=bpmn_python
+```
