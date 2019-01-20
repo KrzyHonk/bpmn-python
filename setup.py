@@ -26,7 +26,6 @@ setup(
     download_url="https://github.com/KrzyHonk/bpmn-python/tarball/0.0.19-SNAPSHOT",
     packages=find_packages(exclude=['docs', 'tests*']),
     install_requires=read('requirements.txt').split('\n'),
-    tests_require="pytest",
     long_description="%s\n%s" % (
         read('README.md'),
         read('CHANGELOG.md')
