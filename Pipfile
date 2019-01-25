@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 pytest-cov = "*"
+tox = "*"
 
 [packages]
 bpmn-python = {editable = true,path = "."}

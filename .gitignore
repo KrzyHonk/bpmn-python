@@ -72,3 +72,4 @@ tests/csv_export/output/
 tests/xml_import_export/output/
 tests/csv_import/output/
 **/*.sw[po]
+Pipfile.lock
