@@ -729,17 +729,17 @@ class BpmnDiagramGraphImport(object):
         sequence_flows[flow_id] = {consts.Consts.name: name, consts.Consts.source_ref: source_ref,
                                    consts.Consts.target_ref: target_ref}
         diagram_graph.add_edge(source_ref, target_ref)
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.id] = flow_id
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.process] = process_id
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.name] = name
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.source_ref] = source_ref
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.target_ref] = target_ref
+        diagram_graph[source_ref][target_ref][consts.Consts.id] = flow_id
+        diagram_graph[source_ref][target_ref][consts.Consts.process] = process_id
+        diagram_graph[source_ref][target_ref][consts.Consts.name] = name
+        diagram_graph[source_ref][target_ref][consts.Consts.source_ref] = source_ref
+        diagram_graph[source_ref][target_ref][consts.Consts.target_ref] = target_ref
         for element in utils.BpmnImportUtils.iterate_elements(flow_element):
             if element.nodeType != element.TEXT_NODE:
                 tag_name = utils.BpmnImportUtils.remove_namespace_from_tag_name(element.tagName)
                 if tag_name == consts.Consts.condition_expression:
                     condition_expression = element.firstChild.nodeValue
-                    diagram_graph.edge[source_ref][target_ref][consts.Consts.condition_expression] = {
+                    diagram_graph[source_ref][target_ref][consts.Consts.condition_expression] = {
                         consts.Consts.id: element.getAttribute(consts.Consts.id),
                         consts.Consts.condition_expression: condition_expression
                     }
@@ -787,10 +787,10 @@ class BpmnDiagramGraphImport(object):
                                   consts.Consts.source_ref: source_ref,
                                   consts.Consts.target_ref: target_ref}
         diagram_graph.add_edge(source_ref, target_ref)
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.id] = flow_id
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.name] = name
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.source_ref] = source_ref
-        diagram_graph.edge[source_ref][target_ref][consts.Consts.target_ref] = target_ref
+        diagram_graph[source_ref][target_ref][consts.Consts.id] = flow_id
+        diagram_graph[source_ref][target_ref][consts.Consts.name] = name
+        diagram_graph[source_ref][target_ref][consts.Consts.source_ref] = source_ref
+        diagram_graph[source_ref][target_ref][consts.Consts.target_ref] = target_ref
 
         '''
         # Add incoming / outgoing nodes to corresponding elements. May be redundant action since this information is
@@ -884,8 +884,8 @@ class BpmnDiagramGraphImport(object):
             name = flow_data[consts.Consts.name]
             source_ref = flow_data[consts.Consts.source_ref]
             target_ref = flow_data[consts.Consts.target_ref]
-            diagram_graph.edge[source_ref][target_ref][consts.Consts.waypoints] = waypoints
-            diagram_graph.edge[source_ref][target_ref][consts.Consts.name] = name
+            diagram_graph[source_ref][target_ref][consts.Consts.waypoints] = waypoints
+            diagram_graph[source_ref][target_ref][consts.Consts.name] = name
 
     @staticmethod
     def read_xml_file(filepath):

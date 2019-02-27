@@ -44,5 +44,6 @@ class BPMNEditorTests(unittest.TestCase):
         bpmn_graph.export_xml_file(self.output_directory, self.output_file_with_di)
         bpmn_graph.export_xml_file_no_di(self.output_directory, self.output_file_no_di)
 
+
 if __name__ == '__main__':
     unittest.main()

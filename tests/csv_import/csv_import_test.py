@@ -3,9 +3,9 @@
 Unit tests for exporting process to CSV functionality.
 """
 
+import filecmp
 import os
 import unittest
-import filecmp
 
 import bpmn_python.bpmn_diagram_rep as diagram
 

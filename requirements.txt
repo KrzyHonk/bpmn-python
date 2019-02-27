@@ -3,3 +3,4 @@ pandas
 networkx
 matplotlib
 pydotplus
+pydot
