@@ -97,3 +97,5 @@ class Consts(object):
     event_definitions = "event_definitions"
     node_ids = "node_ids"
     definition_type = "definition_type"
+
+    grid_column_width = 2

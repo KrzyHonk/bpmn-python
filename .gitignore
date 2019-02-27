@@ -73,3 +73,4 @@ tests/xml_import_export/output/
 tests/csv_import/output/
 **/*.sw[po]
 Pipfile.lock
+_trial_temp

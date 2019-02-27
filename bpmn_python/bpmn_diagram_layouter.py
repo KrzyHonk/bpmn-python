@@ -219,7 +219,7 @@ def grid_layout(bpmn_graph, sorted_nodes_with_classification):
     """
     tmp_nodes_with_classification = list(sorted_nodes_with_classification)
 
-    last_row = 1
+    last_row = consts.Consts.grid_column_width
     last_col = 1
     grid = []
     while tmp_nodes_with_classification:
@@ -257,7 +257,7 @@ def place_element_in_grid(node_with_classification, grid, last_row, last_col, bp
             insert_into_grid(grid, enforced_row_num, current_element_col, node_id)
         else:
             insert_into_grid(grid, current_element_row, current_element_col, node_id)
-        last_row += 1
+        last_row += consts.Consts.grid_column_width
     elif "Join" not in node_with_classification[classification_param_name]:
         # if node is not a Join, put it right from its predecessor (element should only have one predecessor)
         flow_id = incoming_flows[0]
@@ -265,9 +265,9 @@ def place_element_in_grid(node_with_classification, grid, last_row, last_col, bp
         predecessor_id = flow[2][consts.Consts.source_ref]
         predecessor_cell = next(grid_cell for grid_cell in grid if grid_cell.node_id == predecessor_id)
         # insert into cell right from predecessor - no need to insert new column or row
-        current_element_row = predecessor_cell.row
         current_element_col = predecessor_cell.col + 1
-        if enforced_row_num:
+        current_element_row = predecessor_cell.row
+        if enforced_row_num is not None:
             insert_into_grid(grid, enforced_row_num, current_element_col, node_id)
         else:
             insert_into_grid(grid, current_element_row, current_element_col, node_id)
@@ -301,40 +301,52 @@ def place_element_in_grid(node_with_classification, grid, last_row, last_col, bp
             flow = bpmn_graph.get_flow_by_id(flow_id)
             successors_id_list.append(flow[2][consts.Consts.target_ref])
         num_of_successors = len(successors_id_list)
+        successor_node_list = [successor_node for successor_node in nodes_with_classification
+                                      if successor_node[node_param_name][0] in successors_id_list]
+
         if num_of_successors % 2 != 0:
             # if number of successors is even, put one half over the split, second half below
             # proceed with first half
             centre = (num_of_successors // 2)
             for index in range(0, centre):
                 # place element above split
-                successor_node = next(successor_node for successor_node in nodes_with_classification
-                                      if successor_node[node_param_name][0] == successors_id_list[index])
+                successor_node = successor_node_list[index]
                 (grid, last_row, last_col) = place_element_in_grid(successor_node, grid, last_row, last_col,
-                                                                   bpmn_graph, current_element_row + 1)
-            successor_node = next(successor_node for successor_node in nodes_with_classification
-                                  if successor_node[node_param_name][0] == successors_id_list[centre + 1])
+                                                                   bpmn_graph,nodes_with_classification, current_element_row + ((index + 1) * consts.Consts.grid_column_width))
+
+                nodes_with_classification.remove(successor_node)
+
+            successor_node = successor_node_list[centre]
             (grid, last_row, last_col) = place_element_in_grid(successor_node, grid, last_row, last_col,
-                                                               bpmn_graph, current_element_row + 1)
-            for index in range(centre + 2, num_of_successors):
+                                                               bpmn_graph,nodes_with_classification, current_element_row)
+            nodes_with_classification.remove(successor_node)
+            for index in range(centre + 1, num_of_successors):
                 # place element below split
-                successor_node = next(successor_node for successor_node in nodes_with_classification
-                                      if successor_node[node_param_name][0] == successors_id_list[index])
+                successor_node = successor_node_list[index]
                 (grid, last_row, last_col) = place_element_in_grid(successor_node, grid, last_row, last_col,
-                                                                   bpmn_graph, current_element_row - 1)
+                                                                   bpmn_graph,nodes_with_classification, current_element_row - ((index - centre) * consts.Consts.grid_column_width))
+
+                nodes_with_classification.remove(successor_node)
         else:
             centre = (num_of_successors // 2)
             for index in range(0, centre):
                 # place element above split
-                successor_node = next(successor_node for successor_node in nodes_with_classification
-                                      if successor_node[node_param_name][0] == successors_id_list[index])
+                successor_node = successor_node_list[index]
                 (grid, last_row, last_col) = place_element_in_grid(successor_node, grid, last_row, last_col,
-                                                                   bpmn_graph, current_element_row + 1)
-            for index in range(centre + 1, num_of_successors):
+                                                                   bpmn_graph,nodes_with_classification, current_element_row + (index + 1) * consts.Consts.grid_column_width)
+
+                nodes_with_classification.remove(successor_node)
+
+
+            for index in range(centre, num_of_successors):
                 # place element below split
-                successor_node = next(successor_node for successor_node in nodes_with_classification
-                                      if successor_node[node_param_name][0] == successors_id_list[index])
+                successor_node = successor_node_list[index]
                 (grid, last_row, last_col) = place_element_in_grid(successor_node, grid, last_row, last_col,
-                                                                   bpmn_graph, current_element_row - 1)
+                                                                   bpmn_graph,nodes_with_classification, current_element_row - ((index - centre + 1) * consts.Consts.grid_column_width))
+
+                nodes_with_classification.remove(successor_node)
+
+
     return grid, last_row, last_col
 
 
@@ -346,8 +358,8 @@ def insert_into_grid(grid, row, col, node_id):
     :param col:
     :param node_id:
     """
-    if row <= 0:
-        row = 1
+    # if row <= 0:
+    #     row = 1
     occupied_cell = None
     try:
         occupied_cell = next(grid_cell for grid_cell in grid if grid_cell.row == row and grid_cell.col == col)
@@ -357,7 +369,7 @@ def insert_into_grid(grid, row, col, node_id):
     if occupied_cell:
         for grid_cell in grid:
             if grid_cell.row >= row:
-                grid_cell.row += 1
+                grid_cell.row += consts.Consts.width
     grid.append(cell_class.GridCell(row, col, node_id))
 
 
@@ -386,7 +398,30 @@ def set_flows_waypoints(bpmn_graph):
     for flow in flows:
         source_node = bpmn_graph.get_node_by_id(flow[2][consts.Consts.source_ref])
         target_node = bpmn_graph.get_node_by_id(flow[2][consts.Consts.target_ref])
-        flow[2][consts.Consts.waypoints] = [(str(int(source_node[1][consts.Consts.x]) + 50),
-                                             str(int(source_node[1][consts.Consts.y]) + 50)),
-                                            (str(int(target_node[1][consts.Consts.x]) + 50),
-                                             str(int(target_node[1][consts.Consts.y]) + 50))]
+        source_type = source_node[1][consts.Consts.type]
+        target_type = target_node[1][consts.Consts.type]
+        if source_type == consts.Consts.parallel_gateway or source_type == consts.Consts.inclusive_gateway or source_type == consts.Consts.exclusive_gateway:
+            flow[2][consts.Consts.waypoints] = [(str(int(source_node[1][consts.Consts.x]) + 50),
+                                                 str(int(source_node[1][consts.Consts.y]) + 50)),
+                                                (str(int(source_node[1][consts.Consts.x]) + 50),
+                                                 str(int(target_node[1][consts.Consts.y]) + 50)),
+                                                (str(int(target_node[1][consts.Consts.x])),
+                                                 str(int(target_node[1][consts.Consts.y]) + 50))]
+        elif source_node[1][consts.Consts.y] == target_node[1][consts.Consts.y]:
+            flow[2][consts.Consts.waypoints] = [(str(int(source_node[1][consts.Consts.x]) + 50),
+                                                 str(int(source_node[1][consts.Consts.y]) + 50)),
+                                                (str(int(target_node[1][consts.Consts.x])),
+                                                 str(int(target_node[1][consts.Consts.y]) + 50))]
+
+        elif target_type == consts.Consts.parallel_gateway or target_type == consts.Consts.inclusive_gateway or target_type == consts.Consts.exclusive_gateway:
+            flow[2][consts.Consts.waypoints] = [(str(int(source_node[1][consts.Consts.x]) + 50),
+                                                 str(int(source_node[1][consts.Consts.y]) + 50)),
+                                                (str(int(target_node[1][consts.Consts.x]) + 50),
+                                                 str(int(source_node[1][consts.Consts.y]) + 50)),
+                                                (str(int(target_node[1][consts.Consts.x]) + 50),
+                                                 str(int(target_node[1][consts.Consts.y])))]
+        else:
+            flow[2][consts.Consts.waypoints] = [(str(int(source_node[1][consts.Consts.x]) + 50),
+                                                 str(int(source_node[1][consts.Consts.y]) + 50)),
+                                                (str(int(target_node[1][consts.Consts.x])),
+                                                 str(int(target_node[1][consts.Consts.y]) + 50))]
