@@ -77,39 +77,48 @@ class CompareBPMN(object):
                 return 0, 0
         except BaseException as e:
             print("error in calculate similarity: ", e)
-            return  0, 0
+            raise e
 
-    def calculate_batch_similarity(self, bpmn_file_path1, bpmn_file_path2):
+    def calculate_batch_similarity(self, bpmn_file_path1, bpmn_file_path2, output_dir = ""):
         """
         Compute the similarity of all BPMN graphs under two folders
+        Two files to compare are placed in different folders,
+        but they must have [[[the same file name]]]
+
         :param bpmn_file_path1:
         :param bpmn_file_path2:
         :return:
         """
-        self.__raw_bpmn_file_path = bpmn_file_path1
-        self.__bpmn_file_path = bpmn_file_path2
+
+        self.__raw_bpmn_file_path = self.check_file_name(bpmn_file_path1)
+        self.__bpmn_file_path = self.check_file_name(bpmn_file_path2)
         raw_bpmn_file_list = self.get_bpmn_file_list(self.__raw_bpmn_file_path)
         for bpmn_file in raw_bpmn_file_list:
             try:
-
-                raw_file_name = self.__raw_bpmn_file_path + bpmn_file
+                # file name must be same!!
+                raw_file_name = os.path.join(self.__raw_bpmn_file_path + bpmn_file)
                 file_name = self.__bpmn_file_path + bpmn_file
-
                 node_matching_sim, structure_sim = self.calculate_similarity(raw_file_name, file_name)
 
                 self.result_list.append((bpmn_file, node_matching_sim, structure_sim))
             except BaseException as e:
                 print(e, bpmn_file)
+
         df = pd.DataFrame(self.result_list)
         df.sort_values(by=1, inplace=True, ascending=False)
         df.reset_index()
         if self.export_csv:
-            df.to_csv("result_sim.csv")
+            df.to_csv(os.path.join(output_dir, "result_sim.csv"))
 
         if self.export_excel:
-            df.to_excel("resulit_sim.excel")
+            df.to_excel(os.path.join(output_dir + "result_sim.excel"))
         print(df.iloc[:, 1].mean(), df.iloc[:, 2].mean())
 
+    def check_file_name(self, file_name):
+        if file_name[-1] != '/':
+            return file_name + '/'
+        else:
+            return file_name
 
     def calculate_node_matching_similarity(self, raw_nodes, nodes):
         """
@@ -271,5 +280,5 @@ class CompareBPMN(object):
 
 if __name__ == '__main__':
     cb = CompareBPMN()
-    # cb.calculate_batch_similarity("/Users/maicius/code/cpws_judge/data/", "/Users/maicius/code/CPWSSystem/resource/output/bpmn/")
+    cb.calculate_batch_similarity("/Users/maicius/code/cpws_judge/data/", "/Users/maicius/code/CPWSSystem/resource/output/bpmn/")
     cb.calculate_similarity(file_name1="/Users/maicius/code/cpws_judge/data/1431680.xml", file_name2="/Users/maicius/code/CPWSSystem/validate/bpmn_file/1431680.xml")

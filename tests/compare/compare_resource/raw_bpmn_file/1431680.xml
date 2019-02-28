@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='utf-8'?>
+<definitions expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.signavio.com/bpmn20" typeLanguage="http://www.w3.org/2001/XMLSchema" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <bpmndi:BPMNDiagram id="diagram1" name="diagram_name">
+    <bpmndi:BPMNPlane bpmnElement="process_1" id="plane_1">
+      <bpmndi:BPMNShape bpmnElement="0" id="0_gui">
+        <omgdc:Bounds height="100" width="100" x="200" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="1" id="1_gui">
+        <omgdc:Bounds height="100" width="100" x="350" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="2" id="2_gui">
+        <omgdc:Bounds height="100" width="100" x="500" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="3" id="3_gui">
+        <omgdc:Bounds height="100" width="100" x="650" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="4a" id="4a_gui">
+        <omgdc:Bounds height="100" width="100" x="950" y="50" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="4b" id="4b_gui">
+        <omgdc:Bounds height="100" width="100" x="950" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="4d" id="4d_gui">
+        <omgdc:Bounds height="100" width="100" x="950" y="450" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="5" id="5_gui">
+        <omgdc:Bounds height="100" width="100" x="1250" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="6a" id="6a_gui">
+        <omgdc:Bounds height="100" width="100" x="1550" y="-350" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="6b" id="6b_gui">
+        <omgdc:Bounds height="100" width="100" x="1550" y="-150" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="6c" id="6c_gui">
+        <omgdc:Bounds height="100" width="100" x="1550" y="50" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="6d" id="6d_gui">
+        <omgdc:Bounds height="100" width="100" x="1550" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="6e" id="6e_gui">
+        <omgdc:Bounds height="100" width="100" x="1550" y="850" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="6f" id="6f_gui">
+        <omgdc:Bounds height="100" width="100" x="1550" y="650" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="6g" id="6g_gui">
+        <omgdc:Bounds height="100" width="100" x="1550" y="450" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="7" id="7_gui">
+        <omgdc:Bounds height="100" width="100" x="1850" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="3_split" id="3_split_gui">
+        <omgdc:Bounds height="100" width="100" x="800" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="5_join" id="5_join_gui">
+        <omgdc:Bounds height="100" width="100" x="1100" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="5_split" id="5_split_gui">
+        <omgdc:Bounds height="100" width="100" x="1400" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNShape bpmnElement="7_join" id="7_join_gui">
+        <omgdc:Bounds height="100" width="100" x="1700" y="250" />
+      </bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge bpmnElement="0__1" id="0__1_gui">
+        <omgdi:waypoint x="250" y="300" />
+      <omgdi:waypoint x="400" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="1__2" id="1__2_gui">
+        <omgdi:waypoint x="400" y="300" />
+      <omgdi:waypoint x="550" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="2__3" id="2__3_gui">
+        <omgdi:waypoint x="550" y="300" />
+      <omgdi:waypoint x="700" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="3__3_split" id="3__3_split_gui">
+        <omgdi:waypoint x="700" y="300" />
+      <omgdi:waypoint x="850" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="3_split__4a" id="3_split__4a_gui">
+        <omgdi:waypoint x="850" y="300" />
+      <omgdi:waypoint x="1000" y="100" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="4a__5_join" id="4a__5_join_gui">
+        <omgdi:waypoint x="1000" y="100" />
+      <omgdi:waypoint x="1150" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="3_split__4b" id="3_split__4b_gui">
+        <omgdi:waypoint x="850" y="300" />
+      <omgdi:waypoint x="1000" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="4b__5_join" id="4b__5_join_gui">
+        <omgdi:waypoint x="1000" y="300" />
+      <omgdi:waypoint x="1150" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="3_split__4d" id="3_split__4d_gui">
+        <omgdi:waypoint x="850" y="300" />
+      <omgdi:waypoint x="1000" y="500" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="4d__5_join" id="4d__5_join_gui">
+        <omgdi:waypoint x="1000" y="500" />
+      <omgdi:waypoint x="1150" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5_join__5" id="5_join__5_gui">
+        <omgdi:waypoint x="1150" y="300" />
+      <omgdi:waypoint x="1300" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5__5_split" id="5__5_split_gui">
+        <omgdi:waypoint x="1300" y="300" />
+      <omgdi:waypoint x="1450" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5_split__6a" id="5_split__6a_gui">
+        <omgdi:waypoint x="1450" y="300" />
+      <omgdi:waypoint x="1600" y="-300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="6a__7_join" id="6a__7_join_gui">
+        <omgdi:waypoint x="1600" y="-300" />
+      <omgdi:waypoint x="1750" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5_split__6b" id="5_split__6b_gui">
+        <omgdi:waypoint x="1450" y="300" />
+      <omgdi:waypoint x="1600" y="-100" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="6b__7_join" id="6b__7_join_gui">
+        <omgdi:waypoint x="1600" y="-100" />
+      <omgdi:waypoint x="1750" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5_split__6c" id="5_split__6c_gui">
+        <omgdi:waypoint x="1450" y="300" />
+      <omgdi:waypoint x="1600" y="100" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="6c__7_join" id="6c__7_join_gui">
+        <omgdi:waypoint x="1600" y="100" />
+      <omgdi:waypoint x="1750" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5_split__6d" id="5_split__6d_gui">
+        <omgdi:waypoint x="1450" y="300" />
+      <omgdi:waypoint x="1600" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="6d__7_join" id="6d__7_join_gui">
+        <omgdi:waypoint x="1600" y="300" />
+      <omgdi:waypoint x="1750" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5_split__6e" id="5_split__6e_gui">
+        <omgdi:waypoint x="1450" y="300" />
+      <omgdi:waypoint x="1600" y="900" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="6e__7_join" id="6e__7_join_gui">
+        <omgdi:waypoint x="1600" y="900" />
+      <omgdi:waypoint x="1750" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5_split__6f" id="5_split__6f_gui">
+        <omgdi:waypoint x="1450" y="300" />
+      <omgdi:waypoint x="1600" y="700" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="6f__7_join" id="6f__7_join_gui">
+        <omgdi:waypoint x="1600" y="700" />
+      <omgdi:waypoint x="1750" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="5_split__6g" id="5_split__6g_gui">
+        <omgdi:waypoint x="1450" y="300" />
+      <omgdi:waypoint x="1600" y="500" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="6g__7_join" id="6g__7_join_gui">
+        <omgdi:waypoint x="1600" y="500" />
+      <omgdi:waypoint x="1750" y="300" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge bpmnElement="7_join__7" id="7_join__7_gui">
+        <omgdi:waypoint x="1750" y="300" />
+      <omgdi:waypoint x="1900" y="300" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+<process id="process_1" isClosed="false" isExecutable="false" processType="None">
+    <startEvent id="0" isInterrupting="true" name="开始" parallelMultiple="false">
+      <outgoing>0__1</outgoing>
+    </startEvent>
+  <task id="1" name="被告人曾某某驾驶半挂牵引车线由东往西方行驶">
+      <incoming>0__1</incoming>
+    <outgoing>1__2</outgoing>
+    </task>
+  <task id="2" name="行至线崇武联群公司路口路段转弯往路联群公司路口方向行驶过程">
+      <incoming>1__2</incoming>
+    <outgoing>2__3</outgoing>
+    </task>
+  <task id="3" name="行驶林某甲驾驶无牌号二轮摩托车发生碰撞">
+      <incoming>2__3</incoming>
+    <outgoing>3__3_split</outgoing>
+    </task>
+  <task id="4a" name="林某乙受伤">
+      <incoming>3_split__4a</incoming>
+    <outgoing>4a__5_join</outgoing>
+    </task>
+  <task id="4b" name="林某甲受伤抢救无效后于死亡损坏">
+      <incoming>3_split__4b</incoming>
+    <outgoing>4b__5_join</outgoing>
+    </task>
+  <task id="4d" name="曾某某打电话报警">
+      <incoming>3_split__4d</incoming>
+    <outgoing>4d__5_join</outgoing>
+    </task>
+  <task id="5" name="另查明">
+      <incoming>5_join__5</incoming>
+    <outgoing>5__5_split</outgoing>
+    </task>
+  <task id="6a" name="被告人曾某某车主死者亲属经济赔偿问题调解">
+      <incoming>5_split__6a</incoming>
+    <outgoing>6a__7_join</outgoing>
+    </task>
+  <task id="6b" name="达成调解协议">
+      <incoming>5_split__6b</incoming>
+    <outgoing>6b__7_join</outgoing>
+    </task>
+  <task id="6c" name="死者林某甲经济损失肇事车投保保险公司应赔偿金额">
+      <incoming>5_split__6c</incoming>
+    <outgoing>6c__7_join</outgoing>
+    </task>
+  <task id="6d" name="车主另行一次性补偿死者亲属人民币">
+      <incoming>5_split__6d</incoming>
+    <outgoing>6d__7_join</outgoing>
+    </task>
+  <task id="6e" name="被告人曾某某犯罪行为取得死者亲属谅解">
+      <incoming>5_split__6e</incoming>
+    <outgoing>6e__7_join</outgoing>
+    </task>
+  <task id="6f" name="死者亲属伤者林某乙理赔问题将另行诉讼">
+      <incoming>5_split__6f</incoming>
+    <outgoing>6f__7_join</outgoing>
+    </task>
+  <task id="6g" name="2015年1月31日">
+      <incoming>5_split__6g</incoming>
+    <outgoing>6g__7_join</outgoing>
+    </task>
+  <endEvent id="7" name="">
+      <incoming>7_join__7</incoming>
+    </endEvent>
+  <parallelGateway gatewayDirection="Unspecified" id="3_split" name="">
+      <incoming>3__3_split</incoming>
+    <outgoing>3_split__4a</outgoing>
+    <outgoing>3_split__4b</outgoing>
+    <outgoing>3_split__4d</outgoing>
+    </parallelGateway>
+  <parallelGateway gatewayDirection="Unspecified" id="5_join" name="">
+      <incoming>4a__5_join</incoming>
+    <incoming>4b__5_join</incoming>
+    <incoming>4d__5_join</incoming>
+    <outgoing>5_join__5</outgoing>
+    </parallelGateway>
+  <parallelGateway gatewayDirection="Unspecified" id="5_split" name="">
+      <incoming>5__5_split</incoming>
+    <outgoing>5_split__6a</outgoing>
+    <outgoing>5_split__6b</outgoing>
+    <outgoing>5_split__6c</outgoing>
+    <outgoing>5_split__6d</outgoing>
+    <outgoing>5_split__6e</outgoing>
+    <outgoing>5_split__6f</outgoing>
+    <outgoing>5_split__6g</outgoing>
+    </parallelGateway>
+  <parallelGateway gatewayDirection="Unspecified" id="7_join" name="">
+      <incoming>6a__7_join</incoming>
+    <incoming>6b__7_join</incoming>
+    <incoming>6c__7_join</incoming>
+    <incoming>6d__7_join</incoming>
+    <incoming>6e__7_join</incoming>
+    <incoming>6f__7_join</incoming>
+    <incoming>6g__7_join</incoming>
+    <outgoing>7_join__7</outgoing>
+    </parallelGateway>
+  <sequenceFlow id="0__1" name="" sourceRef="0" targetRef="1" />
+  <sequenceFlow id="1__2" name="" sourceRef="1" targetRef="2" />
+  <sequenceFlow id="2__3" name="" sourceRef="2" targetRef="3" />
+  <sequenceFlow id="3__3_split" name="" sourceRef="3" targetRef="3_split" />
+  <sequenceFlow id="3_split__4a" name="" sourceRef="3_split" targetRef="4a" />
+  <sequenceFlow id="4a__5_join" name="" sourceRef="4a" targetRef="5_join" />
+  <sequenceFlow id="3_split__4b" name="" sourceRef="3_split" targetRef="4b" />
+  <sequenceFlow id="4b__5_join" name="" sourceRef="4b" targetRef="5_join" />
+  <sequenceFlow id="3_split__4d" name="" sourceRef="3_split" targetRef="4d" />
+  <sequenceFlow id="4d__5_join" name="" sourceRef="4d" targetRef="5_join" />
+  <sequenceFlow id="5_join__5" name="" sourceRef="5_join" targetRef="5" />
+  <sequenceFlow id="5__5_split" name="" sourceRef="5" targetRef="5_split" />
+  <sequenceFlow id="5_split__6a" name="" sourceRef="5_split" targetRef="6a" />
+  <sequenceFlow id="6a__7_join" name="" sourceRef="6a" targetRef="7_join" />
+  <sequenceFlow id="5_split__6b" name="" sourceRef="5_split" targetRef="6b" />
+  <sequenceFlow id="6b__7_join" name="" sourceRef="6b" targetRef="7_join" />
+  <sequenceFlow id="5_split__6c" name="" sourceRef="5_split" targetRef="6c" />
+  <sequenceFlow id="6c__7_join" name="" sourceRef="6c" targetRef="7_join" />
+  <sequenceFlow id="5_split__6d" name="" sourceRef="5_split" targetRef="6d" />
+  <sequenceFlow id="6d__7_join" name="" sourceRef="6d" targetRef="7_join" />
+  <sequenceFlow id="5_split__6e" name="" sourceRef="5_split" targetRef="6e" />
+  <sequenceFlow id="6e__7_join" name="" sourceRef="6e" targetRef="7_join" />
+  <sequenceFlow id="5_split__6f" name="" sourceRef="5_split" targetRef="6f" />
+  <sequenceFlow id="6f__7_join" name="" sourceRef="6f" targetRef="7_join" />
+  <sequenceFlow id="5_split__6g" name="" sourceRef="5_split" targetRef="6g" />
+  <sequenceFlow id="6g__7_join" name="" sourceRef="6g" targetRef="7_join" />
+  <sequenceFlow id="7_join__7" name="" sourceRef="7_join" targetRef="7" />
+  </process>
+</definitions>

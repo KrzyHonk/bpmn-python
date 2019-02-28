@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" targetNamespace="" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="Process_150x2lw">
+    <startEvent id="StartEvent_1li0fen" name="开始">
+      <outgoing>SequenceFlow_0s2hm7k</outgoing>
+    </startEvent>
+    <task id="Task_1l8hkk9" name="曾某某驾驶重型半挂牵引车由东向西行驶">
+      <incoming>SequenceFlow_1rx93d9</incoming>
+      <outgoing>SequenceFlow_0tu8mxs</outgoing>
+    </task>
+    <task id="Task_0wfvt99" name="林某甲无证驾驶无牌二轮摩托车（后载林某乙）对向行驶">
+      <incoming>SequenceFlow_1mbt0ou</incoming>
+      <outgoing>SequenceFlow_13x8n8m</outgoing>
+    </task>
+    <parallelGateway id="ExclusiveGateway_0oq1ps6">
+      <incoming>SequenceFlow_1s87xqn</incoming>
+      <outgoing>SequenceFlow_1rx93d9</outgoing>
+      <outgoing>SequenceFlow_1mbt0ou</outgoing>
+    </parallelGateway>
+    <sequenceFlow id="SequenceFlow_0s2hm7k" sourceRef="StartEvent_1li0fen" targetRef="Task_1ikp005" />
+    <sequenceFlow id="SequenceFlow_1rx93d9" sourceRef="ExclusiveGateway_0oq1ps6" targetRef="Task_1l8hkk9" />
+    <sequenceFlow id="SequenceFlow_1mbt0ou" sourceRef="ExclusiveGateway_0oq1ps6" targetRef="Task_0wfvt99" />
+    <parallelGateway id="ExclusiveGateway_1lvjzlb">
+      <incoming>SequenceFlow_0tu8mxs</incoming>
+      <incoming>SequenceFlow_13x8n8m</incoming>
+      <outgoing>SequenceFlow_1y9iw52</outgoing>
+    </parallelGateway>
+    <task id="Task_0in2tfo" name="两车碰撞">
+      <incoming>SequenceFlow_1y9iw52</incoming>
+      <outgoing>SequenceFlow_18am8b7</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_0tu8mxs" sourceRef="Task_1l8hkk9" targetRef="ExclusiveGateway_1lvjzlb" />
+    <sequenceFlow id="SequenceFlow_13x8n8m" sourceRef="Task_0wfvt99" targetRef="ExclusiveGateway_1lvjzlb" />
+    <sequenceFlow id="SequenceFlow_1y9iw52" sourceRef="ExclusiveGateway_1lvjzlb" targetRef="Task_0in2tfo" />
+    <parallelGateway id="ExclusiveGateway_03cm86h">
+      <incoming>SequenceFlow_18am8b7</incoming>
+      <outgoing>SequenceFlow_06q3qq5</outgoing>
+      <outgoing>SequenceFlow_1kmdnjf</outgoing>
+      <outgoing>SequenceFlow_1t9adhh</outgoing>
+    </parallelGateway>
+    <task id="Task_0m1sm30" name="林某乙受伤">
+      <incoming>SequenceFlow_06q3qq5</incoming>
+      <outgoing>SequenceFlow_1cq8lhh</outgoing>
+    </task>
+    <task id="Task_05lh3n0" name="林某甲受伤">
+      <incoming>SequenceFlow_1kmdnjf</incoming>
+      <outgoing>SequenceFlow_1o3aiep</outgoing>
+    </task>
+    <task id="Task_1r24isx" name="两车损坏">
+      <incoming>SequenceFlow_1t9adhh</incoming>
+      <outgoing>SequenceFlow_0wvwzxb</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_18am8b7" sourceRef="Task_0in2tfo" targetRef="ExclusiveGateway_03cm86h" />
+    <sequenceFlow id="SequenceFlow_06q3qq5" sourceRef="ExclusiveGateway_03cm86h" targetRef="Task_0m1sm30" />
+    <sequenceFlow id="SequenceFlow_1kmdnjf" sourceRef="ExclusiveGateway_03cm86h" targetRef="Task_05lh3n0" />
+    <sequenceFlow id="SequenceFlow_1t9adhh" sourceRef="ExclusiveGateway_03cm86h" targetRef="Task_1r24isx" />
+    <task id="Task_0hqknou" name="曾某某打电话报警">
+      <incoming>SequenceFlow_1wvyd9l</incoming>
+      <outgoing>SequenceFlow_0d6jc3p</outgoing>
+    </task>
+    <parallelGateway id="ExclusiveGateway_017a3j8">
+      <incoming>SequenceFlow_0rte4s6</incoming>
+      <outgoing>SequenceFlow_0q6xv6c</outgoing>
+      <outgoing>SequenceFlow_0z9h434</outgoing>
+    </parallelGateway>
+    <task id="Task_1xow5er" name="林某甲因交通事故致颅脑损伤合并闭合性胸部脏器联合损伤">
+      <incoming>SequenceFlow_0q6xv6c</incoming>
+      <outgoing>SequenceFlow_044dqix</outgoing>
+    </task>
+    <task id="Task_1esp27f" name="林某乙轻伤二级">
+      <incoming>SequenceFlow_0z9h434</incoming>
+      <outgoing>SequenceFlow_0dt6fsk</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_0q6xv6c" sourceRef="ExclusiveGateway_017a3j8" targetRef="Task_1xow5er" />
+    <sequenceFlow id="SequenceFlow_0z9h434" sourceRef="ExclusiveGateway_017a3j8" targetRef="Task_1esp27f" />
+    <parallelGateway id="ExclusiveGateway_0e9shrb">
+      <incoming>SequenceFlow_044dqix</incoming>
+      <incoming>SequenceFlow_0dt6fsk</incoming>
+      <outgoing>SequenceFlow_0a2saim</outgoing>
+    </parallelGateway>
+    <task id="Task_0i2254n" name="曾某某承担事故全部责任">
+      <incoming>SequenceFlow_1jwr6tc</incoming>
+      <outgoing>SequenceFlow_0qlcgjk</outgoing>
+    </task>
+    <parallelGateway id="ExclusiveGateway_12rgp0y">
+      <incoming>SequenceFlow_0a2saim</incoming>
+      <outgoing>SequenceFlow_1jwr6tc</outgoing>
+      <outgoing>SequenceFlow_1955q5w</outgoing>
+    </parallelGateway>
+    <task id="Task_0tvxioa" name="林某甲、林某乙不承担事故责任">
+      <incoming>SequenceFlow_1955q5w</incoming>
+      <outgoing>SequenceFlow_1gmv6b1</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1jwr6tc" sourceRef="ExclusiveGateway_12rgp0y" targetRef="Task_0i2254n" />
+    <parallelGateway id="ExclusiveGateway_0zki9bq">
+      <incoming>SequenceFlow_0qlcgjk</incoming>
+      <incoming>SequenceFlow_1gmv6b1</incoming>
+      <outgoing>SequenceFlow_1il9n1f</outgoing>
+    </parallelGateway>
+    <sequenceFlow id="SequenceFlow_0qlcgjk" sourceRef="Task_0i2254n" targetRef="ExclusiveGateway_0zki9bq" />
+    <sequenceFlow id="SequenceFlow_1gmv6b1" sourceRef="Task_0tvxioa" targetRef="ExclusiveGateway_0zki9bq" />
+    <task id="Task_0jqp33t" name="曾某某及车主李某某与死者亲属就经济赔偿问题达成调解协议">
+      <incoming>SequenceFlow_1il9n1f</incoming>
+      <outgoing>SequenceFlow_0khw9zo</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1il9n1f" sourceRef="ExclusiveGateway_0zki9bq" targetRef="Task_0jqp33t" />
+    <task id="Task_13ppj2r" name="李某某一次性补偿死者亲属人民币55000元">
+      <incoming>SequenceFlow_0khw9zo</incoming>
+      <outgoing>SequenceFlow_183vz9h</outgoing>
+    </task>
+    <task id="Task_1k7ris9" name="曾某某的犯罪行为得到死者家属的书面谅解">
+      <incoming>SequenceFlow_1t3jg9u</incoming>
+      <outgoing>SequenceFlow_0l8m3dg</outgoing>
+    </task>
+    <task id="Task_0gj6uvu" name="死者家属及林某乙对民事理赔问题将另行诉讼">
+      <incoming>SequenceFlow_0fwrd36</incoming>
+      <outgoing>SequenceFlow_0ff4j04</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_0khw9zo" sourceRef="Task_0jqp33t" targetRef="Task_13ppj2r" />
+    <parallelGateway id="ExclusiveGateway_0c7q4mm">
+      <incoming>SequenceFlow_183vz9h</incoming>
+      <outgoing>SequenceFlow_1t3jg9u</outgoing>
+      <outgoing>SequenceFlow_0fwrd36</outgoing>
+    </parallelGateway>
+    <sequenceFlow id="SequenceFlow_183vz9h" sourceRef="Task_13ppj2r" targetRef="ExclusiveGateway_0c7q4mm" />
+    <sequenceFlow id="SequenceFlow_1t3jg9u" sourceRef="ExclusiveGateway_0c7q4mm" targetRef="Task_1k7ris9" />
+    <sequenceFlow id="SequenceFlow_0fwrd36" sourceRef="ExclusiveGateway_0c7q4mm" targetRef="Task_0gj6uvu" />
+    <sequenceFlow id="SequenceFlow_0l8m3dg" sourceRef="Task_1k7ris9" targetRef="ExclusiveGateway_1tr4lwa" />
+    <sequenceFlow id="SequenceFlow_0ff4j04" sourceRef="Task_0gj6uvu" targetRef="ExclusiveGateway_1tr4lwa" />
+    <endEvent id="EndEvent_19gtiaq" name="结束">
+      <incoming>SequenceFlow_0ua5swk</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_0ua5swk" sourceRef="ExclusiveGateway_1tr4lwa" targetRef="EndEvent_19gtiaq" />
+    <task id="Task_1et2ba7" name="曾某某在现场等候处理">
+      <incoming>SequenceFlow_0d6jc3p</incoming>
+      <outgoing>SequenceFlow_091nkqc</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1o3aiep" sourceRef="Task_05lh3n0" targetRef="ExclusiveGateway_0rsogy3" />
+    <sequenceFlow id="SequenceFlow_1cq8lhh" sourceRef="Task_0m1sm30" targetRef="ExclusiveGateway_0rsogy3" />
+    <sequenceFlow id="SequenceFlow_0wvwzxb" sourceRef="Task_1r24isx" targetRef="ExclusiveGateway_0rsogy3" />
+    <sequenceFlow id="SequenceFlow_1wvyd9l" sourceRef="ExclusiveGateway_0rsogy3" targetRef="Task_0hqknou" />
+    <sequenceFlow id="SequenceFlow_044dqix" sourceRef="Task_1xow5er" targetRef="ExclusiveGateway_0e9shrb" />
+    <sequenceFlow id="SequenceFlow_0dt6fsk" sourceRef="Task_1esp27f" targetRef="ExclusiveGateway_0e9shrb" />
+    <parallelGateway id="ExclusiveGateway_1tr4lwa">
+      <incoming>SequenceFlow_0l8m3dg</incoming>
+      <incoming>SequenceFlow_0ff4j04</incoming>
+      <outgoing>SequenceFlow_0ua5swk</outgoing>
+    </parallelGateway>
+    <sequenceFlow id="SequenceFlow_1955q5w" sourceRef="ExclusiveGateway_12rgp0y" targetRef="Task_0tvxioa" />
+    <sequenceFlow id="SequenceFlow_0a2saim" sourceRef="ExclusiveGateway_0e9shrb" targetRef="ExclusiveGateway_12rgp0y" />
+    <parallelGateway id="ExclusiveGateway_0rsogy3">
+      <incoming>SequenceFlow_1o3aiep</incoming>
+      <incoming>SequenceFlow_1cq8lhh</incoming>
+      <incoming>SequenceFlow_0wvwzxb</incoming>
+      <outgoing>SequenceFlow_1wvyd9l</outgoing>
+    </parallelGateway>
+    <task id="Task_1ikp005" name="2015年1月23日5时40分许">
+      <incoming>SequenceFlow_0s2hm7k</incoming>
+      <outgoing>SequenceFlow_1s87xqn</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1s87xqn" sourceRef="Task_1ikp005" targetRef="ExclusiveGateway_0oq1ps6" />
+    <sequenceFlow id="SequenceFlow_0d6jc3p" sourceRef="Task_0hqknou" targetRef="Task_1et2ba7" />
+    <task id="Task_0b1sb2f" name="林某甲抢救无效死亡">
+      <incoming>SequenceFlow_0de47py</incoming>
+      <outgoing>SequenceFlow_07bwfnn</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_0de47py" sourceRef="ExclusiveGateway_0ucg1g3" targetRef="Task_0b1sb2f" />
+    <parallelGateway id="ExclusiveGateway_0ucg1g3">
+      <incoming>SequenceFlow_091nkqc</incoming>
+      <outgoing>SequenceFlow_0de47py</outgoing>
+      <outgoing>SequenceFlow_1jp7ln7</outgoing>
+    </parallelGateway>
+    <sequenceFlow id="SequenceFlow_091nkqc" sourceRef="Task_1et2ba7" targetRef="ExclusiveGateway_0ucg1g3" />
+    <task id="Task_0vi42nw" name="曾某某如实供述犯罪事实&#10;">
+      <incoming>SequenceFlow_1jp7ln7</incoming>
+      <outgoing>SequenceFlow_066q1z3</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1jp7ln7" sourceRef="ExclusiveGateway_0ucg1g3" targetRef="Task_0vi42nw" />
+    <parallelGateway id="ExclusiveGateway_1hqr9uk">
+      <incoming>SequenceFlow_07bwfnn</incoming>
+      <incoming>SequenceFlow_066q1z3</incoming>
+      <outgoing>SequenceFlow_0rte4s6</outgoing>
+    </parallelGateway>
+    <sequenceFlow id="SequenceFlow_07bwfnn" sourceRef="Task_0b1sb2f" targetRef="ExclusiveGateway_1hqr9uk" />
+    <sequenceFlow id="SequenceFlow_066q1z3" sourceRef="Task_0vi42nw" targetRef="ExclusiveGateway_1hqr9uk" />
+    <sequenceFlow id="SequenceFlow_0rte4s6" sourceRef="ExclusiveGateway_1hqr9uk" targetRef="ExclusiveGateway_017a3j8" />
+  </process>
+  <bpmndi:BPMNDiagram id="sid-74620812-92c4-44e5-949c-aa47393d3830">
+    <bpmndi:BPMNPlane id="sid-cdcae759-2af7-4a6d-bd02-53f3352a731d" bpmnElement="Process_150x2lw">
+      <bpmndi:BPMNShape id="StartEvent_1li0fen_di" bpmnElement="StartEvent_1li0fen">
+        <omgdc:Bounds x="-110" y="145" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="-103" y="188" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1l8hkk9_di" bpmnElement="Task_1l8hkk9">
+        <omgdc:Bounds x="224" y="62" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0wfvt99_di" bpmnElement="Task_0wfvt99">
+        <omgdc:Bounds x="224" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_13v1kqb_di" bpmnElement="ExclusiveGateway_0oq1ps6">
+        <omgdc:Bounds x="167" y="138" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0s2hm7k_di" bpmnElement="SequenceFlow_0s2hm7k">
+        <di:waypoint x="-74" y="163" />
+        <di:waypoint x="-43" y="163" />
+        <di:waypoint x="-43" y="164" />
+        <di:waypoint x="-13" y="164" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rx93d9_di" bpmnElement="SequenceFlow_1rx93d9">
+        <di:waypoint x="192" y="138" />
+        <di:waypoint x="192" y="102" />
+        <di:waypoint x="224" y="102" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1mbt0ou_di" bpmnElement="SequenceFlow_1mbt0ou">
+        <di:waypoint x="192" y="188" />
+        <di:waypoint x="192" y="220" />
+        <di:waypoint x="224" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1wzb5l4_di" bpmnElement="ExclusiveGateway_1lvjzlb">
+        <omgdc:Bounds x="330" y="138" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0in2tfo_di" bpmnElement="Task_0in2tfo">
+        <omgdc:Bounds x="399" y="123" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tu8mxs_di" bpmnElement="SequenceFlow_0tu8mxs">
+        <di:waypoint x="324" y="102" />
+        <di:waypoint x="355" y="102" />
+        <di:waypoint x="355" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_13x8n8m_di" bpmnElement="SequenceFlow_13x8n8m">
+        <di:waypoint x="324" y="220" />
+        <di:waypoint x="355" y="220" />
+        <di:waypoint x="355" y="188" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1y9iw52_di" bpmnElement="SequenceFlow_1y9iw52">
+        <di:waypoint x="380" y="163" />
+        <di:waypoint x="399" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_0glf1km_di" bpmnElement="ExclusiveGateway_03cm86h">
+        <omgdc:Bounds x="516" y="138" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0m1sm30_di" bpmnElement="Task_0m1sm30">
+        <omgdc:Bounds x="590" y="20" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_05lh3n0_di" bpmnElement="Task_05lh3n0">
+        <omgdc:Bounds x="590" y="123" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1r24isx_di" bpmnElement="Task_1r24isx">
+        <omgdc:Bounds x="590" y="231" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18am8b7_di" bpmnElement="SequenceFlow_18am8b7">
+        <di:waypoint x="499" y="163" />
+        <di:waypoint x="516" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06q3qq5_di" bpmnElement="SequenceFlow_06q3qq5">
+        <di:waypoint x="541" y="138" />
+        <di:waypoint x="541" y="60" />
+        <di:waypoint x="590" y="60" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kmdnjf_di" bpmnElement="SequenceFlow_1kmdnjf">
+        <di:waypoint x="566" y="163" />
+        <di:waypoint x="590" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1t9adhh_di" bpmnElement="SequenceFlow_1t9adhh">
+        <di:waypoint x="541" y="188" />
+        <di:waypoint x="541" y="271" />
+        <di:waypoint x="590" y="271" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0hqknou_di" bpmnElement="Task_0hqknou">
+        <omgdc:Bounds x="805" y="123" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_16ytsjf_di" bpmnElement="ExclusiveGateway_017a3j8">
+        <omgdc:Bounds x="1034" y="336" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1xow5er_di" bpmnElement="Task_1xow5er">
+        <omgdc:Bounds x="917" y="422" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1esp27f_di" bpmnElement="Task_1esp27f">
+        <omgdc:Bounds x="1109" y="422" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0q6xv6c_di" bpmnElement="SequenceFlow_0q6xv6c">
+        <di:waypoint x="1034" y="361" />
+        <di:waypoint x="981" y="361" />
+        <di:waypoint x="981" y="422" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0z9h434_di" bpmnElement="SequenceFlow_0z9h434">
+        <di:waypoint x="1084" y="361" />
+        <di:waypoint x="1146" y="361" />
+        <di:waypoint x="1146" y="422" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1ctcmij_di" bpmnElement="ExclusiveGateway_0e9shrb">
+        <omgdc:Bounds x="1034" y="526" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0i2254n_di" bpmnElement="Task_0i2254n">
+        <omgdc:Bounds x="768" y="568" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_0yzbq5a_di" bpmnElement="ExclusiveGateway_12rgp0y">
+        <omgdc:Bounds x="906" y="634" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0tvxioa_di" bpmnElement="Task_0tvxioa">
+        <omgdc:Bounds x="768" y="675" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jwr6tc_di" bpmnElement="SequenceFlow_1jwr6tc">
+        <di:waypoint x="931" y="634" />
+        <di:waypoint x="931" y="608" />
+        <di:waypoint x="868" y="608" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_0iv8bcy_di" bpmnElement="ExclusiveGateway_0zki9bq">
+        <omgdc:Bounds x="680" y="634" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qlcgjk_di" bpmnElement="SequenceFlow_0qlcgjk">
+        <di:waypoint x="768" y="608" />
+        <di:waypoint x="705" y="608" />
+        <di:waypoint x="705" y="634" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gmv6b1_di" bpmnElement="SequenceFlow_1gmv6b1">
+        <di:waypoint x="768" y="715" />
+        <di:waypoint x="705" y="715" />
+        <di:waypoint x="705" y="684" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0jqp33t_di" bpmnElement="Task_0jqp33t">
+        <omgdc:Bounds x="551" y="619" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1il9n1f_di" bpmnElement="SequenceFlow_1il9n1f">
+        <di:waypoint x="680" y="659" />
+        <di:waypoint x="651" y="659" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_13ppj2r_di" bpmnElement="Task_13ppj2r">
+        <omgdc:Bounds x="407" y="619" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1k7ris9_di" bpmnElement="Task_1k7ris9">
+        <omgdc:Bounds x="192" y="538" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0gj6uvu_di" bpmnElement="Task_0gj6uvu">
+        <omgdc:Bounds x="192" y="684" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0khw9zo_di" bpmnElement="SequenceFlow_0khw9zo">
+        <di:waypoint x="551" y="659" />
+        <di:waypoint x="507" y="659" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1ahwe2p_di" bpmnElement="ExclusiveGateway_0c7q4mm">
+        <omgdc:Bounds x="321" y="634" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_183vz9h_di" bpmnElement="SequenceFlow_183vz9h">
+        <di:waypoint x="407" y="659" />
+        <di:waypoint x="371" y="659" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1t3jg9u_di" bpmnElement="SequenceFlow_1t3jg9u">
+        <di:waypoint x="346" y="634" />
+        <di:waypoint x="346" y="578" />
+        <di:waypoint x="292" y="578" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fwrd36_di" bpmnElement="SequenceFlow_0fwrd36">
+        <di:waypoint x="346" y="684" />
+        <di:waypoint x="346" y="724" />
+        <di:waypoint x="292" y="724" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0l8m3dg_di" bpmnElement="SequenceFlow_0l8m3dg">
+        <di:waypoint x="192" y="578" />
+        <di:waypoint x="140" y="578" />
+        <di:waypoint x="140" y="634" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ff4j04_di" bpmnElement="SequenceFlow_0ff4j04">
+        <di:waypoint x="192" y="724" />
+        <di:waypoint x="140" y="724" />
+        <di:waypoint x="140" y="684" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_19gtiaq_di" bpmnElement="EndEvent_19gtiaq">
+        <omgdc:Bounds x="43" y="641" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="50" y="684" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ua5swk_di" bpmnElement="SequenceFlow_0ua5swk">
+        <di:waypoint x="115" y="659" />
+        <di:waypoint x="79" y="659" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1et2ba7_di" bpmnElement="Task_1et2ba7">
+        <omgdc:Bounds x="931" y="123" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o3aiep_di" bpmnElement="SequenceFlow_1o3aiep">
+        <di:waypoint x="690" y="163" />
+        <di:waypoint x="718" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1cq8lhh_di" bpmnElement="SequenceFlow_1cq8lhh">
+        <di:waypoint x="690" y="60" />
+        <di:waypoint x="743" y="60" />
+        <di:waypoint x="743" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wvwzxb_di" bpmnElement="SequenceFlow_0wvwzxb">
+        <di:waypoint x="690" y="271" />
+        <di:waypoint x="743" y="271" />
+        <di:waypoint x="743" y="188" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wvyd9l_di" bpmnElement="SequenceFlow_1wvyd9l">
+        <di:waypoint x="768" y="163" />
+        <di:waypoint x="805" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_044dqix_di" bpmnElement="SequenceFlow_044dqix">
+        <di:waypoint x="967" y="502" />
+        <di:waypoint x="967" y="551" />
+        <di:waypoint x="1034" y="551" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dt6fsk_di" bpmnElement="SequenceFlow_0dt6fsk">
+        <di:waypoint x="1159" y="502" />
+        <di:waypoint x="1159" y="551" />
+        <di:waypoint x="1084" y="551" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1mfdwq2_di" bpmnElement="ExclusiveGateway_1tr4lwa">
+        <omgdc:Bounds x="115" y="634" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1955q5w_di" bpmnElement="SequenceFlow_1955q5w">
+        <di:waypoint x="931" y="684" />
+        <di:waypoint x="931" y="715" />
+        <di:waypoint x="868" y="715" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0a2saim_di" bpmnElement="SequenceFlow_0a2saim">
+        <di:waypoint x="1059" y="576" />
+        <di:waypoint x="1059" y="659" />
+        <di:waypoint x="956" y="659" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_034j5ue_di" bpmnElement="ExclusiveGateway_0rsogy3">
+        <omgdc:Bounds x="718" y="138" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1ikp005_di" bpmnElement="Task_1ikp005">
+        <omgdc:Bounds x="-13" y="124" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1s87xqn_di" bpmnElement="SequenceFlow_1s87xqn">
+        <di:waypoint x="87" y="164" />
+        <di:waypoint x="127" y="164" />
+        <di:waypoint x="127" y="163" />
+        <di:waypoint x="167" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0d6jc3p_di" bpmnElement="SequenceFlow_0d6jc3p">
+        <di:waypoint x="905" y="163" />
+        <di:waypoint x="931" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0b1sb2f_di" bpmnElement="Task_0b1sb2f">
+        <omgdc:Bounds x="1251" y="231" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0de47py_di" bpmnElement="SequenceFlow_0de47py">
+        <di:waypoint x="1194" y="163" />
+        <di:waypoint x="1301" y="163" />
+        <di:waypoint x="1301" y="231" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_0bff1lq_di" bpmnElement="ExclusiveGateway_0ucg1g3">
+        <omgdc:Bounds x="1144" y="138" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_091nkqc_di" bpmnElement="SequenceFlow_091nkqc">
+        <di:waypoint x="1031" y="163" />
+        <di:waypoint x="1144" y="163" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0vi42nw_di" bpmnElement="Task_0vi42nw">
+        <omgdc:Bounds x="1421" y="231" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jp7ln7_di" bpmnElement="SequenceFlow_1jp7ln7">
+        <di:waypoint x="1194" y="163" />
+        <di:waypoint x="1471" y="163" />
+        <di:waypoint x="1471" y="231" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1qlrnbd_di" bpmnElement="ExclusiveGateway_1hqr9uk">
+        <omgdc:Bounds x="1345" y="384" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_07bwfnn_di" bpmnElement="SequenceFlow_07bwfnn">
+        <di:waypoint x="1301" y="311" />
+        <di:waypoint x="1301" y="409" />
+        <di:waypoint x="1345" y="409" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_066q1z3_di" bpmnElement="SequenceFlow_066q1z3">
+        <di:waypoint x="1471" y="311" />
+        <di:waypoint x="1471" y="409" />
+        <di:waypoint x="1395" y="409" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rte4s6_di" bpmnElement="SequenceFlow_0rte4s6">
+        <di:waypoint x="1345" y="409" />
+        <di:waypoint x="1215" y="409" />
+        <di:waypoint x="1215" y="361" />
+        <di:waypoint x="1084" y="361" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+    <bpmndi:BPMNLabelStyle id="sid-e0502d32-f8d1-41cf-9c4a-cbb49fecf581">
+      <omgdc:Font name="Arial" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" />
+    </bpmndi:BPMNLabelStyle>
+    <bpmndi:BPMNLabelStyle id="sid-84cb49fd-2f7c-44fb-8950-83c3fa153d3b">
+      <omgdc:Font name="Arial" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" />
+    </bpmndi:BPMNLabelStyle>
+  </bpmndi:BPMNDiagram>
+</definitions>
