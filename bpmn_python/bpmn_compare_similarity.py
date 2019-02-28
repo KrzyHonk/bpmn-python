@@ -106,13 +106,18 @@ class CompareBPMN(object):
 
         df = pd.DataFrame(self.result_list)
         df.sort_values(by=1, inplace=True, ascending=False)
+
+        print("avg node matching similarity: ", df.iloc[:, 1].mean())
+        print("avg structure similarity: ", df.iloc[:, 2].mean())
+
+        df.columns = ['file_name', 'node_sim', 'structure_sim']
         df.reset_index()
         if self.export_csv:
             df.to_csv(os.path.join(output_dir, "result_sim.csv"))
 
         if self.export_excel:
             df.to_excel(os.path.join(output_dir + "result_sim.excel"))
-        print(df.iloc[:, 1].mean(), df.iloc[:, 2].mean())
+
 
     def check_file_name(self, file_name):
         if file_name[-1] != '/':
