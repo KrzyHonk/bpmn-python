@@ -281,9 +281,3 @@ class CompareBPMN(object):
                 se_list.append((edge[0], edge[1]))
         raw_edges_list = list(raw_edges_set)
         return se_list + raw_edges_list
-
-
-if __name__ == '__main__':
-    cb = CompareBPMN()
-    cb.calculate_batch_similarity("/Users/maicius/code/cpws_judge/data/", "/Users/maicius/code/CPWSSystem/resource/output/bpmn/")
-    cb.calculate_similarity(file_name1="/Users/maicius/code/cpws_judge/data/1431680.xml", file_name2="/Users/maicius/code/CPWSSystem/validate/bpmn_file/1431680.xml")
