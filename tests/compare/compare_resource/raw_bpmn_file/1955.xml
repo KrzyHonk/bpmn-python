@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:tns="http://www.activiti.org/testm1545209423741" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="m1545209423741" name="" targetNamespace="http://www.activiti.org/testm1545209423741">
+  <process id="Process_150x2lw" processType="None" isClosed="false" isExecutable="true">
+    <startEvent id="StartEvent_1li0fen" name="开始">
+      <outgoing>SequenceFlow_06t6f0w</outgoing>
+    </startEvent>
+    <task id="Task_065j7bf" name="2014年10月30日5时58分许">
+      <incoming>SequenceFlow_06t6f0w</incoming>
+      <outgoing>SequenceFlow_1kvi19q</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_06t6f0w" sourceRef="StartEvent_1li0fen" targetRef="Task_065j7bf" />
+    <task id="Task_1yeqdds" name="被告人乔石驾驶奔驰牌无号牌重型自卸车">
+      <incoming>SequenceFlow_1kvi19q</incoming>
+      <outgoing>SequenceFlow_1e13rm9</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1kvi19q" sourceRef="Task_065j7bf" targetRef="Task_1yeqdds" />
+    <task id="Task_1mitbfp" name="沿本市X003道路由北向南行驶至本市新城区金鹿泊乐城小区大门北侧">
+      <incoming>SequenceFlow_1e13rm9</incoming>
+      <outgoing>SequenceFlow_1jlefl9</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1e13rm9" sourceRef="Task_1yeqdds" targetRef="Task_1mitbfp" />
+    <task id="Task_1yjeq1z" name="与由北向南步行至该处的行人于某发生碰撞并碾压">
+      <incoming>SequenceFlow_1jlefl9</incoming>
+      <outgoing>SequenceFlow_15sdhno</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1jlefl9" sourceRef="Task_1mitbfp" targetRef="Task_1yjeq1z" />
+    <task id="Task_0q3h0o8" name="于某当场死亡">
+      <incoming>SequenceFlow_15sdhno</incoming>
+      <outgoing>SequenceFlow_06f7v8a</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_15sdhno" sourceRef="Task_1yjeq1z" targetRef="Task_0q3h0o8" />
+    <task id="Task_0vhzn3f" name="被告人乔石驾驶肇事车辆逃离现场">
+      <incoming>SequenceFlow_06f7v8a</incoming>
+      <outgoing>SequenceFlow_0ol8amm</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_06f7v8a" sourceRef="Task_0q3h0o8" targetRef="Task_0vhzn3f" />
+    <task id="Task_0d8s793" name="2014年11月29日">
+      <incoming>SequenceFlow_0ol8amm</incoming>
+      <outgoing>SequenceFlow_1vsp81t</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_0ol8amm" sourceRef="Task_0vhzn3f" targetRef="Task_0d8s793" />
+    <task id="Task_08bc9i0" name="被告人乔石在本市玉泉区八里庄被抓获归案">
+      <incoming>SequenceFlow_1vsp81t</incoming>
+      <outgoing>SequenceFlow_1nua1nq</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1vsp81t" sourceRef="Task_0d8s793" targetRef="Task_08bc9i0" />
+    <task id="Task_09ny01m" name="被告人乔石的行为给郭某某、于某某、汉某某造成的经济损失为死亡赔偿金567000元（28350×20年）、丧葬费27228元（4568×6个月）、处理事故误工费1650元（110×3人×5天）、交通费1000元（酌情）、住宿费4800元（320×3人×5天），共计人民币601678元">
+      <incoming>SequenceFlow_1nua1nq</incoming>
+      <outgoing>SequenceFlow_02w6rry</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1nua1nq" sourceRef="Task_08bc9i0" targetRef="Task_09ny01m" />
+    <task id="Task_04pk4dt" name="被告已赔偿人民币47500元">
+      <incoming>SequenceFlow_02w6rry</incoming>
+      <outgoing>SequenceFlow_0waw7p0</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_02w6rry" sourceRef="Task_09ny01m" targetRef="Task_04pk4dt" />
+    <endEvent id="EndEvent_0voqupx" name="结束">
+      <incoming>SequenceFlow_0waw7p0</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_0waw7p0" sourceRef="Task_04pk4dt" targetRef="EndEvent_0voqupx" />
+  </process>
+  <bpmndi:BPMNDiagram id="Diagram-_1" name="New Diagram" documentation="background=#3C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0">
+    <bpmndi:BPMNPlane bpmnElement="Process_150x2lw">
+      <bpmndi:BPMNShape id="Shape-StartEvent_1li0fen" bpmnElement="StartEvent_1li0fen">
+        <omgdc:Bounds x="184" y="184" width="32" height="32" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="0" y="0" width="32" height="32" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_065j7bf_di" bpmnElement="Task_065j7bf">
+        <omgdc:Bounds x="266" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_06t6f0w_di" bpmnElement="SequenceFlow_06t6f0w">
+        <di:waypoint x="216" y="200" />
+        <di:waypoint x="266" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1yeqdds_di" bpmnElement="Task_1yeqdds">
+        <omgdc:Bounds x="416" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kvi19q_di" bpmnElement="SequenceFlow_1kvi19q">
+        <di:waypoint x="366" y="200" />
+        <di:waypoint x="416" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1mitbfp_di" bpmnElement="Task_1mitbfp">
+        <omgdc:Bounds x="566" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1e13rm9_di" bpmnElement="SequenceFlow_1e13rm9">
+        <di:waypoint x="516" y="200" />
+        <di:waypoint x="566" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1yjeq1z_di" bpmnElement="Task_1yjeq1z">
+        <omgdc:Bounds x="716" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jlefl9_di" bpmnElement="SequenceFlow_1jlefl9">
+        <di:waypoint x="666" y="200" />
+        <di:waypoint x="716" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0q3h0o8_di" bpmnElement="Task_0q3h0o8">
+        <omgdc:Bounds x="866" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_15sdhno_di" bpmnElement="SequenceFlow_15sdhno">
+        <di:waypoint x="816" y="200" />
+        <di:waypoint x="866" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0vhzn3f_di" bpmnElement="Task_0vhzn3f">
+        <omgdc:Bounds x="1016" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_06f7v8a_di" bpmnElement="SequenceFlow_06f7v8a">
+        <di:waypoint x="966" y="200" />
+        <di:waypoint x="1016" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0d8s793_di" bpmnElement="Task_0d8s793">
+        <omgdc:Bounds x="1166" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ol8amm_di" bpmnElement="SequenceFlow_0ol8amm">
+        <di:waypoint x="1116" y="200" />
+        <di:waypoint x="1166" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_08bc9i0_di" bpmnElement="Task_08bc9i0">
+        <omgdc:Bounds x="1316" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vsp81t_di" bpmnElement="SequenceFlow_1vsp81t">
+        <di:waypoint x="1266" y="200" />
+        <di:waypoint x="1316" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_09ny01m_di" bpmnElement="Task_09ny01m">
+        <omgdc:Bounds x="1466" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nua1nq_di" bpmnElement="SequenceFlow_1nua1nq">
+        <di:waypoint x="1416" y="200" />
+        <di:waypoint x="1466" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_04pk4dt_di" bpmnElement="Task_04pk4dt">
+        <omgdc:Bounds x="1616" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_02w6rry_di" bpmnElement="SequenceFlow_02w6rry">
+        <di:waypoint x="1566" y="200" />
+        <di:waypoint x="1616" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0voqupx_di" bpmnElement="EndEvent_0voqupx">
+        <omgdc:Bounds x="1766" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1773" y="225" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0waw7p0_di" bpmnElement="SequenceFlow_0waw7p0">
+        <di:waypoint x="1716" y="200" />
+        <di:waypoint x="1766" y="200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
