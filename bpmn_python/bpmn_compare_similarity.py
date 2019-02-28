@@ -1,5 +1,7 @@
 """
-比较两个BPMN模型的相似性
+Comparing the Similarity of Two BPMN Graphs
+Implementation for Paper:
+Similarity of business process models: Metrics and evaluation
 """
 
 from Levenshtein import distance
@@ -7,36 +9,42 @@ from bpmn_python.bpmn_diagram_rep import BpmnDiagramGraph
 import os
 import pandas as pd
 
-
 class CompareBPMN(object):
-    def __init__(self, export_csv=False):
+    def __init__(self, export_csv=False, export_excel=True):
+        """
+        Comparing the Similarity of Two BPMN Graphs
 
+        Implementation for Paper:
+        《Similarity of business process models: Metrics and evaluation》
+        Address: https://kodu.ut.ee/~dumas/pubs/BetaWPSimilarity.pdf
+
+        :param export_csv: If true, export export csv file as final result
+        :param export_excel: If true, export export excel file as final result
+        """
         self.export_csv = export_csv
+        self.export_excel = export_excel
         self.result_list = []
-
 
     def get_bpmn_nodes(self, bpmn):
         """
         :param bpmn:
         :return:
         """
-        start_end_node = set()
         nodes = bpmn.get_nodes()
-        # for node in nodes:
-        #     # 去除开始节点和结束节点
-        #     if (node[1]['type'] == 'startEvent' or node[1]['type'] == 'endEvent'):
-        #         start_end_node.add(node[0])
-        #         nodes.remove(node)
-        return nodes, start_end_node
+        return nodes
 
     def get_bpmn_file_list(self, bpmn_file_path):
+        """
+        :param bpmn_file_path:
+        :return:
+        """
         file_list = os.listdir(bpmn_file_path)
         for file in file_list:
             if file.find('.xml') == -1 and file.find('.bpmn') == -1:
                 file_list.remove(file)
         return file_list
 
-    def get_bpmn_flows(self, bpmn, start_end_node):
+    def get_bpmn_flows(self, bpmn):
         edges = bpmn.get_flows()
         # edges = list(filter(lambda x: x[0] not in start_end_node and x[1] not in start_end_node, edges))
         return edges
@@ -45,24 +53,25 @@ class CompareBPMN(object):
         try:
             raw_bpmn = BpmnDiagramGraph()
             raw_bpmn.load_diagram_from_xml_file(file_name1)
-            raw_nodes, start_end_node = self.get_bpmn_nodes(raw_bpmn)
-            raw_edges = self.get_bpmn_flows(raw_bpmn, start_end_node)
+            raw_nodes = self.get_bpmn_nodes(raw_bpmn)
+            raw_edges = self.get_bpmn_flows(raw_bpmn)
 
             bpmn = BpmnDiagramGraph()
             bpmn.load_diagram_from_xml_file(file_name2)
-            nodes, start_end_node = self.get_bpmn_nodes(bpmn)
-            edges = self.get_bpmn_flows(bpmn, start_end_node)
-            print(nodes)
-            print(raw_nodes)
+            nodes = self.get_bpmn_nodes(bpmn)
+            edges = self.get_bpmn_flows(bpmn)
+
             if len(nodes) > 0 and len(raw_nodes) > 0:
-                # 计算节点内容相似性
+                # calculate node matching similarity
                 node_matching_sim, equivalence_mapping = self.calculate_node_matching_similarity(raw_nodes,
                                                                                                  nodes)
                 print("node matching similarity: between", file_name1, "and", file_name2, ":",
                       round(node_matching_sim, 3))
-
+                # calculate structure similarity
                 structure_sim = self.calculate_structure_similarity(raw_edges, raw_nodes, edges, nodes,
                                                                     equivalence_mapping)
+                print("structure similarity: between", file_name1, "and", file_name2, ":",
+                      round(structure_sim, 3))
                 return node_matching_sim, structure_sim
             else:
                 return 0, 0
@@ -71,6 +80,12 @@ class CompareBPMN(object):
             return  0, 0
 
     def calculate_batch_similarity(self, bpmn_file_path1, bpmn_file_path2):
+        """
+        Compute the similarity of all BPMN graphs under two folders
+        :param bpmn_file_path1:
+        :param bpmn_file_path2:
+        :return:
+        """
         self.__raw_bpmn_file_path = bpmn_file_path1
         self.__bpmn_file_path = bpmn_file_path2
         raw_bpmn_file_list = self.get_bpmn_file_list(self.__raw_bpmn_file_path)
@@ -90,13 +105,16 @@ class CompareBPMN(object):
         df.reset_index()
         if self.export_csv:
             df.to_csv("result_sim.csv")
+
+        if self.export_excel:
+            df.to_excel("resulit_sim.excel")
         print(df.iloc[:, 1].mean(), df.iloc[:, 2].mean())
 
 
     def calculate_node_matching_similarity(self, raw_nodes, nodes):
         """
-        比较传入的两个节点列表的相似性
-        首先找到列表中每个节点的相等映射
+        compare similarity of two nodes
+        Similarity is measured by text editing distance (Levenshtein Distance) and node type
         :param raw_nodes:
         :param nodes:
         :return:
@@ -109,13 +127,13 @@ class CompareBPMN(object):
             edit_distance_list_df = pd.DataFrame([edit_distance_list], columns=col, index=[raw_node[0]])
             edit_distance_df = edit_distance_df.append(edit_distance_list_df)
             for node in nodes:
-                # 计算句法相似度
+                # Syntactic Similarity
                 syn_sim = self.get_syn_sim(raw_node, node)
-                # 计算类型相似度
+                # Type Similarity
                 type_sim = self.get_type_sim(raw_node, node)
                 node_sim = syn_sim * type_sim
                 edit_distance_df.loc[raw_node[0], node[0]] = node_sim
-
+        # find best mapping for each node
         equivalence_mapping = self.calculate_equivalence_mapping(sim_data_frame=edit_distance_df)
         node_matching_sim = self.calculate_node_matching(equivalence_mapping, len(raw_nodes), len(nodes))
 
@@ -139,7 +157,7 @@ class CompareBPMN(object):
 
     def get_type_sim(self, node1, node2):
         """
-        计算类型相似性
+        Calculate type similarity
         :param node1:
         :param node2:
         :return:
@@ -147,17 +165,13 @@ class CompareBPMN(object):
         node_type1 = node1[1]['type']
         node_type2 = node2[1]['type']
 
-        if node_type1 == 'exclusiveGateway':
-            node_type1 = "parallelGateway"
-        if node_type2 == 'exclusiveGateway':
-            node_type2 = 'parallelGateway'
         return 1 if node_type1 == node_type2 else 0
 
     def calculate_equivalence_mapping(self, sim_data_frame):
         """
-        根据传入的相似性矩阵计算最佳相等映射
+        Computing the Best Equivalent Mapping Based on the Input Similarity Matrix
         :param sim_data_frame:
-        :return:
+        :return: Best Equivalent Mapping List of Nodes
         """
         df_shape = sim_data_frame.shape
         cols = list(sim_data_frame.columns.values)
@@ -174,8 +188,8 @@ class CompareBPMN(object):
 
     def calculate_node_matching(self, equivalence_mapping, raw_node_num, node_num):
         """
-        计算节点相似度
-        :param equivalence_mapping:
+        Computing the final similarity of nodes according to the formulas in the paper
+        :param equivalence_mapping: Best Equivalent Mapping List of Nodes
         :param raw_node_num:
         :param node_num:
         :return:
@@ -185,7 +199,7 @@ class CompareBPMN(object):
 
     def find_best_mapping(self, col, sim_data_frame):
         """
-        根据传入的节点名称和DataFrame寻找最佳映射
+        Find the best equivalence mapping for incoming nodes
         :param col:
         :param sim_data_frame:
         :return:
@@ -196,7 +210,7 @@ class CompareBPMN(object):
             row_data = sim_data_frame.loc[max_index, :]
             max_column = row_data[row_data == row_data.max()].index.values[0]
             if max_column == col:
-                print('best mapping:', col, max_index)
+                # print('best mapping:', col, max_index)
                 sim_data_frame.drop([col], axis=1, inplace=True)
                 sim_data_frame.drop([max_index], axis=0, inplace=True)
                 return (col, max_index, row_data.max())
@@ -209,12 +223,12 @@ class CompareBPMN(object):
         se = self.calculate_se(raw_edges, edges, equivalence_mapping)
         sim_sum = self.calculate_graph_edit_distance(equivalence_mapping)
         graph_edit_distance = len(sn) + len(se) + 2 * sim_sum
-        print("图编辑距离：", graph_edit_distance)
+        print("graph edit distance：", graph_edit_distance)
         snv = len(sn) / (len(raw_nodes) + len(nodes))
         sev = len(se) / (len(raw_edges) + len(edges))
         sbv = 2 * sim_sum / (len(raw_nodes) + len(nodes) - len(sn))
         simged = 1 - (snv + sev + sbv) / 3
-        print("图编辑相似度:", round(simged, 3))
+        print("graph edit similarity:", round(simged, 3))
         return simged
 
     def calculate_graph_edit_distance(self, equivalence_mapping):
