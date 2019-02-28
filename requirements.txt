@@ -4,3 +4,4 @@ networkx
 matplotlib
 pydotplus
 python-Levenshtein
+pydot
