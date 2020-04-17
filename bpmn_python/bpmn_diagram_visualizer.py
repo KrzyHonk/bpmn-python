@@ -88,7 +88,7 @@ def bpmn_diagram_to_png(bpmn_diagram, file_name):
         graph.add_node(n)
 
     for edge in g.edges(data=True):
-        e = pydotplus.Edge(src=edge[0], dst=edge[1], label=edge[2].get(consts.Consts.name))
+        e = pydotplus.Edge(src=edge[2].get(consts.Consts.source_ref), dst=edge[2].get(consts.Consts.target_ref), label=edge[2].get(consts.Consts.name))
         graph.add_edge(e)
 
     graph.write(file_name + ".png", format='png')
