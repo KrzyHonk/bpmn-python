@@ -369,7 +369,7 @@ def insert_into_grid(grid, row, col, node_id):
     if occupied_cell:
         for grid_cell in grid:
             if grid_cell.row >= row:
-                grid_cell.row += consts.Consts.width
+                grid_cell.row += consts.Consts.grid_column_width
     grid.append(cell_class.GridCell(row, col, node_id))
 
 
